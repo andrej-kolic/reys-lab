@@ -1,0 +1,155 @@
+---
+/**
+ * The global candidate switcher.
+ *
+ * Every remaining design question in the design plan is perceptual, so the
+ * playground has to let any font pairing be judged against any theme at
+ * full-screen scale — not as a swatch. These buttons set `data-theme` and
+ * `data-shade` on `<html>`; the token layer in global.css does the rest.
+ * Persisted to localStorage so a decision survives a page change.
+ *
+ * Glow is settled at .28 and so has no control any more, the same as type and
+ * the accent policy. It stays in the readout because a locked value is still
+ * worth seeing while judging the ones that are not.
+ *
+ * Theme and shade are deliberately separate controls. Theme picks the hue
+ * family, which is the identity decision; shade only picks how dark that family
+ * sits, which is a trim done afterwards. Folding them into one control is what
+ * made the previous A/B/C read as a single palette.
+ */
+
+const groups = [
+  {
+    key: "theme",
+    title: "Theme",
+    options: [
+      { value: "violet", label: "Violet", hint: "Violet mass, gold light" },
+      { value: "navy", label: "Navy", hint: "Navy mass, mint light" },
+      { value: "jungle", label: "Jungle", hint: "Teal mass, lime light" },
+    ],
+  },
+  {
+    key: "shade",
+    title: "Shade",
+    options: [
+      { value: "a", label: "a", hint: "Base" },
+      { value: "b", label: "b", hint: "Darker — for long reading" },
+      { value: "c", label: "c", hint: "Same darkness, cooler" },
+    ],
+  },
+] as const;
+---
+
+<div
+  class="sticky top-0 z-50 border-b border-border/70 bg-bg/85 backdrop-blur-md"
+  data-lab-controls
+>
+  <div
+    class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3"
+  >
+    <a
+      href="/lab"
+      class="label !text-accent transition-opacity duration-150 hover:opacity-70"
+      >Rey&rsquo;s Lab</a
+    >
+
+    {
+      groups.map((group) => (
+        <div class="flex items-center gap-2">
+          <span class="label">{group.title}</span>
+          <div
+            class="flex overflow-hidden rounded-md border border-border"
+            role="group"
+            aria-label={`${group.title} candidate`}
+            data-control={group.key}
+          >
+            {group.options.map((option) => (
+              <button
+                type="button"
+                data-value={option.value}
+                title={option.hint}
+                aria-pressed="false"
+                class="cursor-pointer border-r border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-muted transition-colors duration-150 last:border-r-0 hover:bg-raised/60 hover:text-ink aria-pressed:bg-accent aria-pressed:text-void aria-pressed:font-semibold"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+
+    <output
+      class="label ml-auto !normal-case !tracking-normal !text-muted"
+      data-lab-readout>—</output
+    >
+  </div>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const KEYS = ["theme", "shade", "glow"] as const;
+  type Key = (typeof KEYS)[number];
+
+  const NAMES: Record<Key, Record<string, string>> = {
+    theme: { violet: "Violet", navy: "Navy", jungle: "Jungle" },
+    shade: { a: "a", b: "b", c: "c" },
+    glow: { "0.12": "glow .12", "0.28": "glow .28", "0.5": "glow .50", "0.8": "glow .80" },
+  };
+
+  function readout() {
+    const node = document.querySelector("[data-lab-readout]");
+    if (!node) return;
+    const [theme, shade, glow] = KEYS.map(
+      (key) => NAMES[key][root.dataset[key] ?? ""] ?? "?",
+    );
+
+    // Each theme names its own accents, so read those back out of the cascade
+    // rather than hardcoding "cyan + gold" for every theme.
+    const styles = getComputedStyle(root);
+    const accentLabel = [1, 2]
+      .map((n) =>
+        styles.getPropertyValue(`--lab-accent-${n}-name`).trim().replace(/"/g, ""),
+      )
+      .filter(Boolean)
+      .join(" + ");
+
+    node.textContent = `${theme} ${shade} · Outfit · ${accentLabel} · ${glow}`;
+  }
+
+  function sync() {
+    for (const key of KEYS) {
+      const current = root.dataset[key];
+      const group = document.querySelector(`[data-control="${key}"]`);
+      if (!group) continue;
+      for (const button of group.querySelectorAll("button")) {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.value === current),
+        );
+      }
+    }
+    readout();
+  }
+
+  function apply(key: Key, value: string) {
+    root.dataset[key] = value;
+    try {
+      localStorage.setItem(`lab:${key}`, value);
+    } catch {
+      // Private browsing — the choice just does not persist.
+    }
+    sync();
+  }
+
+  document.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement | null)?.closest("button");
+    const group = button?.closest<HTMLElement>("[data-control]");
+    if (!button || !group) return;
+    const key = group.dataset.control as Key | undefined;
+    if (!key || !button.dataset.value) return;
+    apply(key, button.dataset.value);
+  });
+
+  sync();
+</script>

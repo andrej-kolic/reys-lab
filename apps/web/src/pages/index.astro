@@ -1,17 +1,26 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
 
+// Placeholder. The real home page is deliberately downstream of /lab — the
+// font pairing and palette get settled by looking before any real page is
+// assembled from them. See reys-lab-design-plan.md.
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Rey's Lab</title>
-	</head>
-	<body>
-		<h1>Rey's Lab</h1>
-	</body>
-</html>
+<BaseLayout
+  title="Rey's Lab"
+  description="Portfolio and lab notes by Andrej Kolic."
+>
+  <main
+    class="glow mx-auto flex min-h-screen max-w-measure flex-col justify-center px-6"
+  >
+    <p class="label !text-accent">Under construction</p>
+    <h1
+      class="mt-4 font-display text-6xl leading-[1.05] font-bold tracking-tight"
+    >
+      Rey&rsquo;s Lab
+    </h1>
+    <p class="mt-5 text-lg leading-relaxed text-muted">
+      Portfolio and lab notes. Being built in the open.
+    </p>
+  </main>
+</BaseLayout>

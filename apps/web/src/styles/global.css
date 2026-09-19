@@ -1,0 +1,410 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Design tokens.
+
+   Everything is a CSS custom property so that swapping a candidate palette or
+   font pairing is a one-line change and so that `/lab` can render several
+   candidates on one page by setting `data-theme`, `data-shade` or `data-type`
+   on a wrapper.
+
+   Layering, outermost first:
+     1. --lab-*  raw palette values (theme × shade candidates)
+     2. --ff-*   font pairing (swappable candidates)
+     3. @theme   the Tailwind mapping — the only names pages should use
+   ========================================================================= */
+
+/* ── Theme candidates ─────────────────────────────────────────────
+   Two independent axes, because they answer different questions:
+
+     data-theme  which hue family the site lives in  — the identity decision
+     data-shade  how dark that family sits           — a trim, decided after
+
+   Values are sampled from the reference frames, then put on one shared
+   lightness ladder: only hue and saturation differ between themes, so the
+   switcher compares hue rather than brightness. The Kurzgesagt rule holds in
+   all three — the mass is never neutral black, it always carries hue. */
+
+/* Each combination needs three selector forms, because the two axes are not
+   always carried by the same element:
+
+     both attributes together   — on <html>, the normal case
+     theme above, shade below   — the shade cards on /lab/colour
+     shade at root, theme below — the theme bands on /lab/colour
+
+   A single compound selector only ever matches <html>, which silently made
+   every in-page comparison render identically. */
+
+/* Violet · category 1
+   Deep violet mass, warm gold light, magenta and cyan rims. Sampled
+   from the supernova and canyon-portal frames. This is the current site. */
+
+/* a — base */
+:root,
+[data-theme="violet"][data-shade="a"],
+[data-theme="violet"] [data-shade="a"],
+html[data-shade="a"] [data-theme="violet"] {
+  --lab-void: #140a26;
+  --lab-bg: #1e1035;
+  --lab-surface: #2a1b4a;
+  --lab-raised: #3d2470;
+  --lab-border: #4a2d7d;
+  --lab-line: #7b3fa0;
+  --lab-ink: #efeafc;
+  --lab-muted: #b3a5d4;
+  --lab-dim: #a497c1;
+  --lab-code-bg: #180d2c;
+}
+
+/* b — darker — built for reading 2000 words */
+[data-theme="violet"][data-shade="b"],
+[data-theme="violet"] [data-shade="b"],
+html[data-shade="b"] [data-theme="violet"] {
+  --lab-void: #0d071a;
+  --lab-bg: #140b24;
+  --lab-surface: #1c1332;
+  --lab-raised: #29194c;
+  --lab-border: #311f55;
+  --lab-line: #522b6c;
+  --lab-ink: #efeafc;
+  --lab-muted: #b2a5d4;
+  --lab-dim: #9284b6;
+  --lab-code-bg: #10091e;
+}
+
+/* c — same darkness, cooler hue */
+[data-theme="violet"][data-shade="c"],
+[data-theme="violet"] [data-shade="c"],
+html[data-shade="c"] [data-theme="violet"] {
+  --lab-void: #100c24;
+  --lab-bg: #191233;
+  --lab-surface: #241e47;
+  --lab-raised: #33286c;
+  --lab-border: #3f3179;
+  --lab-line: #6b449b;
+  --lab-ink: #edebfb;
+  --lab-muted: #ada8d1;
+  --lab-dim: #9d98be;
+  --lab-code-bg: #140f2a;
+}
+
+[data-theme="violet"] {
+  --lab-accent-1: #3bb8f5; /* cyan — interaction: links, focus, active */
+  --lab-accent-2: #ffd23f; /* gold — state: current, highlight, primary */
+  --lab-decor: #ff4fb8;   /* glow and edges only, never a text colour */
+  --lab-warn: #ff5470;
+  --lab-accent-1-name: "cyan";
+  --lab-accent-2-name: "gold";
+  --lab-accent: var(--lab-accent-1);
+  --lab-warm: var(--lab-accent-2);
+  --lab-glow-a: var(--lab-accent-1);
+  --lab-glow-b: var(--lab-decor);
+}
+
+/* Navy · category 2
+   Navy-indigo mass lit by cyan-mint, gold sparks. From the black-hole
+   and Mars-from-space frames. Cooler and less saturated than violet — the
+   reference mass measures 43% saturation against violet’s 84%. */
+
+/* a — base */
+[data-theme="navy"][data-shade="a"],
+[data-theme="navy"] [data-shade="a"],
+html[data-shade="a"] [data-theme="navy"] {
+  --lab-void: #0d0f23;
+  --lab-bg: #141631;
+  --lab-surface: #202445;
+  --lab-raised: #2c3368;
+  --lab-border: #353a75;
+  --lab-line: #564996;
+  --lab-ink: #eceefa;
+  --lab-muted: #aaafcf;
+  --lab-dim: #9ca1bd;
+  --lab-code-bg: #101229;
+}
+
+/* b — darker — built for reading 2000 words */
+[data-theme="navy"][data-shade="b"],
+[data-theme="navy"] [data-shade="b"],
+html[data-shade="b"] [data-theme="navy"] {
+  --lab-void: #090a18;
+  --lab-bg: #0d0f21;
+  --lab-surface: #16192f;
+  --lab-raised: #1e2347;
+  --lab-border: #24294f;
+  --lab-line: #3a3266;
+  --lab-ink: #eceefa;
+  --lab-muted: #aab0cf;
+  --lab-dim: #878eaf;
+  --lab-code-bg: #0b0d1c;
+}
+
+/* c — same darkness, cooler hue */
+[data-theme="navy"][data-shade="c"],
+[data-theme="navy"] [data-shade="c"],
+html[data-shade="c"] [data-theme="navy"] {
+  --lab-void: #0e1322;
+  --lab-bg: #151b30;
+  --lab-surface: #222c43;
+  --lab-raised: #2c3b5f;
+  --lab-border: #394771;
+  --lab-line: #4d4d92;
+  --lab-ink: #edf1f9;
+  --lab-muted: #acb6cd;
+  --lab-dim: #9fa8bc;
+  --lab-code-bg: #111728;
+}
+
+[data-theme="navy"] {
+  --lab-accent-1: #5ee9b5; /* mint — interaction: links, focus, active */
+  --lab-accent-2: #ffcf4d; /* gold — state: current, highlight, primary */
+  --lab-decor: #8b8cf7;   /* glow and edges only, never a text colour */
+  --lab-warn: #ff6b81;
+  --lab-accent-1-name: "mint";
+  --lab-accent-2-name: "gold";
+  --lab-accent: var(--lab-accent-1);
+  --lab-warm: var(--lab-accent-2);
+  --lab-glow-a: var(--lab-accent-1);
+  --lab-glow-b: var(--lab-decor);
+}
+
+/* Jungle · category 3
+   Teal-blue mass under a chartreuse sky, amber points, magenta flora.
+   From the alien-jungle and reactor-jungle frames. The only candidate whose
+   mass is not violet at all. */
+
+/* a — base */
+[data-theme="jungle"][data-shade="a"],
+[data-theme="jungle"] [data-shade="a"],
+html[data-shade="a"] [data-theme="jungle"] {
+  --lab-void: #0c1c24;
+  --lab-bg: #132732;
+  --lab-surface: #1f3a46;
+  --lab-raised: #254b5d;
+  --lab-border: #335f77;
+  --lab-line: #466799;
+  --lab-ink: #ebf7fb;
+  --lab-muted: #b0cad5;
+  --lab-dim: #a3bbc4;
+  --lab-code-bg: #0f212a;
+}
+
+/* b — darker — built for reading 2000 words */
+[data-theme="jungle"][data-shade="b"],
+[data-theme="jungle"] [data-shade="b"],
+html[data-shade="b"] [data-theme="jungle"] {
+  --lab-void: #081318;
+  --lab-bg: #0d1b22;
+  --lab-surface: #152830;
+  --lab-raised: #1d3b48;
+  --lab-border: #234151;
+  --lab-line: #304768;
+  --lab-ink: #ebf7fb;
+  --lab-muted: #a9c6d0;
+  --lab-dim: #88a7b2;
+  --lab-code-bg: #0b161c;
+}
+
+/* c — same darkness, cooler hue */
+[data-theme="jungle"][data-shade="c"],
+[data-theme="jungle"] [data-shade="c"],
+html[data-shade="c"] [data-theme="jungle"] {
+  --lab-void: #0d1f23;
+  --lab-bg: #152b30;
+  --lab-surface: #213f44;
+  --lab-raised: #28525a;
+  --lab-border: #376873;
+  --lab-line: #4b7494;
+  --lab-ink: #ecf8fa;
+  --lab-muted: #bad4d7;
+  --lab-dim: #acc4c7;
+  --lab-code-bg: #112428;
+}
+
+[data-theme="jungle"] {
+  --lab-accent-1: #a8e85c; /* lime — interaction: links, focus, active */
+  --lab-accent-2: #ffb545; /* amber — state: current, highlight, primary */
+  --lab-decor: #ff7bb8;   /* glow and edges only, never a text colour */
+  --lab-warn: #ff6250;
+  --lab-accent-1-name: "lime";
+  --lab-accent-2-name: "amber";
+  --lab-accent: var(--lab-accent-1);
+  --lab-warm: var(--lab-accent-2);
+  --lab-glow-a: var(--lab-accent-1);
+  --lab-glow-b: var(--lab-decor);
+}
+
+/* ── Accent policy ──────────────────────────────────────────────
+   Settled 2026-09-19: both accents, not one.
+
+   Two accents only work if each has exactly one job. The moment either is used
+   because it "looks better here", colour stops carrying information and becomes
+   decoration — at which point one accent would have been the better choice.
+   So the rule, and it is not negotiable per-component:
+
+     --lab-accent  (cool)  INTERACTION. Links, focus rings, hover, anything the
+                           user can act on. Never decoration, never state.
+
+     --lab-warm    (warm)  STATE. Current page, active filter, "shipped",
+                           the primary button. Never a link.
+
+   Two further constraints that come with the pair:
+
+     - Neither is ever a large fill, and neither is ever body text. They live on
+       edges, rules, micro-labels, focus rings and glow.
+     - Colour is never the only signal. If warm marks the current page, that page
+       also gets weight or an underline — roughly 8% of men cannot reliably
+       separate these hues.
+
+   Each theme supplies its own pair and binds these itself, so a band carrying
+   its own data-theme shows that theme's accents rather than the root's. The
+   binding has to live inside each theme: declared once on :root,
+   `var(--lab-accent-1)` would resolve there and inherit down as a fixed colour,
+   which is how the violet band once ended up wearing the jungle theme's lime. */
+
+/* ── Type ────────────────────────────────────────────────────────
+   Settled 2026-09-19. Outfit carries display and text, IBM Plex Mono carries
+   micro-labels and code. Kept behind semantic names so a future change is one
+   line here rather than a find-and-replace. */
+
+:root {
+  --ff-display: var(--ff-outfit);
+  --ff-text: var(--ff-outfit);
+  --ff-mono: var(--ff-plex-mono);
+}
+
+/* ── Tailwind mapping ─────────────────────────────────────────────────────
+   `inline` matters: it makes utilities resolve --lab-* at the element rather
+   than at :root, which is what lets a `<div data-theme="navy">` wrapper restyle
+   its whole subtree. Without it the candidates could only be compared by
+   switching the whole document. */
+
+@theme inline {
+  --color-void: var(--lab-void);
+  --color-bg: var(--lab-bg);
+  --color-surface: var(--lab-surface);
+  --color-raised: var(--lab-raised);
+  --color-border: var(--lab-border);
+  --color-line: var(--lab-line);
+
+  --color-ink: var(--lab-ink);
+  --color-muted: var(--lab-muted);
+  --color-dim: var(--lab-dim);
+
+  --color-accent: var(--lab-accent);
+  --color-warm: var(--lab-warm);
+  --color-accent-1: var(--lab-accent-1);
+  --color-accent-2: var(--lab-accent-2);
+  --color-decor: var(--lab-decor);
+  --color-warn: var(--lab-warn);
+
+  --font-display: var(--ff-display);
+  --font-text: var(--ff-text);
+  --font-mono: var(--ff-mono);
+
+  /* Prose measure, per the design plan's ~65–68ch */
+  --container-measure: 68ch;
+}
+
+/* ── Base element styles ──────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    background-color: var(--lab-bg);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+
+    /* The ambient glow bleeds past its container by design, which on a phone
+       showed up as a real horizontal scroll. `clip` rather than `hidden`:
+       `hidden` would make this a scroll container and break the sticky lab
+       controls. */
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--lab-bg);
+    color: var(--lab-ink);
+    font-family: var(--ff-text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--lab-accent) 35%, transparent);
+    color: var(--lab-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--lab-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ── The one recurring device: the mono micro-label ───────────────────────
+   Present in all four reference sites without exception. Defined once here
+   rather than as a utility soup repeated on every page. */
+
+@utility label {
+  font-family: var(--ff-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  /* 0.2em, chosen by eye against the real content. disko.media measures
+     0.22em; this reads slightly tighter and holds better at 11px. */
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lab-dim);
+}
+
+/* ── Glow strength ─────────────────────────────────────────────
+   One value to pick, not a set of states — nothing here uses glow for hover or
+   disabled. These are candidates, like the shades, and the losers get deleted
+   once one wins. The ramp on /lab/colour sets --glow-strength inline per card,
+   which beats this and so keeps working independently of the switcher. */
+
+[data-glow="0.12"] { --glow-strength: 0.12; }
+[data-glow="0.28"] { --glow-strength: 0.28; }
+[data-glow="0.5"]  { --glow-strength: 0.5; }
+[data-glow="0.8"]  { --glow-strength: 0.8; }
+
+/* Ambient glow — the reference's "bloom", translated to interface.
+   Sits behind content, never over text. */
+@utility glow {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10% auto;
+    height: 26rem;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        42rem 20rem at 22% 0%,
+        color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * 100%), transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        34rem 18rem at 78% 12%,
+        color-mix(in oklab, var(--lab-glow-b) calc(var(--glow-strength, 0.28) * 62%), transparent),
+        transparent 72%
+      );
+    filter: blur(24px);
+  }
+}

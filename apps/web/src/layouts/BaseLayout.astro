@@ -1,0 +1,42 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Sets `<meta name="robots" content="noindex, nofollow">`. */
+  noindex?: boolean;
+}
+
+const { title, description, noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="violet" data-shade="a">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    {/*
+      The locked pairing. Deliberately not preloaded: Astro generates
+      metric-matched local fallbacks, so text paints immediately at close to the
+      right size and swaps in with little shift — a better trade than blocking
+      first paint on the font files.
+    */}
+    <Font cssVariable="--ff-outfit" />
+    <Font cssVariable="--ff-plex-mono" />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

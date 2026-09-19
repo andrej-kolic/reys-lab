@@ -1,0 +1,269 @@
+---
+import { Code } from "astro-expressive-code/components";
+import LabLayout from "../../layouts/LabLayout.astro";
+import Section from "../../components/lab/Section.astro";
+
+const projects = [
+  {
+    label: "Experiment 01 · Shipped",
+    title: "Grounder",
+    summary:
+      "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time.",
+    stack: ["TypeScript", "Node", "Markdown"],
+    result: "In daily use",
+  },
+  {
+    label: "Experiment 02 · Running",
+    title: "Rookie Trader",
+    summary:
+      "A paper-trading harness for testing strategies against historical data without risking a cent or a convincing backtest.",
+    stack: ["Python", "Pandas", "AWS"],
+    result: "14 strategies tested",
+  },
+];
+
+const posts = [
+  {
+    date: "2026-09-19",
+    title: "The adapter is the lock-in",
+    description:
+      "Why a static build and a dist directory buy more portability than any deployment abstraction.",
+  },
+  {
+    date: "2026-09-04",
+    title: "Deciding by looking",
+    description:
+      "Two weeks of arguing about fonts in prose, settled in ten minutes by a route that renders them.",
+  },
+  {
+    date: "2026-08-21",
+    title: "A monorepo with one app in it",
+    description:
+      "Boundaries are cheap to draw early and expensive to draw late. Abstractions are the opposite.",
+  },
+];
+
+const timeline = [
+  {
+    year: "2026",
+    role: "Building Rey's Lab",
+    detail: "Astro, Tailwind, Cloudflare. A portfolio that is also the work sample.",
+  },
+  {
+    year: "2024",
+    role: "Senior Frontend Engineer",
+    detail: "React and AWS. Design systems, build pipelines, and the odd backend.",
+  },
+  {
+    year: "2021",
+    role: "Frontend Engineer",
+    detail: "Where the habit of writing the tradeoff down started.",
+  },
+];
+
+const deployCode = `{
+  "name": "reys-lab-web",
+  "compatibility_date": "2026-09-19",
+  "assets": {
+    "directory": "../../apps/web/dist",
+    "not_found_handling": "404-page"
+  }
+}`;
+
+const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
+---
+
+<LabLayout
+  title="Components"
+  eyebrow="03 / Parts"
+  intro="The pieces that actually recur, built from tokens rather than ad-hoc values. Flip the base and type candidates above while looking at these — a component that only works under one palette is a component that is doing too much."
+>
+  <Section
+    id="labels"
+    title="Micro-labels"
+    note="The single strongest through-line in all four reference sites, without exception: mono, uppercase, wide tracking, small, quiet. Defined once as a utility so it cannot drift."
+  >
+    <div
+      class="flex flex-wrap items-center gap-x-10 gap-y-5 rounded-xl border border-border bg-surface px-6 py-6"
+    >
+      <span class="label">Experiment 04</span>
+      <span class="label !text-accent">Shipped</span>
+      <span class="label !text-warm">Currently</span>
+      <span class="label flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-accent"></span>
+        Lab notes
+      </span>
+      <span class="font-mono text-sm tabular-nums text-muted">
+        2026 · 3.41 s · 0.35 KiB
+      </span>
+    </div>
+  </Section>
+
+  <Section
+    id="project-card"
+    title="Project card"
+    note="Where an employer decides whether to click. Label, name, what it is in one sentence, stack, outcome — no adjectives."
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+      {
+        projects.map((project) => (
+          <a
+            href="#project-card"
+            class="group flex flex-col rounded-xl border border-border bg-surface p-6 transition-colors duration-150 hover:border-accent"
+          >
+            <p class="label">{project.label}</p>
+            <h3 class="mt-3 font-display text-2xl font-bold tracking-tight transition-colors duration-150 group-hover:text-accent">
+              {project.title}
+            </h3>
+            <p class="mt-2.5 grow text-sm leading-relaxed text-muted">
+              {project.summary}
+            </p>
+            <div class="mt-5 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
+              {project.stack.map((item) => (
+                <span class="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-dim">
+                  {item}
+                </span>
+              ))}
+              <span class="label ml-auto !text-warm">{project.result}</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="post-item"
+    title="Post list item"
+    note="Chronological, scannable, quiet. The blog index is not a place for display type."
+  >
+    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+      {
+        posts.map((post) => (
+          <a
+            href="#post-item"
+            class="group flex flex-col gap-1 border-b border-border/60 px-6 py-5 transition-colors duration-150 last:border-b-0 hover:bg-raised/40 sm:flex-row sm:items-baseline sm:gap-6"
+          >
+            <time
+              datetime={post.date}
+              class="label w-24 shrink-0 tabular-nums"
+            >
+              {post.date}
+            </time>
+            <div class="min-w-0">
+              <h3 class="font-display text-lg font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent">
+                {post.title}
+              </h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">
+                {post.description}
+              </p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="code"
+    title="Code block"
+    note="A primary visual element on a dev blog, not an afterthought. Expressive Code, with its frame, border and background bound to the palette tokens — so it re-skins with the rest of the site instead of sitting in it like a foreign object."
+  >
+    <div class="space-y-5">
+      <Code code={deployCode} lang="json" title="deploy/cloudflare/wrangler.jsonc" />
+      <Code code={shellCode} lang="bash" frame="terminal" />
+    </div>
+  </Section>
+
+  <Section
+    id="prose"
+    title="Prose"
+    note="The other half of the job. Marketing energy on the home page, a good reading environment here — measure held to roughly 68 characters, calmer type, less chrome."
+  >
+    <div class="max-w-measure rounded-xl border border-border bg-surface px-6 py-8">
+      <p class="leading-[1.75] text-ink">
+        Astro builds two ways. Static output emits plain HTML, CSS and
+        JavaScript that any host on earth can serve. Server output needs an
+        adapter, and an adapter is a build-time plugin that compiles the site
+        into one vendor&rsquo;s runtime format.
+      </p>
+      <p class="mt-5 leading-[1.75] text-ink">
+        That puts the vendor inside the application package, underneath
+        everything, where no amount of deployment wrapping can reach it. The
+        usual way this happens is not a decision at all: a site is static{" "}
+        <em class="text-warm not-italic">except</em> for one contact form, the
+        form needs a server, and the whole site follows it into a runtime it can
+        never leave. So the rule is{" "}
+        <a
+          href="#prose"
+          class="text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+        >
+          static output, no adapter
+        </a>, and anything that genuinely needs a server becomes its own
+        deployable.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    id="links"
+    title="Link states"
+    note="Rest, hover and focus shown together, because the focus ring is the state most often left undesigned and it is the one that carries the accessibility claim. Tab through the live link to check the real thing."
+  >
+    <div class="grid gap-4 sm:grid-cols-3">
+      <div class="rounded-xl border border-border bg-surface p-5">
+        <p class="label">Rest</p>
+        <p class="mt-3">
+          <span
+            class="text-accent underline decoration-accent/40 underline-offset-4"
+            >a portable build</span
+          >
+        </p>
+      </div>
+      <div class="rounded-xl border border-border bg-surface p-5">
+        <p class="label">Hover</p>
+        <p class="mt-3">
+          <span class="text-accent underline decoration-accent underline-offset-4"
+            >a portable build</span
+          >
+        </p>
+      </div>
+      <div class="rounded-xl border border-border bg-surface p-5">
+        <p class="label">Focus · live, tab to it</p>
+        <p class="mt-3">
+          <a
+            href="#links"
+            class="text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+            >a portable build</a
+          >
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Section
+    id="timeline"
+    title="Timeline node"
+    note="For the Experience page, which comes later. The spine is the page structure, the years are mono and small, and the line is the only place a bright colour is allowed to run vertically."
+  >
+    <ol class="relative ml-2 border-l border-border pl-8">
+      {
+        timeline.map((entry) => (
+          <li class="relative pb-10 last:pb-0">
+            <span class="absolute top-1.5 -left-[2.3125rem] h-2.5 w-2.5 rounded-full border-2 border-accent bg-bg" />
+            <span class="label absolute top-1 -left-[7.5rem] hidden w-16 text-right tabular-nums lg:block">
+              {entry.year}
+            </span>
+            <p class="label tabular-nums lg:hidden">{entry.year}</p>
+            <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight lg:mt-0">
+              {entry.role}
+            </h3>
+            <p class="mt-1 max-w-measure text-sm leading-relaxed text-muted">
+              {entry.detail}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+</LabLayout>

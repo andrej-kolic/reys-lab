@@ -1,0 +1,466 @@
+---
+import LabLayout from "../../layouts/LabLayout.astro";
+import Section from "../../components/lab/Section.astro";
+
+/**
+ * Only token *names* live here. Every value on this page is read back out of
+ * the live cascade at runtime, so the swatches and the contrast numbers can
+ * never drift from global.css — and they follow whichever base candidate is
+ * currently applied.
+ */
+const surfaceTokens = [
+  { token: "--lab-void", role: "Deepest well · behind code, inset areas" },
+  { token: "--lab-bg", role: "Page background" },
+  { token: "--lab-surface", role: "Cards, raised panels" },
+  { token: "--lab-raised", role: "Panel headers, hover fills" },
+  { token: "--lab-border", role: "Hairlines, card edges" },
+  { token: "--lab-line", role: "Emphatic rules, dividers" },
+];
+
+const inkTokens = [
+  { token: "--lab-ink", role: "Body text" },
+  { token: "--lab-muted", role: "Secondary prose" },
+  { token: "--lab-dim", role: "Micro-labels, metadata" },
+];
+
+const accentTokens = [
+  { token: "--lab-accent-1", role: "Interaction · links, focus, active" },
+  { token: "--lab-accent-2", role: "State · highlights, current" },
+  { token: "--lab-decor", role: "Decoration only — glow, edges" },
+  { token: "--lab-warn", role: "Sparing · warnings, deletions" },
+];
+
+const foregrounds = [
+  "--lab-ink",
+  "--lab-muted",
+  "--lab-dim",
+  "--lab-accent-1",
+  "--lab-accent-2",
+  "--lab-decor",
+  "--lab-warn",
+];
+const backgrounds = ["--lab-void", "--lab-bg", "--lab-surface", "--lab-raised"];
+
+const themes = [
+  {
+    id: "violet",
+    name: "Violet · category 1",
+    note: "Violet mass, warm gold light, magenta and cyan rims. Sampled from the supernova and canyon-portal frames — this is what the site is now.",
+  },
+  {
+    id: "navy",
+    name: "Navy · category 2",
+    note: "Navy-indigo mass lit by cyan-mint, with gold sparks. Measurably calmer: the reference mass is 43% saturated where violet is 84%.",
+  },
+  {
+    id: "jungle",
+    name: "Jungle · category 3",
+    note: "Teal-blue mass under a chartreuse sky, amber points, magenta flora. The only candidate whose mass is not violet at all.",
+  },
+];
+
+const shades = [
+  { id: "a", name: "a", note: "base" },
+  { id: "b", name: "b", note: "darker" },
+  { id: "c", name: "c", note: "cooler" },
+];
+
+const accentRoles = [
+  {
+    token: "--lab-accent",
+    role: "Interaction",
+    rule: "Links, focus rings, hover, anything the user can act on.",
+    never: "Never decoration. Never state.",
+  },
+  {
+    token: "--lab-warm",
+    role: "State",
+    rule: "Current page, active filter, shipped status, the primary button.",
+    never: "Never a link.",
+  },
+];
+
+const glows = [0.12, 0.28, 0.5, 0.8];
+---
+
+<LabLayout
+  title="Colour"
+  eyebrow="02 / Palette"
+  intro="The base is never neutral black — it carries hue. That single decision is most of the effect and it costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on large fills and never on body text."
+>
+  <Section
+    id="themes"
+    title="Themes at scale"
+    note="A base colour reads completely differently as a 64px swatch than it does filling a screen, so each theme gets a full band with real content in it. These follow the shade you pick in the switcher, so you are comparing hue and nothing else. Scroll slowly — the one that wins is the one you stop noticing."
+  >
+    <div class="space-y-5">
+      {
+        themes.map((theme) => (
+          <div
+            data-theme={theme.id}
+            class="glow overflow-hidden rounded-xl border border-border bg-bg"
+          >
+            <div class="px-6 pt-8 pb-10 sm:px-10">
+              <p class="label !text-accent">{theme.name}</p>
+              <h3 class="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+                Experiments, and what they cost
+              </h3>
+              <p class="mt-4 max-w-measure leading-relaxed text-muted">
+                {theme.note} Body text stays near-white at full contrast on
+                every theme; what changes underneath it is the mass.
+              </p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-xl border border-border bg-surface p-5">
+                  <p class="label">Experiment 02 · Shipped</p>
+                  <h4 class="mt-2.5 font-display text-lg font-semibold">
+                    Grounder
+                  </h4>
+                  <p class="mt-1.5 text-sm leading-relaxed text-muted">
+                    A CLI that links a project to a local markdown vault so an
+                    agent keeps its memory between sessions.
+                  </p>
+                </div>
+                <div class="rounded-xl border border-border bg-surface p-5">
+                  <p class="label">Readout</p>
+                  <dl class="mt-2.5 space-y-1.5 font-mono text-sm tabular-nums">
+                    <div class="flex justify-between">
+                      <dt class="text-dim">Build</dt>
+                      <dd class="text-ink">3.41 s</dd>
+                    </div>
+                    <div class="flex justify-between">
+                      <dt class="text-dim">Output</dt>
+                      <dd class="text-ink">0.35 KiB</dd>
+                    </div>
+                    <div class="flex justify-between">
+                      <dt class="text-dim">Adapters</dt>
+                      <dd class="text-warm">0</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="shades"
+    title="Shades within a theme"
+    note="The second axis, held at whichever theme is active. Shade is a trim, not an identity — worth settling only after the theme is chosen."
+  >
+    <div class="grid gap-4 lg:grid-cols-3">
+      {
+        shades.map((shade) => (
+          <div
+            data-shade={shade.id}
+            class="rounded-xl border border-border bg-bg p-5"
+          >
+            <p class="label !text-accent">
+              Shade {shade.name} · {shade.note}
+            </p>
+            <h3 class="mt-3 font-display text-2xl font-bold tracking-tight">
+              Rey&rsquo;s Lab
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-muted">
+              The same three paragraphs of body copy sit on this background on
+              every page of the site. This is the one that has to survive being
+              read for ten minutes.
+            </p>
+            <div class="mt-4 rounded-lg border border-border bg-surface p-3">
+              <p class="label">Card on this shade</p>
+              <p class="mt-1.5 font-mono text-sm text-ink">0.35 KiB · 0 adapters</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="tokens"
+    title="Tokens"
+    note="Live values, read back out of the cascade. These follow the theme and shade selected in the switcher above."
+  >
+    <div class="space-y-8">
+      {
+        [
+          { title: "Surfaces", items: surfaceTokens },
+          { title: "Ink", items: inkTokens },
+          { title: "Accents", items: accentTokens },
+        ].map((group) => (
+          <div>
+            <p class="label mb-3">{group.title}</p>
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {group.items.map((item) => (
+                <div class="flex items-center gap-4 rounded-xl border border-border bg-surface p-3">
+                  <div
+                    class="h-14 w-14 shrink-0 rounded-lg border border-border"
+                    style={`background-color: var(${item.token})`}
+                  />
+                  <div class="min-w-0">
+                    <p class="truncate font-mono text-[13px] text-ink">
+                      {item.token}
+                    </p>
+                    <p
+                      class="label mt-1 !tracking-wider !text-warm"
+                      data-hex={item.token}
+                    >
+                      …
+                    </p>
+                    <p class="mt-1 truncate text-xs text-dim">{item.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="contrast"
+    title="Contrast matrix"
+    note="Every foreground against every background, computed live against WCAG AA — 4.5:1 for body text, 3:1 for large text. This is what catches magenta-on-violet automatically instead of by eye, and it re-runs whenever you change the base candidate."
+  >
+    <div class="overflow-x-auto rounded-xl border border-border">
+      <table class="w-full min-w-[42rem] border-collapse bg-surface text-left">
+        <thead>
+          <tr class="border-b border-border">
+            <th class="label px-4 py-3 font-normal">Foreground</th>
+            {
+              backgrounds.map((bg) => (
+                <th class="label px-4 py-3 font-normal">
+                  {bg.replace("--lab-", "")}
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            foregrounds.map((fg) => (
+              <tr class="border-b border-border/60 last:border-b-0">
+                <th class="px-4 py-3 text-left font-mono text-[13px] font-normal whitespace-nowrap text-ink">
+                  {fg.replace("--lab-", "")}
+                </th>
+                {backgrounds.map((bg) => (
+                  <td
+                    class="px-4 py-3 align-middle"
+                    style={`background-color: var(${bg})`}
+                    data-cell
+                    data-fg={fg}
+                    data-bg={bg}
+                  >
+                    <span
+                      class="text-sm"
+                      style={`color: var(${fg})`}
+                      data-sample
+                    >
+                      Aa
+                    </span>
+                    <span
+                      class="ml-2 font-mono text-xs tabular-nums text-muted"
+                      data-ratio
+                    >
+                      …
+                    </span>
+                    <span class="label mt-1 block" data-grade />
+                  </td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 max-w-measure text-sm text-dim">
+      A <span class="font-mono text-warm">FAIL</span> is not automatically a
+      problem — it means that pair is not allowed to carry text.
+    </p>
+    <p class="mt-3 max-w-measure text-sm text-dim">
+      Worth noting, because it contradicts the design plan: at these values
+      magenta <em class="text-warm not-italic">passes</em> AA on every surface
+      except the raised one. The plan assumed it would fail. It stays decoration
+      anyway — seven per cent of men cannot reliably separate it from the coral
+      beside it, and an accent that has to be explained is not an accent — but
+      the reason is now the real one rather than a contrast number that was
+      never checked.
+    </p>
+  </Section>
+
+  <Section
+    id="accents"
+    title="The two accents"
+    note="Settled 2026-09-19: both, not one. Two accents only work if each has exactly one job — the moment either gets used because it looks better there, colour stops carrying information and becomes decoration, at which point one accent would have been the better choice. Each theme supplies its own pair."
+  >
+    <div class="grid gap-4 lg:grid-cols-2">
+      {
+        accentRoles.map((accent) => (
+          <div class="rounded-xl border border-border bg-surface p-6">
+            <div class="flex items-center gap-3">
+              <span
+                class="h-8 w-8 shrink-0 rounded-lg border border-border"
+                style={`background-color: var(${accent.token})`}
+              />
+              <div>
+                <p class="label">{accent.role}</p>
+                <p class="mt-1 font-mono text-[13px] text-ink">{accent.token}</p>
+              </div>
+            </div>
+            <p class="mt-4 text-sm leading-relaxed text-muted">{accent.rule}</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-warn">{accent.never}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-4 rounded-xl border border-border bg-surface p-6">
+      <p class="label">In use</p>
+      <div class="mt-4 flex flex-wrap items-center gap-x-8 gap-y-4">
+        <p class="text-sm text-muted">
+          A sentence with{" "}
+          <a
+            href="#accents"
+            class="text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+          >
+            an inline link
+          </a>{" "}
+          in it.
+        </p>
+        <button
+          type="button"
+          class="cursor-pointer rounded-lg bg-warm px-3.5 py-2 font-mono text-xs font-semibold tracking-wider text-void uppercase transition-opacity duration-150 hover:opacity-85"
+        >
+          Primary
+        </button>
+        <span class="label !text-warm">Current · 2026</span>
+        <span class="label !text-accent">Shipped</span>
+      </div>
+    </div>
+
+    <p class="mt-3 max-w-measure text-sm text-dim">
+      Two constraints come with the pair. Neither accent is ever a large fill or
+      body text — they live on edges, rules, micro-labels, focus rings and glow.
+      And colour is never the only signal: if warm marks the current page, that
+      page also gets weight or an underline, because roughly 8% of men cannot
+      reliably separate these hues.
+    </p>
+  </Section>
+
+  <Section
+    id="glow"
+    title="Glow ramp"
+    note="The reference's bloom, translated to interface. Too little and it is invisible; too much and it looks like a stock gradient hero. The right answer is probably lower than it feels."
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+      {
+        glows.map((strength) => (
+          <div
+            class="glow overflow-hidden rounded-xl border border-border bg-bg px-6 py-10"
+            style={`--glow-strength: ${strength}`}
+          >
+            <p class="label !text-accent">Strength {strength.toFixed(2)}</p>
+            <p class="mt-3 font-display text-3xl font-bold tracking-tight">
+              Rey&rsquo;s Lab
+            </p>
+            <p class="mt-2 max-w-measure text-sm leading-relaxed text-muted">
+              Glow sits behind content and never under text it has to stay
+              legible against.
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+</LabLayout>
+
+<script>
+  /**
+   * Contrast and swatch values are read from the live cascade rather than
+   * duplicated in JavaScript. A probe element resolves each custom property to
+   * a concrete rgb() triple, which also means nested var() chains and
+   * per-candidate overrides resolve correctly and for free.
+   */
+  const probe = document.createElement("span");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText =
+    "position:absolute;width:0;height:0;opacity:0;pointer-events:none";
+  document.body.append(probe);
+
+  function resolve(scope: Element, token: string): [number, number, number] {
+    scope.append(probe);
+    probe.style.color = `var(${token})`;
+    const value = getComputedStyle(probe).color;
+    const parts = value.match(/[\d.]+/g);
+    if (!parts || parts.length < 3) return [0, 0, 0];
+    return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+  }
+
+  function luminance([r, g, b]: [number, number, number]): number {
+    const channel = (value: number) => {
+      const v = value / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  }
+
+  function ratio(
+    fg: [number, number, number],
+    bg: [number, number, number],
+  ): number {
+    const a = luminance(fg);
+    const b = luminance(bg);
+    return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  }
+
+  function hex([r, g, b]: [number, number, number]): string {
+    return `#${[r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("")}`;
+  }
+
+  function paint() {
+    for (const node of document.querySelectorAll<HTMLElement>("[data-hex]")) {
+      node.textContent = hex(resolve(node.parentElement ?? node, node.dataset.hex!));
+    }
+
+    for (const cell of document.querySelectorAll<HTMLElement>("[data-cell]")) {
+      const value = ratio(
+        resolve(cell, cell.dataset.fg!),
+        resolve(cell, cell.dataset.bg!),
+      );
+
+      const ratioNode = cell.querySelector<HTMLElement>("[data-ratio]");
+      const gradeNode = cell.querySelector<HTMLElement>("[data-grade]");
+      if (!ratioNode || !gradeNode) continue;
+
+      ratioNode.textContent = `${value.toFixed(2)}:1`;
+
+      const body = value >= 4.5;
+      const large = value >= 3;
+      gradeNode.textContent = body
+        ? "AA · any text"
+        : large
+          ? "AA · large only"
+          : "Fail · no text";
+      gradeNode.style.color = body
+        ? "var(--lab-accent-2)"
+        : large
+          ? "var(--lab-muted)"
+          : "var(--lab-warn)";
+    }
+
+    document.body.append(probe);
+  }
+
+  paint();
+
+  // The switcher rewrites data-theme/shade on <html>; every number above
+  // depends on them.
+  new MutationObserver(paint).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme", "data-shade"],
+  });
+</script>

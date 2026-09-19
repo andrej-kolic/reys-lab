@@ -1,0 +1,151 @@
+---
+import LabLayout from "../../layouts/LabLayout.astro";
+import Section from "../../components/lab/Section.astro";
+
+/**
+ * Settled, not a comparison any more. Kept as the living specimen: the place to
+ * check that a heading size or a label still looks right before it ships.
+ *
+ * The copy is real — taken from this project's own architecture notes — because
+ * lorem ipsum hides how a face handles ordinary technical prose, which is what
+ * this site is mostly made of.
+ */
+const copy = {
+  eyebrow: "Lab note · 19 Sep 2026",
+  h1: "Rey’s Lab",
+  h2: "The adapter is the lock-in",
+  body: "Astro builds two ways. Static output emits plain HTML, CSS and JavaScript that any host on earth can serve. Server output needs an adapter, and an adapter is a build-time plugin that compiles the site into one vendor's runtime format. That puts the vendor inside the application package, underneath everything, where no amount of deployment wrapping can reach it. So: static output, no adapter, and the dist directory is the contract.",
+  mono: "Status · Shipped",
+  code: "pnpm exec turbo run deploy",
+  numerals: "0123456789 · 3.4 KB · 99.8%",
+};
+
+const decision = [
+  { label: "Display + text", value: "Outfit" },
+  { label: "Micro-labels + code", value: "IBM Plex Mono" },
+  { label: "Sans weight", value: "31.5 KB · 1 file" },
+  { label: "Label tracking", value: "0.2em" },
+  { label: "Settled", value: "2026-09-19" },
+  { label: "Rejected", value: "Sora · IBM Plex Sans" },
+];
+
+const ramp = [
+  { cls: "text-6xl font-bold tracking-tight", token: "text-6xl / 60px", sample: "Hero" },
+  { cls: "text-4xl font-bold tracking-tight", token: "text-4xl / 36px", sample: "Page heading" },
+  { cls: "text-2xl font-semibold tracking-tight", token: "text-2xl / 24px", sample: "Section heading" },
+  { cls: "text-lg font-semibold", token: "text-lg / 18px", sample: "Card title" },
+  { cls: "text-base", token: "text-base / 16px", sample: "Body copy, the default reading size" },
+  { cls: "text-sm text-muted", token: "text-sm / 14px", sample: "Secondary and metadata" },
+];
+---
+
+<LabLayout
+  title="Type"
+  eyebrow="01 / Specimen"
+  intro="Outfit for everything you read, IBM Plex Mono for everything the site measures. Settled by looking at three candidates side by side rather than arguing about them, and kept here as the specimen to check a size or a label against before it ships."
+>
+  <Section
+    id="decision"
+    title="The decision"
+    note="Outfit is the pairing disko.media uses, verified against the live site rather than guessed — it sets Outfit from the wordmark to the buttons, over IBM Plex Mono micro-labels. Outfit is variable, so one file covers every weight; IBM Plex Sans wanted six files and 249.5 KB to do the same job."
+  >
+    <dl
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+    >
+      {
+        decision.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="specimen"
+    title="Full specimen"
+    note="Eyebrow, hero, heading, prose, micro-label, inline code and numerals — the six things this site actually sets, in the theme and shade currently selected above."
+  >
+    <article class="overflow-hidden rounded-xl border border-border bg-surface">
+      <div class="px-6 py-8 sm:px-10">
+        <p class="label !text-accent">{copy.eyebrow}</p>
+
+        <p
+          class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight sm:text-7xl"
+        >
+          {copy.h1}
+        </p>
+
+        <h3 class="mt-10 font-display text-3xl font-bold tracking-tight">
+          {copy.h2}
+        </h3>
+
+        <p class="mt-4 max-w-measure text-base leading-relaxed text-muted">
+          {copy.body}
+        </p>
+
+        <div
+          class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border/60 pt-5"
+        >
+          <span class="label">{copy.mono}</span>
+          <span class="font-mono text-sm tabular-nums text-muted">
+            {copy.numerals}
+          </span>
+          <code
+            class="rounded-md border border-border bg-void/60 px-2 py-1 font-mono text-[13px] text-accent"
+            >{copy.code}</code
+          >
+        </div>
+      </div>
+    </article>
+  </Section>
+
+  <Section
+    id="labels"
+    title="Micro-label tracking"
+    note="The one spec that took a second pass. disko.media measures 0.22em at 11px; 0.2em tested better against this content and is what ships. The difference is small and entirely perceptual, which is why it belongs here rather than in an argument."
+  >
+    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+      {
+        [
+          { em: "0.14em", note: "original — too tight, letters clot" },
+          { em: "0.2em", note: "shipped" },
+          { em: "0.22em", note: "disko.media" },
+          { em: "0.28em", note: "too loose — reads as spaced-out, not labelled" },
+        ].map((step) => (
+          <div class="flex flex-col gap-2 border-b border-border/60 px-6 py-5 last:border-b-0 sm:flex-row sm:items-baseline sm:gap-8">
+            <span class="label w-20 shrink-0 !tracking-wider">{step.em}</span>
+            <span
+              class="font-mono text-[11px] font-medium text-dim uppercase"
+              style={`letter-spacing: ${step.em}`}
+            >
+              Experiment 02 · Shipped
+            </span>
+            <span class="ml-auto text-sm text-dim">{step.note}</span>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="ramp"
+    title="Scale ramp"
+    note="The steps themselves, in Outfit. Check a new heading against this before inventing a size for it."
+  >
+    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+      {
+        ramp.map((step) => (
+          <div class="flex flex-col gap-2 border-b border-border/60 px-6 py-5 last:border-b-0 sm:flex-row sm:items-baseline sm:gap-8">
+            <span class="label w-40 shrink-0">{step.token}</span>
+            <span class={`font-display ${step.cls}`}>{step.sample}</span>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+</LabLayout>

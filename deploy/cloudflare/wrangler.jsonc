@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "reys-lab-web",
+  "compatibility_date": "2026-09-19",
+
+  // Assets-only: no "main" entrypoint, so this is a pure static file host.
+  // The directory is apps/web's build output — the only place this package
+  // knows anything about the app, and the reason for the workspace dependency
+  // in package.json (which also gives Turborepo the build-before-deploy edge).
+  "assets": {
+    "directory": "../../apps/web/dist",
+    "not_found_handling": "404-page"
+  }
+}

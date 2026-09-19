@@ -27,7 +27,7 @@ See `services/README.md`.
 ```
 apps/web/          Astro. Static. Knows nothing about hosting.
 deploy/cloudflare/ wrangler config + a one-line deploy script
-packages/          shared tsconfig and eslint config
+packages/          shared eslint config
 services/          future independent backends (empty)
 ```
 

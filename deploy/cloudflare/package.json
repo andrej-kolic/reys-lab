@@ -1,0 +1,14 @@
+{
+  "name": "@reys-lab/deploy-cloudflare",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
+  },
+  "devDependencies": {
+    "@reys-lab/web": "workspace:*",
+    "wrangler": "catalog:"
+  }
+}

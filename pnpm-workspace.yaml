@@ -4,6 +4,12 @@ packages:
   - "packages/*"
   - "services/*"
 
+# esbuild's postinstall links its native binary; without it Astro cannot build.
+# pnpm blocks install scripts by default, so it is approved explicitly.
+allowBuilds:
+  esbuild: true
+  workerd: true
+
 # Shared versions pinned once, referenced as "catalog:" by every package.
 catalog:
   astro: ^7.3.3

@@ -59,12 +59,6 @@ const themes = [
   },
 ];
 
-const shades = [
-  { id: "a", name: "a", note: "base" },
-  { id: "b", name: "b", note: "darker" },
-  { id: "c", name: "c", note: "cooler" },
-];
-
 const accentRoles = [
   {
     token: "--lab-accent",
@@ -91,7 +85,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
   <Section
     id="themes"
     title="Themes at scale"
-    note="A base colour reads completely differently as a 64px swatch than it does filling a screen, so each theme gets a full band with real content in it. These follow the shade you pick in the switcher, so you are comparing hue and nothing else. Scroll slowly — the one that wins is the one you stop noticing."
+    note="A base colour reads completely differently as a 64px swatch than it does filling a screen, so each theme gets a full band with real content in it. Each carries the darkness settled for it — violet c, navy a, jungle a — so you are comparing hue and nothing else. Scroll slowly — the one that wins is the one you stop noticing."
   >
     <div class="space-y-5">
       {
@@ -147,42 +141,9 @@ const glows = [0.12, 0.28, 0.5, 0.8];
   </Section>
 
   <Section
-    id="shades"
-    title="Shades within a theme"
-    note="The second axis, held at whichever theme is active. Shade is a trim, not an identity — worth settling only after the theme is chosen."
-  >
-    <div class="grid gap-4 lg:grid-cols-3">
-      {
-        shades.map((shade) => (
-          <div
-            data-shade={shade.id}
-            class="rounded-xl border border-border bg-bg p-5"
-          >
-            <p class="label !text-accent">
-              Shade {shade.name} · {shade.note}
-            </p>
-            <h3 class="mt-3 font-display text-2xl font-bold tracking-tight">
-              Rey&rsquo;s Lab
-            </h3>
-            <p class="mt-2 text-sm leading-relaxed text-muted">
-              The same three paragraphs of body copy sit on this background on
-              every page of the site. This is the one that has to survive being
-              read for ten minutes.
-            </p>
-            <div class="mt-4 rounded-lg border border-border bg-surface p-3">
-              <p class="label">Card on this shade</p>
-              <p class="mt-1.5 font-mono text-sm text-ink">0.35 KiB · 0 adapters</p>
-            </div>
-          </div>
-        ))
-      }
-    </div>
-  </Section>
-
-  <Section
     id="tokens"
     title="Tokens"
-    note="Live values, read back out of the cascade. These follow the theme and shade selected in the switcher above."
+    note="Live values, read back out of the cascade. These follow the theme selected in the switcher above."
   >
     <div class="space-y-8">
       {
@@ -457,10 +418,10 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
   paint();
 
-  // The switcher rewrites data-theme/shade on <html>; every number above
-  // depends on them.
+  // The switcher rewrites data-theme on <html>; every number above depends
+  // on it.
   new MutationObserver(paint).observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["data-theme", "data-shade"],
+    attributeFilter: ["data-theme"],
   });
 </script>

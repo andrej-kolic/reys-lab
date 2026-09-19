@@ -32,11 +32,11 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/lab";
         var d = document.documentElement;
         var defaults = {
           theme: "violet",
-          shade: "a",
         };
         // Locked, so it is set rather than restored — a browser that stored a
         // losing value back when glow had a control would otherwise be stuck
-        // on it with no way left to change it.
+        // on it with no way left to change it. Shade needs nothing at all now
+        // that each theme carries its own.
         d.setAttribute("data-glow", "0.28");
         for (var key in defaults) {
           var saved = null;

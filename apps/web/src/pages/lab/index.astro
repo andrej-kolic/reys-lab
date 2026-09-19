@@ -14,7 +14,7 @@ const sections = [
     href: "/lab/colour",
     title: "Colour",
     label: "02 / Palette",
-    body: "Three themes at full-screen scale, three shades within the active one, every token as a swatch, a contrast matrix computed live against WCAG AA (the minimum text-contrast standard), and a glow ramp.",
+    body: "Three themes at full-screen scale, each at the darkness settled for it, every token as a swatch, a contrast matrix computed live against WCAG AA (the minimum text-contrast standard), and a glow ramp.",
   },
   {
     href: "/lab/components",
@@ -29,7 +29,7 @@ const readout = [
   { label: "Astro", value: pkg.dependencies.astro.replace("catalog:", "7.3.3") },
   { label: "Tailwind", value: pkg.dependencies.tailwindcss.replace(/^[\^~]/, "") },
   { label: "Typeface", value: "Outfit + Plex Mono" },
-  { label: "Theme candidates", value: "3 \u00d7 3 shades" },
+  { label: "Theme candidates", value: "3" },
   { label: "Output", value: "static / no adapter" },
   { label: "Status", value: "deciding" },
   { label: "Routes", value: "5" },
@@ -42,7 +42,7 @@ const readout = [
 <LabLayout
   title="The Lab"
   eyebrow="Design playground"
-  intro="Every design question left on this project is a perceptual one, and prose is a bad instrument for perceptual questions. So: render the candidates, deploy them, look at them on a phone, and let the winner be obvious. The switcher at the top applies any font pairing to any theme and shade across every page here."
+  intro="Every design question left on this project is a perceptual one, and prose is a bad instrument for perceptual questions. So: render the candidates, deploy them, look at them on a phone, and let the winner be obvious. The switcher at the top applies a theme across every page here."
 >
   <Section
     id="readout"
@@ -93,7 +93,6 @@ const readout = [
       {
         [
           "Theme — violet, navy or jungle. The identity decision.",
-          "Shade — how dark that theme sits. A trim, settled after the theme.",
           "Accent policy — both accents, or just one. Each theme brings its own pair.",
           "Whether the gradient signature on the hero name earns its place.",
           "How far to push the lab concept before it tips into cringe.",

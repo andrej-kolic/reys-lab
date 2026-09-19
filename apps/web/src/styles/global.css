@@ -5,77 +5,37 @@
 
    Everything is a CSS custom property so that swapping a candidate palette or
    font pairing is a one-line change and so that `/lab` can render several
-   candidates on one page by setting `data-theme`, `data-shade` or `data-type`
-   on a wrapper.
+   candidates on one page by setting `data-theme` on a wrapper.
 
    Layering, outermost first:
-     1. --lab-*  raw palette values (theme × shade candidates)
+     1. --lab-*  raw palette values (one set per theme)
      2. --ff-*   font pairing (swappable candidates)
      3. @theme   the Tailwind mapping — the only names pages should use
    ========================================================================= */
 
 /* ── Theme candidates ─────────────────────────────────────────────
-   Two independent axes, because they answer different questions:
-
-     data-theme  which hue family the site lives in  — the identity decision
-     data-shade  how dark that family sits           — a trim, decided after
+   One axis now: `data-theme` picks the hue family, which is the identity
+   decision. The shade axis is gone — each theme carries the darkness that won
+   for it (violet c, navy a, jungle a), folded into the theme itself.
 
    Values are sampled from the reference frames, then put on one shared
    lightness ladder: only hue and saturation differ between themes, so the
    switcher compares hue rather than brightness. The Kurzgesagt rule holds in
-   all three — the mass is never neutral black, it always carries hue. */
+   all three — the mass is never neutral black, it always carries hue.
 
-/* Each combination needs three selector forms, because the two axes are not
-   always carried by the same element:
-
-     both attributes together   — on <html>, the normal case
-     theme above, shade below   — the shade cards on /lab/colour
-     shade at root, theme below — the theme bands on /lab/colour
-
-   A single compound selector only ever matches <html>, which silently made
-   every in-page comparison render identically. */
+   The `:root` fallback must stay FIRST in source order: it has the same
+   specificity as nothing else here, and a later copy would win over the theme
+   blocks. With a single axis the plain attribute selector matches whether
+   `data-theme` sits on <html> or on a band inside /lab/colour, so the compound
+   and descendant forms the two-axis version needed are gone too. */
 
 /* Violet · category 1
    Deep violet mass, warm gold light, magenta and cyan rims. Sampled
-   from the supernova and canyon-portal frames. This is the current site. */
+   from the supernova and canyon-portal frames. Shade c: same darkness as the
+   original base, cooler hue. */
 
-/* a — base */
 :root,
-[data-theme="violet"][data-shade="a"],
-[data-theme="violet"] [data-shade="a"],
-html[data-shade="a"] [data-theme="violet"] {
-  --lab-void: #140a26;
-  --lab-bg: #1e1035;
-  --lab-surface: #2a1b4a;
-  --lab-raised: #3d2470;
-  --lab-border: #4a2d7d;
-  --lab-line: #7b3fa0;
-  --lab-ink: #efeafc;
-  --lab-muted: #b3a5d4;
-  --lab-dim: #a497c1;
-  --lab-code-bg: #180d2c;
-}
-
-/* b — darker — built for reading 2000 words */
-[data-theme="violet"][data-shade="b"],
-[data-theme="violet"] [data-shade="b"],
-html[data-shade="b"] [data-theme="violet"] {
-  --lab-void: #0d071a;
-  --lab-bg: #140b24;
-  --lab-surface: #1c1332;
-  --lab-raised: #29194c;
-  --lab-border: #311f55;
-  --lab-line: #522b6c;
-  --lab-ink: #efeafc;
-  --lab-muted: #b2a5d4;
-  --lab-dim: #9284b6;
-  --lab-code-bg: #10091e;
-}
-
-/* c — same darkness, cooler hue */
-[data-theme="violet"][data-shade="c"],
-[data-theme="violet"] [data-shade="c"],
-html[data-shade="c"] [data-theme="violet"] {
+[data-theme="violet"] {
   --lab-void: #100c24;
   --lab-bg: #191233;
   --lab-surface: #241e47;
@@ -86,9 +46,7 @@ html[data-shade="c"] [data-theme="violet"] {
   --lab-muted: #ada8d1;
   --lab-dim: #9d98be;
   --lab-code-bg: #140f2a;
-}
 
-[data-theme="violet"] {
   --lab-accent-1: #3bb8f5; /* cyan — interaction: links, focus, active */
   --lab-accent-2: #ffd23f; /* gold — state: current, highlight, primary */
   --lab-decor: #ff4fb8;   /* glow and edges only, never a text colour */
@@ -104,12 +62,9 @@ html[data-shade="c"] [data-theme="violet"] {
 /* Navy · category 2
    Navy-indigo mass lit by cyan-mint, gold sparks. From the black-hole
    and Mars-from-space frames. Cooler and less saturated than violet — the
-   reference mass measures 43% saturation against violet’s 84%. */
+   reference mass measures 43% saturation against violet’s 84%. Shade a. */
 
-/* a — base */
-[data-theme="navy"][data-shade="a"],
-[data-theme="navy"] [data-shade="a"],
-html[data-shade="a"] [data-theme="navy"] {
+[data-theme="navy"] {
   --lab-void: #0d0f23;
   --lab-bg: #141631;
   --lab-surface: #202445;
@@ -120,41 +75,7 @@ html[data-shade="a"] [data-theme="navy"] {
   --lab-muted: #aaafcf;
   --lab-dim: #9ca1bd;
   --lab-code-bg: #101229;
-}
 
-/* b — darker — built for reading 2000 words */
-[data-theme="navy"][data-shade="b"],
-[data-theme="navy"] [data-shade="b"],
-html[data-shade="b"] [data-theme="navy"] {
-  --lab-void: #090a18;
-  --lab-bg: #0d0f21;
-  --lab-surface: #16192f;
-  --lab-raised: #1e2347;
-  --lab-border: #24294f;
-  --lab-line: #3a3266;
-  --lab-ink: #eceefa;
-  --lab-muted: #aab0cf;
-  --lab-dim: #878eaf;
-  --lab-code-bg: #0b0d1c;
-}
-
-/* c — same darkness, cooler hue */
-[data-theme="navy"][data-shade="c"],
-[data-theme="navy"] [data-shade="c"],
-html[data-shade="c"] [data-theme="navy"] {
-  --lab-void: #0e1322;
-  --lab-bg: #151b30;
-  --lab-surface: #222c43;
-  --lab-raised: #2c3b5f;
-  --lab-border: #394771;
-  --lab-line: #4d4d92;
-  --lab-ink: #edf1f9;
-  --lab-muted: #acb6cd;
-  --lab-dim: #9fa8bc;
-  --lab-code-bg: #111728;
-}
-
-[data-theme="navy"] {
   --lab-accent-1: #5ee9b5; /* mint — interaction: links, focus, active */
   --lab-accent-2: #ffcf4d; /* gold — state: current, highlight, primary */
   --lab-decor: #8b8cf7;   /* glow and edges only, never a text colour */
@@ -170,12 +91,9 @@ html[data-shade="c"] [data-theme="navy"] {
 /* Jungle · category 3
    Teal-blue mass under a chartreuse sky, amber points, magenta flora.
    From the alien-jungle and reactor-jungle frames. The only candidate whose
-   mass is not violet at all. */
+   mass is not violet at all. Shade a. */
 
-/* a — base */
-[data-theme="jungle"][data-shade="a"],
-[data-theme="jungle"] [data-shade="a"],
-html[data-shade="a"] [data-theme="jungle"] {
+[data-theme="jungle"] {
   --lab-void: #0c1c24;
   --lab-bg: #132732;
   --lab-surface: #1f3a46;
@@ -186,41 +104,7 @@ html[data-shade="a"] [data-theme="jungle"] {
   --lab-muted: #b0cad5;
   --lab-dim: #a3bbc4;
   --lab-code-bg: #0f212a;
-}
 
-/* b — darker — built for reading 2000 words */
-[data-theme="jungle"][data-shade="b"],
-[data-theme="jungle"] [data-shade="b"],
-html[data-shade="b"] [data-theme="jungle"] {
-  --lab-void: #081318;
-  --lab-bg: #0d1b22;
-  --lab-surface: #152830;
-  --lab-raised: #1d3b48;
-  --lab-border: #234151;
-  --lab-line: #304768;
-  --lab-ink: #ebf7fb;
-  --lab-muted: #a9c6d0;
-  --lab-dim: #88a7b2;
-  --lab-code-bg: #0b161c;
-}
-
-/* c — same darkness, cooler hue */
-[data-theme="jungle"][data-shade="c"],
-[data-theme="jungle"] [data-shade="c"],
-html[data-shade="c"] [data-theme="jungle"] {
-  --lab-void: #0d1f23;
-  --lab-bg: #152b30;
-  --lab-surface: #213f44;
-  --lab-raised: #28525a;
-  --lab-border: #376873;
-  --lab-line: #4b7494;
-  --lab-ink: #ecf8fa;
-  --lab-muted: #bad4d7;
-  --lab-dim: #acc4c7;
-  --lab-code-bg: #112428;
-}
-
-[data-theme="jungle"] {
   --lab-accent-1: #a8e85c; /* lime — interaction: links, focus, active */
   --lab-accent-2: #ffb545; /* amber — state: current, highlight, primary */
   --lab-decor: #ff7bb8;   /* glow and edges only, never a text colour */
@@ -372,8 +256,9 @@ html[data-shade="c"] [data-theme="jungle"] {
 
 /* ── Glow strength ─────────────────────────────────────────────
    One value to pick, not a set of states — nothing here uses glow for hover or
-   disabled. These are candidates, like the shades, and the losers get deleted
-   once one wins. The ramp on /lab/colour sets --glow-strength inline per card,
+   disabled. Settled at .28; the other three are kept only so the ramp on
+   /lab/colour still demonstrates the range. The ramp sets --glow-strength
+   inline per card,
    which beats this and so keeps working independently of the switcher. */
 
 [data-glow="0.12"] { --glow-strength: 0.12; }

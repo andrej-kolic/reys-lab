@@ -4,18 +4,15 @@
  *
  * Every remaining design question in the design plan is perceptual, so the
  * playground has to let any font pairing be judged against any theme at
- * full-screen scale — not as a swatch. These buttons set `data-theme` and
- * `data-shade` on `<html>`; the token layer in global.css does the rest.
- * Persisted to localStorage so a decision survives a page change.
+ * full-screen scale — not as a swatch. The buttons set `data-theme` on
+ * `<html>`; the token layer in global.css does the rest. Persisted to
+ * localStorage so a decision survives a page change.
  *
- * Glow is settled at .28 and so has no control any more, the same as type and
- * the accent policy. It stays in the readout because a locked value is still
- * worth seeing while judging the ones that are not.
- *
- * Theme and shade are deliberately separate controls. Theme picks the hue
- * family, which is the identity decision; shade only picks how dark that family
- * sits, which is a trim done afterwards. Folding them into one control is what
- * made the previous A/B/C read as a single palette.
+ * Theme is the only axis left. Shade was the second one — how dark a hue
+ * family sits — and it is settled per theme: violet c, navy a, jungle a, now
+ * folded into the themes themselves. Glow is settled at .28. Neither has a
+ * control any more, the same as type and the accent policy; glow stays in the
+ * readout because a locked value is still worth seeing beside the open one.
  */
 
 const groups = [
@@ -26,15 +23,6 @@ const groups = [
       { value: "violet", label: "Violet", hint: "Violet mass, gold light" },
       { value: "navy", label: "Navy", hint: "Navy mass, mint light" },
       { value: "jungle", label: "Jungle", hint: "Teal mass, lime light" },
-    ],
-  },
-  {
-    key: "shade",
-    title: "Shade",
-    options: [
-      { value: "a", label: "a", hint: "Base" },
-      { value: "b", label: "b", hint: "Darker — for long reading" },
-      { value: "c", label: "c", hint: "Same darkness, cooler" },
     ],
   },
 ] as const;
@@ -88,19 +76,18 @@ const groups = [
 
 <script>
   const root = document.documentElement;
-  const KEYS = ["theme", "shade", "glow"] as const;
+  const KEYS = ["theme", "glow"] as const;
   type Key = (typeof KEYS)[number];
 
   const NAMES: Record<Key, Record<string, string>> = {
     theme: { violet: "Violet", navy: "Navy", jungle: "Jungle" },
-    shade: { a: "a", b: "b", c: "c" },
     glow: { "0.12": "glow .12", "0.28": "glow .28", "0.5": "glow .50", "0.8": "glow .80" },
   };
 
   function readout() {
     const node = document.querySelector("[data-lab-readout]");
     if (!node) return;
-    const [theme, shade, glow] = KEYS.map(
+    const [theme, glow] = KEYS.map(
       (key) => NAMES[key][root.dataset[key] ?? ""] ?? "?",
     );
 
@@ -114,7 +101,7 @@ const groups = [
       .filter(Boolean)
       .join(" + ");
 
-    node.textContent = `${theme} ${shade} · Outfit · ${accentLabel} · ${glow}`;
+    node.textContent = `${theme} · Outfit · ${accentLabel} · ${glow}`;
   }
 
   function sync() {

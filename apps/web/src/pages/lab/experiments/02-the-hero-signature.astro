@@ -23,7 +23,7 @@ const record = [
   { label: "Opened", value: opened },
   { label: "Status", value: "open · undecided" },
   { label: "Variable", value: "fill on the name" },
-  { label: "Candidates", value: "4, incl. control" },
+  { label: "Candidates", value: "5, incl. control" },
   { label: "Floor", value: "3:1 · large text" },
   { label: "Measured", value: "worst stop, not mean" },
 ];
@@ -63,13 +63,24 @@ const candidates = [
     stops: ["#7cf3d4", "#3bb8f5", "#9b6cff", "#ff4fb8", "#ff8a3d", "#ffd23f"],
     note: "The rainbow-galaxy frames as the plan first described them, and the move ultrasound.money actually makes. It is the only candidate that introduces hues the palette does not contain — which is the whole question: is the strongest idea in the reference set worth an exception, or does an exception on the loudest element on the site cost more than it returns.",
   },
+  {
+    id: "duotone",
+    name: "E · Two words, two colours",
+    claim: "Cyan · mint. No ramp at all.",
+    /* #5ee9b5 is navy's interaction accent, quoted from the frozen record in
+       experiment-01-palette.css rather than imported from it — that file is
+       scoped to experiment 01 and does not get reached into. */
+    stops: ["--lab-accent-1", "#5ee9b5"],
+    measure: "dimmer word",
+    note: "Not a gradient. The name splits at the space it already has and each word takes one flat colour — cyan, then the mint that was navy's interaction accent before navy lost experiment 01. It asks the question the other three assume away: whether the signature needs a ramp, or whether two colours and the word break do the whole job. The hue is an import from a rejected palette, which is either the most interesting thing about it or the argument against it.",
+  },
 ];
 
 const method = [
   "Every band is one hero at the same size, same background, same copy. Only the fill moves.",
   "Judged at full width on a phone before a desktop — the name is the largest thing on the site and the phone is where it is largest relative to the screen.",
   "Contrast is computed in the page against the page background, reporting each candidate's worst stop. A gradient that averages well and bottoms out at 2:1 has failed.",
-  "The control is judged last but on equal terms. The question is not which gradient wins; it is whether a gradient wins.",
+  "The control is judged last but on equal terms. The question is not which gradient wins; it is whether a gradient wins at all — which is why the set holds one candidate with no gradient and one with no ramp.",
 ];
 
 /**
@@ -114,7 +125,7 @@ const constraints = [
 <LabLayout
   title="The hero signature"
   eyebrow="Experiment 02 · open"
-  intro="The design plan reserved a multi-hue gradient for exactly one element — the name in the hero — and then deliberately left it undecided until there was a real home page to tune it against. Four fills, one of them no fill at all, rendered at the size they would actually ship at."
+  intro="The design plan reserved a multi-hue gradient for exactly one element — the name in the hero — and then deliberately left it undecided until there was a real home page to tune it against. Five treatments, one of them no treatment at all, rendered at the size they would actually ship at."
 >
   <Section
     id="record"
@@ -156,6 +167,13 @@ const constraints = [
         hero name is the largest fill on the site. A signature that contradicts
         the rule it sits inside is not a signature, it is a leak.
       </p>
+      <p>
+        <strong class="font-semibold text-ink">E was added after the first look
+        and this hypothesis does not cover it</strong>, which is recorded here
+        rather than quietly fixed. It is also the only candidate that is not a
+        ramp, so if it wins, the finding is not &ldquo;which gradient&rdquo; but
+        that the question was posed one option too narrow.
+      </p>
     </div>
   </Section>
 
@@ -180,8 +198,14 @@ const constraints = [
               <h4
                 class="mt-4 font-display text-5xl leading-[1.02] font-bold tracking-tight sm:text-7xl"
               >
+                {/* Split into words so E can colour them independently. The
+                    gradient candidates set no colour on the words, so the
+                    words inherit `transparent` from the clipped parent and the
+                    ramp paints straight through them. */}
                 <span class="signature" data-candidate={candidate.id}>
-                  Rey&rsquo;s Lab
+                  <span data-word="first">Rey&rsquo;s</span>{" "}<span
+                    data-word="second">Lab</span
+                  >
                 </span>
               </h4>
               <p class="mt-6 max-w-measure text-lg leading-relaxed text-muted">
@@ -197,6 +221,7 @@ const constraints = [
               <p
                 class="mt-3 font-mono text-xs tracking-tight text-dim"
                 data-worst={candidate.stops.join(",")}
+                data-worst-label={candidate.measure ?? "worst stop"}
               >
                 measuring&hellip;
               </p>
@@ -339,6 +364,11 @@ const constraints = [
       );
     }
 
+    /* E paints the words rather than the box, so it sets colour on the
+       children and never touches background-clip. It sits outside the
+       @supports block below for that reason — it has nothing to fall back
+       from. */
+
     .signature[data-candidate="spectrum"] {
       background-image: linear-gradient(
         100deg in oklab,
@@ -350,6 +380,14 @@ const constraints = [
         #ffd23f
       );
     }
+  }
+
+  .signature[data-candidate="duotone"] [data-word="first"] {
+    color: var(--lab-accent-1);
+  }
+
+  .signature[data-candidate="duotone"] [data-word="second"] {
+    color: #5ee9b5;
   }
 </style>
 
@@ -406,7 +444,8 @@ const constraints = [
       }
     }
 
-    const label = stops.length > 1 ? `worst stop ${at}` : at;
+    const label =
+      stops.length > 1 ? `${node.dataset.worstLabel} ${at}` : at;
     const grade =
       worst >= 4.5
         ? "AA · any size"

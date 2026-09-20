@@ -1,43 +1,43 @@
 ---
 import LabLayout from "../../layouts/LabLayout.astro";
 import Section from "../../components/lab/Section.astro";
+import ListRow from "../../components/ListRow.astro";
 import pkg from "../../../package.json";
-import { routeCount } from "../../lib/routes";
+import { countRoutes } from "../../lib/routes";
+import {
+  byStatus,
+  href as experimentHref,
+  owner,
+} from "../../lib/experiments";
 
 // Counted rather than typed. The readout's whole claim is that these are real
 // build values, and a hand-maintained route count is the one number on it that
 // would quietly go stale the next time a page is added.
 
-const sections = [
+// Open above settled: an open experiment is the live one and should read that
+// way. Both lists come from the registry, so this page cannot disagree with a
+// project page about which experiments exist.
+const open = byStatus("open");
+const settled = byStatus("settled");
+
+const reference = [
   {
-    href: "/lab/type",
+    href: "/lab/reference/type",
     title: "Type",
-    label: "01 / Specimen",
-    body: "Settled: Outfit over IBM Plex Mono. The full specimen, the micro-label tracking ramp, and the scale — the place to check a size before it ships.",
+    label: "Specimen",
+    body: "Outfit over IBM Plex Mono. The full specimen, the micro-label tracking ramp and the scale — the place to check a size before it ships.",
   },
   {
-    href: "/lab/colour",
+    href: "/lab/reference/colour",
     title: "Colour",
-    label: "02 / Palette",
-    body: "The settled palette — violet c — as live token swatches, a contrast matrix computed in the page against WCAG AA (the minimum text-contrast standard), the accent policy, and a glow ramp.",
+    label: "Palette",
+    body: "Violet c as live token swatches, plus a contrast matrix computed in the page against WCAG AA — the minimum text-contrast standard.",
   },
   {
-    href: "/lab/components",
+    href: "/lab/reference/components",
     title: "Components",
-    label: "03 / Parts",
-    body: "The pieces that actually recur: project card, post list item, micro-label, code block, link states, timeline node.",
-  },
-  {
-    href: "/lab/experiments/01-choosing-a-palette",
-    title: "Experiment 01",
-    label: "Settled · 2026-09-20",
-    body: "Choosing a palette. Four built, three judged at full-screen scale, violet c won. Frozen: the losing palettes still render there and nowhere else.",
-  },
-  {
-    href: "/lab/experiments/02-the-hero-signature",
-    title: "Experiment 02",
-    label: "Open · 2026-09-20",
-    body: "The hero signature. Whether the name carries a multi-hue gradient, and drawn from what — four fills including no fill at all, at the size they would ship at.",
+    label: "Parts",
+    body: "The pieces that actually recur: project card, list row, micro-label, code block, link states, timeline node.",
   },
 ];
 
@@ -48,8 +48,8 @@ const readout = [
   { label: "Typeface", value: "Outfit + Plex Mono" },
   { label: "Palette", value: "violet c" },
   { label: "Output", value: "static / no adapter" },
-  { label: "Status", value: "building" },
-  { label: "Routes", value: String(routeCount) },
+  { label: "Experiments", value: `${settled.length} settled · ${open.length} open` },
+  { label: "Routes", value: String(await countRoutes()) },
   // Kept to a multiple of three: the grid draws its gaps with a background
   // colour, so a half-filled last row shows up as a bare slab.
   { label: "AA floor", value: "4.5:1 held" },
@@ -57,10 +57,37 @@ const readout = [
 ---
 
 <LabLayout
+  kind="index"
   title="The Lab"
-  eyebrow="Design playground"
-  intro="Perceptual questions need an instrument, not an argument. So: render the candidates, deploy them, look at them on a phone, and let the winner be obvious. Type and palette went that way and are settled; what is settled lives here as a specimen, and what it was settled over is kept as a dated experiment."
+  eyebrow="Experiments"
+  intro="Perceptual questions need an instrument, not an argument. So: build the candidates, deploy them, look at them on a phone, and let the winner be obvious. An experiment is a question answered that way, ending in a dated verdict — if it has no candidates and no verdict, it is a blog post instead. Every experiment names the project it was run for; the ones marked Rey's Lab are this site, which has no other project page."
 >
+  <Section
+    id="experiments"
+    title="Experiments"
+    note="Dated and, once settled, frozen — a record, never updated to match the site. That is what stops the lab drifting into theme-park territory: a section containing only finished, dated work has nothing left to keep embellishing. An abandoned experiment leaves a permanent gap in the numbering, which is honest and is the price of the sequence."
+  >
+    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+      {
+        [...open, ...settled].map((experiment) => (
+          <ListRow
+            href={experimentHref(experiment)}
+            meta={`Experiment ${experiment.number}`}
+            metaSub={owner(experiment).name}
+            title={experiment.title}
+            description={experiment.summary}
+            tag={
+              experiment.status === "open"
+                ? "Open"
+                : `Settled ${experiment.date}`
+            }
+            tagTone={experiment.status === "open" ? "warm" : "dim"}
+          />
+        ))
+      }
+    </div>
+  </Section>
+
   <Section
     id="readout"
     title="Instrument readout"
@@ -82,19 +109,23 @@ const readout = [
     </dl>
   </Section>
 
-  <Section id="sections" title="Sections">
+  <Section
+    id="reference"
+    title="Reference"
+    note="The opposite contract to an experiment: these are maintained, and always show the site as it is now. They are noindex — a wall of swatches with no narrative makes a poor search landing page — but reachable from here, because the contrast matrix is worth verifying rather than taking on trust."
+  >
     <div class="grid gap-4 sm:grid-cols-3">
       {
-        sections.map((section) => (
+        reference.map((item) => (
           <a
-            href={section.href}
+            href={item.href}
             class="group flex flex-col rounded-xl border border-border bg-surface p-5 transition-colors duration-150 hover:border-accent"
           >
-            <p class="label">{section.label}</p>
+            <p class="label">{item.label}</p>
             <h3 class="mt-3 font-display text-xl font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent">
-              {section.title}
+              {item.title}
             </h3>
-            <p class="mt-2 text-sm leading-relaxed text-muted">{section.body}</p>
+            <p class="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
           </a>
         ))
       }
@@ -104,13 +135,14 @@ const readout = [
   <Section
     id="open"
     title="Still open"
-    note="What this playground exists to settle. Decided by looking, not by arguing. Palette and type are no longer on this list."
+    note="What this playground exists to settle. Decided by looking, not by arguing. Palette, type and the site structure are no longer on this list."
   >
     <ul class="max-w-measure space-y-3 text-muted">
       {
         [
           "Whether the gradient signature on the hero name earns its place.",
-          "How far to push the lab concept before it tips into cringe.",
+          "Which accent owns the primary button — and whether the accent policy's own list needs amending to say so.",
+          "The vocabulary table — the fixed noun for each thing, decided once.",
         ].map((item) => (
           <li class="flex gap-3">
             <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-warm" />

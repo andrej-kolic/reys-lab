@@ -11,21 +11,24 @@
  *
  * The candidates themselves are not lost, they are quarantined — see
  * /lab/experiments/01-choosing-a-palette.
+ *
+ * Not sticky, as of 2026-09-20. It pinned to the top because it was a
+ * switcher and you had to reach for it while scrolling past candidates. A
+ * readout has nothing to reach for. It was also the only sticky element on the
+ * site, sitting under a nav that is not, so on scroll the two-tier header came
+ * apart and this strip pinned alone.
  */
 ---
 
 <div
-  class="sticky top-0 z-50 border-b border-border/70 bg-bg/85 backdrop-blur-md"
+  class="border-b border-border/70"
   data-lab-controls
 >
   <div
     class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3"
   >
-    <a
-      href="/lab"
-      class="label !text-accent transition-opacity duration-150 hover:opacity-70"
-      >Rey&rsquo;s Lab</a
-    >
+    {/* The wordmark lives in the site nav above; this bar only reports. */}
+    <span class="label !text-accent">Instrument readout</span>
 
     <output
       class="label ml-auto !normal-case !tracking-normal !text-muted"

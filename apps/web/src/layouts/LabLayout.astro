@@ -1,68 +1,127 @@
 ---
-import { Font } from "astro:assets";
 import BaseLayout from "./BaseLayout.astro";
+import SiteNav from "../components/SiteNav.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 import LabControls from "../components/lab/LabControls.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import { bySlug, owner } from "../lib/experiments";
 
 interface Props {
   title: string;
   /** Mono eyebrow above the page heading. */
   eyebrow: string;
   intro: string;
+  /**
+   * Which half of the lab this page is.
+   *
+   * The split is not topic, it is whether the page is allowed to change:
+   *
+   *   experiment — frozen once dated. A record. Public and indexed, because
+   *                showing how a decision got made is the strongest evidence
+   *                on the site.
+   *   reference  — maintained, always reflects the site as it is now.
+   *                noindex: it is a tool, a wall of swatches with no
+   *                narrative, and the story worth reading is told in the
+   *                experiment that produced it.
+   *   index      — the lab index itself.
+   */
+  kind: "index" | "experiment" | "reference";
+  /**
+   * Required for kind="experiment": the registry slug. The owner, status and
+   * date are read from there rather than retyped here, so a page cannot
+   * disagree with the lab index about which project it belongs to.
+   */
+  slug?: string;
 }
 
-const { title, eyebrow, intro } = Astro.props;
+const { title, eyebrow, intro, kind, slug } = Astro.props;
 
-const sections = [
-  { href: "/lab", label: "Index" },
-  { href: "/lab/type", label: "Type" },
-  { href: "/lab/colour", label: "Colour" },
-  { href: "/lab/components", label: "Components" },
-  { href: "/lab/experiments/01-choosing-a-palette", label: "Experiment 01" },
-  { href: "/lab/experiments/02-the-hero-signature", label: "Experiment 02" },
-];
-
-const path = Astro.url.pathname.replace(/\/$/, "") || "/lab";
+const experiment = slug ? bySlug(slug) : undefined;
+const project = experiment ? owner(experiment) : undefined;
 ---
 
-<BaseLayout title={`${title} · Rey's Lab`} noindex>
-  <LabControls />
+<BaseLayout
+  title={`${title} · Rey's Lab`}
+  noindex={kind === "reference"}
+>
+  <div class="page-glow flex min-h-screen flex-col">
+    <SiteNav />
+    <LabControls />
 
-  <div class="mx-auto max-w-5xl px-5 pb-24">
-    <nav class="flex flex-wrap gap-x-5 gap-y-2 py-5" aria-label="Lab sections">
+    <div class="mx-auto w-full max-w-5xl grow px-5 pb-20">
       {
-        sections.map((section) => (
-          <a
-            href={section.href}
-            aria-current={section.href === path ? "page" : undefined}
-            class="label transition-colors duration-150 hover:!text-ink aria-[current=page]:!text-warm"
-          >
-            {section.label}
-          </a>
-        ))
+        kind !== "index" && (
+          <div class="pt-8">
+            <Breadcrumb
+              trail={[{ href: "/lab", label: "Lab" }]}
+              current={title}
+            />
+          </div>
+        )
       }
-    </nav>
 
-    <header class="glow border-b border-border pt-10 pb-12">
-      <p class="label !text-accent">{eyebrow}</p>
-      <h1
-        class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl"
+      <header
+        class:list={[
+          "border-b border-border pb-12",
+          kind === "index" ? "pt-12" : "pt-6",
+        ]}
       >
-        {title}
-      </h1>
-      <p class="mt-5 max-w-measure text-lg leading-relaxed text-muted text-pretty">
-        {intro}
-      </p>
-    </header>
+        <p class="label !text-accent">{eyebrow}</p>
+        <h1
+          class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl"
+        >
+          {title}
+        </h1>
+        <p
+          class="mt-5 max-w-measure text-lg leading-relaxed text-muted text-pretty"
+        >
+          {intro}
+        </p>
 
-    <main class="pt-14">
-      <slot />
-    </main>
+        {
+          project && (
+            <dl class="mt-7 flex flex-wrap items-baseline gap-x-3">
+              <dt class="label">Run for</dt>
+              <dd class="font-mono text-sm text-muted">
+                {project.href ? (
+                  <a
+                    href={project.href}
+                    class="!text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+                  >
+                    {project.name}
+                  </a>
+                ) : (
+                  project.name
+                )}
+                {project.note && ` (${project.note})`}
+              </dd>
+            </dl>
+          )
+        }
+      </header>
 
-    <footer class="mt-24 border-t border-border pt-6">
-      <p class="label">
-        Not linked from site navigation · noindex · kept after launch as the
-        living style reference
-      </p>
-    </footer>
+      <main class="pt-14">
+        <slot />
+      </main>
+
+      {
+        kind === "reference" && (
+          <p class="label mt-20 border-t border-border pt-6">
+            Reference · noindex · maintained, not frozen — this page always
+            shows the site as it is now
+          </p>
+        )
+      }
+      {
+        kind === "experiment" && (
+          <p class="label mt-20 border-t border-border pt-6">
+            Experiment · frozen once dated — a record, never updated to match
+            the site
+          </p>
+        )
+      }
+    </div>
+
+    <SiteFooter />
   </div>
 </BaseLayout>

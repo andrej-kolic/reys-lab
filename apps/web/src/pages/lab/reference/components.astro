@@ -1,7 +1,7 @@
 ---
 import { Code } from "astro-expressive-code/components";
-import LabLayout from "../../layouts/LabLayout.astro";
-import Section from "../../components/lab/Section.astro";
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
 
 const projects = [
   {
@@ -77,6 +77,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
   title="Components"
   eyebrow="03 / Parts"
   intro="The pieces that actually recur, built from tokens rather than ad-hoc values. Flip the base and type candidates above while looking at these — a component that only works under one palette is a component that is doing too much."
+  kind="reference"
 >
   <Section
     id="labels"

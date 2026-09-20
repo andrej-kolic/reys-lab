@@ -1,0 +1,425 @@
+---
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+
+/**
+ * An open experiment. The design plan left exactly two questions open, to be
+ * answered by looking rather than arguing, and this is the first of them: does
+ * the hero name carry a multi-hue gradient, and if so, drawn from what.
+ *
+ * One thing moves. Every band below renders the same hero at the same size on
+ * the same background; the only variable is the fill on the name. That is the
+ * lesson experiment 01 paid for — its first three candidates changed two things
+ * at once and therefore answered neither question.
+ *
+ * The copy is placeholder and is not what is being judged. It is here because a
+ * fill reads differently on a word than on a page, and the name has to be seen
+ * with something under it.
+ */
+
+const opened = "2026-09-20";
+
+const record = [
+  { label: "Opened", value: opened },
+  { label: "Status", value: "open · undecided" },
+  { label: "Variable", value: "fill on the name" },
+  { label: "Candidates", value: "4, incl. control" },
+  { label: "Floor", value: "3:1 · large text" },
+  { label: "Measured", value: "worst stop, not mean" },
+];
+
+/**
+ * `stops` is what the contrast probe reads. A gradient is only as legible as
+ * its weakest point, so each candidate declares every stop it actually paints
+ * and the script reports the worst one rather than an average that would hide
+ * it.
+ */
+const candidates = [
+  {
+    id: "control",
+    name: "A · No gradient",
+    claim: "The control",
+    stops: ["--lab-ink"],
+    note: "Near-white on violet, which is what every other heading on the site already does. If nothing below beats this, the answer is that the signature was never needed — and a control that wins is a real result, not a failed experiment.",
+  },
+  {
+    id: "pair",
+    name: "B · The accent pair",
+    claim: "Cyan → gold. No new hues.",
+    stops: ["--lab-accent-1", "--lab-accent-2"],
+    note: "Built from the two accents the site already carries. The design plan predicted this is the only version that can ship without renegotiating the accent policy — cool to warm is the same temperature opposition the palette is built on, so the name reads as the palette rather than as an exception to it.",
+  },
+  {
+    id: "triad",
+    name: "C · Pair through magenta",
+    claim: "Cyan → magenta → gold.",
+    stops: ["--lab-accent-1", "--lab-decor", "--lab-accent-2"],
+    note: "The same two ends with the decoration hue carrying the middle. Magenta is barred from text by policy for being too close to the coral beside it — but this is a fill, not a text colour, and it is the hue the glow already puts behind this exact spot.",
+  },
+  {
+    id: "spectrum",
+    name: "D · Full spectrum",
+    claim: "Category 5, literally.",
+    stops: ["#7cf3d4", "#3bb8f5", "#9b6cff", "#ff4fb8", "#ff8a3d", "#ffd23f"],
+    note: "The rainbow-galaxy frames as the plan first described them, and the move ultrasound.money actually makes. It is the only candidate that introduces hues the palette does not contain — which is the whole question: is the strongest idea in the reference set worth an exception, or does an exception on the loudest element on the site cost more than it returns.",
+  },
+];
+
+const method = [
+  "Every band is one hero at the same size, same background, same copy. Only the fill moves.",
+  "Judged at full width on a phone before a desktop — the name is the largest thing on the site and the phone is where it is largest relative to the screen.",
+  "Contrast is computed in the page against the page background, reporting each candidate's worst stop. A gradient that averages well and bottoms out at 2:1 has failed.",
+  "The control is judged last but on equal terms. The question is not which gradient wins; it is whether a gradient wins.",
+];
+
+/**
+ * Written while building the comparison, not after judging it. The result is
+ * still open; these are things the instrument itself turned up.
+ */
+const notes = [
+  {
+    title: "sRGB interpolation nearly lost B the comparison",
+    body: "Cyan to gold is the widest hue span in the set, and a default linear-gradient interpolates channel by channel — which sinks the midpoint into a desaturated grey-green that looks like a rendering fault. B would have been rejected on that, and the rejection would have been of sRGB rather than of the idea. Interpolating in oklab holds chroma across the middle. Every candidate now uses it, so none of them is being judged on its colour space.",
+  },
+  {
+    title: "The fallback has to be declared first, not last",
+    body: "Painting a gradient through glyphs means the element's own colour goes transparent, and a transparent colour is an invisible name anywhere the clip does not apply. So the solid near-white is unconditional and only the @supports block takes it away. The failure mode of the decoration is losing the decoration, never losing the name.",
+  },
+  {
+    title: "A gradient's contrast is its worst stop",
+    body: "Averaging the stops would report a comfortable number for a ramp that bottoms out below the floor somewhere in the middle of the word. The probe reports the minimum instead, which is the only figure that describes what a reader actually has to read. All four clear 4.5:1 as built — the spectrum's violet stop is the tightest at just over 5:1, and it is the stop any future edit should be checked against.",
+  },
+];
+
+const constraints = [
+  {
+    title: "It is allowed on exactly one element",
+    body: "Used once it is a signature; used twice it is a theme. Whichever candidate wins, the name in the hero is the only place it appears — not on section headings, not on the lab, not on a second page.",
+  },
+  {
+    title: "It has to survive the accent pair",
+    body: "Two accents plus a multi-hue wordmark is a lot of colour for one page. B and C spend nothing extra because they are the accents; D asks the page to hold eight hues at once.",
+  },
+  {
+    title: "It cannot be the only signal",
+    body: "The name is a name. It carries no state and links nowhere, so the fill is decoration in the strict sense — which is exactly why it is permitted to use the decoration hue and exactly why nothing may come to depend on it.",
+  },
+  {
+    title: "The text stays text",
+    body: "Real characters, selectable, in the document, with a solid colour underneath the fill. No image, no SVG outline, no duplicate layer for screen readers to read twice.",
+  },
+];
+---
+
+<LabLayout
+  title="The hero signature"
+  eyebrow="Experiment 02 · open"
+  intro="The design plan reserved a multi-hue gradient for exactly one element — the name in the hero — and then deliberately left it undecided until there was a real home page to tune it against. Four fills, one of them no fill at all, rendered at the size they would actually ship at."
+>
+  <Section
+    id="record"
+    title="Record"
+    note="Open, not settled. These values describe the comparison as it stands; the result row stays empty until the looking is done."
+  >
+    <dl
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+    >
+      {
+        record.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="hypothesis"
+    title="Hypothesis"
+    note="Written before looking, so that it can be wrong in public."
+  >
+    <div class="max-w-measure space-y-4 text-lg leading-relaxed text-muted">
+      <p>
+        The gradient earns its place only if it reads as <em class="text-ink not-italic"
+          >this palette at its loudest</em
+        >, not as a different palette visiting. That predicts B or C wins and D
+        loses — D is the prettiest in isolation and the one most likely to look
+        borrowed, because it is borrowed.
+      </p>
+      <p>
+        The control is the real threat. The site&rsquo;s whole argument is that
+        bright colour lives on edges and rims and never on large fills, and the
+        hero name is the largest fill on the site. A signature that contradicts
+        the rule it sits inside is not a signature, it is a leak.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    id="candidates"
+    title="Candidates"
+    note="Each band is the hero as it would ship. Scroll them at full width, on a phone, before reading anything below."
+  >
+    <div class="space-y-6">
+      {
+        candidates.map((candidate) => (
+          <article class="overflow-hidden rounded-xl border border-border bg-surface">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border px-5 py-3">
+              <h3 class="label !text-ink">{candidate.name}</h3>
+              <p class="font-mono text-xs tracking-tight text-dim">
+                {candidate.claim}
+              </p>
+            </div>
+
+            <div class="glow bg-bg px-6 py-16 sm:px-10 sm:py-20">
+              <p class="label !text-accent">Portfolio &amp; lab notes</p>
+              <h4
+                class="mt-4 font-display text-5xl leading-[1.02] font-bold tracking-tight sm:text-7xl"
+              >
+                <span class="signature" data-candidate={candidate.id}>
+                  Rey&rsquo;s Lab
+                </span>
+              </h4>
+              <p class="mt-6 max-w-measure text-lg leading-relaxed text-muted">
+                Placeholder positioning line, here so the name is judged with
+                something underneath it rather than floating alone.
+              </p>
+            </div>
+
+            <div class="border-t border-border px-5 py-4">
+              <p class="max-w-measure text-sm leading-relaxed text-muted">
+                {candidate.note}
+              </p>
+              <p
+                class="mt-3 font-mono text-xs tracking-tight text-dim"
+                data-worst={candidate.stops.join(",")}
+              >
+                measuring&hellip;
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="method"
+    title="Method"
+    note="Design a comparison so one thing moves. Experiment 01 learned this the expensive way."
+  >
+    <ol class="max-w-measure space-y-4">
+      {
+        method.map((step, index) => (
+          <li class="flex gap-4">
+            <span class="label !text-warm shrink-0 pt-1.5">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <p class="leading-relaxed text-muted">{step}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section
+    id="constraints"
+    title="What the winner has to accept"
+    note="These hold whichever candidate wins, and they are the reason the question is narrow enough to answer by looking."
+  >
+    <div class="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+      {
+        constraints.map((constraint) => (
+          <div class="bg-surface px-5 py-5">
+            <h3 class="font-display text-base font-semibold tracking-tight text-ink">
+              {constraint.title}
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-muted">
+              {constraint.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="notes"
+    title="Notes from building it"
+    note="Not the result. These are what the comparison turned up about itself while it was being assembled — which is most of what a lab is for."
+  >
+    <div class="space-y-5">
+      {
+        notes.map((item) => (
+          <article class="rounded-xl border border-border bg-surface px-5 py-5">
+            <h3 class="font-display text-lg font-semibold tracking-tight text-ink">
+              {item.title}
+            </h3>
+            <p class="mt-2 max-w-measure leading-relaxed text-muted">
+              {item.body}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="result"
+    title="Result"
+    note="Empty on purpose. It gets filled in by looking, and then this page freezes like experiment 01."
+  >
+    <p class="max-w-measure leading-relaxed text-muted">
+      Undecided as of {opened}. When it settles, the winner moves to the home
+      page and the losing fills stay here, scoped to this page, in the same way
+      navy and jungle stayed on experiment 01.
+    </p>
+  </Section>
+</LabLayout>
+
+<style>
+  /**
+   * The mechanics, once, for all four candidates.
+   *
+   * `background-clip: text` paints the gradient through the glyphs, which means
+   * the element's own `color` has to go transparent — and a transparent colour
+   * is an invisible name anywhere the clip does not apply. So the solid colour
+   * is declared first and unconditionally, and only the @supports block takes
+   * it away. Anything that cannot clip gets near-white text and loses nothing
+   * but the decoration.
+   */
+  .signature {
+    color: var(--lab-ink);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .signature[data-candidate="pair"],
+    .signature[data-candidate="triad"],
+    .signature[data-candidate="spectrum"] {
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      /* The gradient is sized and positioned against the text box itself, so a
+         two-word name does not get a different slice of the ramp than a
+         one-word name would. */
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      /* Clipped text loses the antialiasing hint it would inherit from body, and
+         at 72px the difference shows up as furred edges on the light stops. */
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* All three interpolate `in oklab`, and this is not a detail.
+       sRGB interpolates by channel, so a ramp between two hues far apart on
+       the wheel sinks through a desaturated middle on the way. Cyan to gold is
+       the worst case in this set — in sRGB its midpoint lands on a grey-green
+       that looks like a mistake, which would have lost B the comparison for a
+       reason that has nothing to do with B. Oklab holds chroma across the
+       middle, so every candidate is judged as the idea rather than as sRGB's
+       opinion of it. */
+
+    .signature[data-candidate="pair"] {
+      background-image: linear-gradient(
+        100deg in oklab,
+        var(--lab-accent-1),
+        var(--lab-accent-2)
+      );
+    }
+
+    .signature[data-candidate="triad"] {
+      background-image: linear-gradient(
+        100deg in oklab,
+        var(--lab-accent-1),
+        var(--lab-decor) 52%,
+        var(--lab-accent-2)
+      );
+    }
+
+    .signature[data-candidate="spectrum"] {
+      background-image: linear-gradient(
+        100deg in oklab,
+        #7cf3d4,
+        #3bb8f5,
+        #9b6cff,
+        #ff4fb8,
+        #ff8a3d,
+        #ffd23f
+      );
+    }
+  }
+</style>
+
+<script>
+  /**
+   * A gradient is only as legible as its worst stop, so that is what gets
+   * reported — an average would hide exactly the failure worth catching. Values
+   * are resolved out of the live cascade through a probe rather than restated
+   * in JavaScript, the same way /lab/colour does it, so a token edit moves the
+   * numbers here without anyone remembering to.
+   */
+  const probe = document.createElement("span");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText =
+    "position:absolute;width:0;height:0;opacity:0;pointer-events:none";
+  document.body.append(probe);
+
+  function resolve(value: string): [number, number, number] {
+    probe.style.color = value.startsWith("--") ? `var(${value})` : value;
+    const parts = getComputedStyle(probe).color.match(/[\d.]+/g);
+    if (!parts || parts.length < 3) return [0, 0, 0];
+    return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+  }
+
+  function luminance([r, g, b]: [number, number, number]): number {
+    const channel = (value: number) => {
+      const v = value / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  }
+
+  function ratio(
+    fg: [number, number, number],
+    bg: [number, number, number],
+  ): number {
+    const a = luminance(fg);
+    const b = luminance(bg);
+    return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  }
+
+  const background = resolve("--lab-bg");
+
+  for (const node of document.querySelectorAll<HTMLElement>("[data-worst]")) {
+    const stops = node.dataset.worst!.split(",");
+    let worst = Infinity;
+    let at = stops[0];
+
+    for (const stop of stops) {
+      const value = ratio(resolve(stop), background);
+      if (value < worst) {
+        worst = value;
+        at = stop;
+      }
+    }
+
+    const label = stops.length > 1 ? `worst stop ${at}` : at;
+    const grade =
+      worst >= 4.5
+        ? "AA · any size"
+        : worst >= 3
+          ? "AA · large text only"
+          : "fails at any size";
+
+    node.textContent = `${worst.toFixed(2)}:1 · ${label} · ${grade}`;
+    node.style.color =
+      worst >= 4.5
+        ? "var(--lab-accent-2)"
+        : worst >= 3
+          ? "var(--lab-muted)"
+          : "var(--lab-warn)";
+  }
+</script>

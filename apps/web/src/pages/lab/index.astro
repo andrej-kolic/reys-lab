@@ -2,6 +2,11 @@
 import LabLayout from "../../layouts/LabLayout.astro";
 import Section from "../../components/lab/Section.astro";
 import pkg from "../../../package.json";
+import { routeCount } from "../../lib/routes";
+
+// Counted rather than typed. The readout's whole claim is that these are real
+// build values, and a hand-maintained route count is the one number on it that
+// would quietly go stale the next time a page is added.
 
 const sections = [
   {
@@ -28,6 +33,12 @@ const sections = [
     label: "Settled · 2026-09-20",
     body: "Choosing a palette. Four built, three judged at full-screen scale, violet c won. Frozen: the losing palettes still render there and nowhere else.",
   },
+  {
+    href: "/lab/experiments/02-the-hero-signature",
+    title: "Experiment 02",
+    label: "Open · 2026-09-20",
+    body: "The hero signature. Whether the name carries a multi-hue gradient, and drawn from what — four fills including no fill at all, at the size they would ship at.",
+  },
 ];
 
 const readout = [
@@ -38,7 +49,7 @@ const readout = [
   { label: "Palette", value: "violet c" },
   { label: "Output", value: "static / no adapter" },
   { label: "Status", value: "building" },
-  { label: "Routes", value: "6" },
+  { label: "Routes", value: String(routeCount) },
   // Kept to a multiple of three: the grid draws its gaps with a background
   // colour, so a half-filled last row shows up as a bare slab.
   { label: "AA floor", value: "4.5:1 held" },

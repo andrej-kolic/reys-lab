@@ -14,13 +14,19 @@ const sections = [
     href: "/lab/colour",
     title: "Colour",
     label: "02 / Palette",
-    body: "Three themes at full-screen scale, each at the darkness settled for it, every token as a swatch, a contrast matrix computed live against WCAG AA (the minimum text-contrast standard), and a glow ramp.",
+    body: "The settled palette — violet c — as live token swatches, a contrast matrix computed in the page against WCAG AA (the minimum text-contrast standard), the accent policy, and a glow ramp.",
   },
   {
     href: "/lab/components",
     title: "Components",
     label: "03 / Parts",
     body: "The pieces that actually recur: project card, post list item, micro-label, code block, link states, timeline node.",
+  },
+  {
+    href: "/lab/experiments/01-choosing-a-palette",
+    title: "Experiment 01",
+    label: "Settled · 2026-09-20",
+    body: "Choosing a palette. Four built, three judged at full-screen scale, violet c won. Frozen: the losing palettes still render there and nowhere else.",
   },
 ];
 
@@ -29,10 +35,10 @@ const readout = [
   { label: "Astro", value: pkg.dependencies.astro.replace("catalog:", "7.3.3") },
   { label: "Tailwind", value: pkg.dependencies.tailwindcss.replace(/^[\^~]/, "") },
   { label: "Typeface", value: "Outfit + Plex Mono" },
-  { label: "Theme candidates", value: "3" },
+  { label: "Palette", value: "violet c" },
   { label: "Output", value: "static / no adapter" },
-  { label: "Status", value: "deciding" },
-  { label: "Routes", value: "5" },
+  { label: "Status", value: "building" },
+  { label: "Routes", value: "6" },
   // Kept to a multiple of three: the grid draws its gaps with a background
   // colour, so a half-filled last row shows up as a bare slab.
   { label: "AA floor", value: "4.5:1 held" },
@@ -42,7 +48,7 @@ const readout = [
 <LabLayout
   title="The Lab"
   eyebrow="Design playground"
-  intro="Every design question left on this project is a perceptual one, and prose is a bad instrument for perceptual questions. So: render the candidates, deploy them, look at them on a phone, and let the winner be obvious. The switcher at the top applies a theme across every page here."
+  intro="Perceptual questions need an instrument, not an argument. So: render the candidates, deploy them, look at them on a phone, and let the winner be obvious. Type and palette went that way and are settled; what is settled lives here as a specimen, and what it was settled over is kept as a dated experiment."
 >
   <Section
     id="readout"
@@ -87,12 +93,11 @@ const readout = [
   <Section
     id="open"
     title="Still open"
-    note="What this playground exists to settle. Decided by looking, not by arguing."
+    note="What this playground exists to settle. Decided by looking, not by arguing. Palette and type are no longer on this list."
   >
     <ul class="max-w-measure space-y-3 text-muted">
       {
         [
-          "Theme — violet, navy or jungle. The identity decision, and the last one blocking real pages.",
           "Whether the gradient signature on the hero name earns its place.",
           "How far to push the lab concept before it tips into cringe.",
         ].map((item) => (

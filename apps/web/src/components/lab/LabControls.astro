@@ -1,31 +1,17 @@
 ---
 /**
- * The global candidate switcher.
+ * The lab's instrument bar.
  *
- * Every remaining design question in the design plan is perceptual, so the
- * playground has to let any font pairing be judged against any theme at
- * full-screen scale — not as a swatch. The buttons set `data-theme` on
- * `<html>`; the token layer in global.css does the rest. Persisted to
- * localStorage so a decision survives a page change.
+ * It was a candidate switcher — theme, shade and glow, persisted to
+ * localStorage. All three are settled now (violet c, folded shades, glow .28),
+ * so there is nothing left to switch and the controls are gone. What remains is
+ * the readout, which reports the settled values instead of claiming them: the
+ * palette name and both accent names are read back out of the live cascade, so
+ * this line cannot disagree with global.css.
  *
- * Theme is the only axis left. Shade was the second one — how dark a hue
- * family sits — and it is settled per theme: violet c, navy a, jungle a, now
- * folded into the themes themselves. Glow is settled at .28. Neither has a
- * control any more, the same as type and the accent policy; glow stays in the
- * readout because a locked value is still worth seeing beside the open one.
+ * The candidates themselves are not lost, they are quarantined — see
+ * /lab/experiments/01-choosing-a-palette.
  */
-
-const groups = [
-  {
-    key: "theme",
-    title: "Theme",
-    options: [
-      { value: "violet", label: "Violet", hint: "Violet mass, gold light" },
-      { value: "navy", label: "Navy", hint: "Navy mass, mint light" },
-      { value: "jungle", label: "Jungle", hint: "Teal mass, lime light" },
-    ],
-  },
-] as const;
 ---
 
 <div
@@ -33,7 +19,7 @@ const groups = [
   data-lab-controls
 >
   <div
-    class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3"
+    class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3"
   >
     <a
       href="/lab"
@@ -41,102 +27,34 @@ const groups = [
       >Rey&rsquo;s Lab</a
     >
 
-    {
-      groups.map((group) => (
-        <div class="flex items-center gap-2">
-          <span class="label">{group.title}</span>
-          <div
-            class="flex overflow-hidden rounded-md border border-border"
-            role="group"
-            aria-label={`${group.title} candidate`}
-            data-control={group.key}
-          >
-            {group.options.map((option) => (
-              <button
-                type="button"
-                data-value={option.value}
-                title={option.hint}
-                aria-pressed="false"
-                class="cursor-pointer border-r border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-muted transition-colors duration-150 last:border-r-0 hover:bg-raised/60 hover:text-ink aria-pressed:bg-accent aria-pressed:text-void aria-pressed:font-semibold"
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))
-    }
-
     <output
       class="label ml-auto !normal-case !tracking-normal !text-muted"
-      data-lab-readout>—</output
+      data-lab-readout>&mdash;</output
     >
   </div>
 </div>
 
 <script>
-  const root = document.documentElement;
-  const KEYS = ["theme", "glow"] as const;
-  type Key = (typeof KEYS)[number];
+  const styles = getComputedStyle(document.documentElement);
+  const value = (name: string) =>
+    styles.getPropertyValue(name).trim().replace(/"/g, "");
 
-  const NAMES: Record<Key, Record<string, string>> = {
-    theme: { violet: "Violet", navy: "Navy", jungle: "Jungle" },
-    glow: { "0.12": "glow .12", "0.28": "glow .28", "0.5": "glow .50", "0.8": "glow .80" },
-  };
-
-  function readout() {
-    const node = document.querySelector("[data-lab-readout]");
-    if (!node) return;
-    const [theme, glow] = KEYS.map(
-      (key) => NAMES[key][root.dataset[key] ?? ""] ?? "?",
-    );
-
-    // Each theme names its own accents, so read those back out of the cascade
-    // rather than hardcoding "cyan + gold" for every theme.
-    const styles = getComputedStyle(root);
-    const accentLabel = [1, 2]
-      .map((n) =>
-        styles.getPropertyValue(`--lab-accent-${n}-name`).trim().replace(/"/g, ""),
-      )
+  const node = document.querySelector("[data-lab-readout]");
+  if (node) {
+    // Each accent names itself in the token layer, so the pair is reported
+    // rather than hardcoded — the same reason the palette names itself.
+    const accents = [1, 2]
+      .map((n) => value(`--lab-accent-${n}-name`))
       .filter(Boolean)
       .join(" + ");
 
-    node.textContent = `${theme} · Outfit · ${accentLabel} · ${glow}`;
+    node.textContent = [
+      value("--lab-theme-name"),
+      "Outfit",
+      accents,
+      `glow ${value("--glow-strength")}`,
+    ]
+      .filter(Boolean)
+      .join(" \u00b7 ");
   }
-
-  function sync() {
-    for (const key of KEYS) {
-      const current = root.dataset[key];
-      const group = document.querySelector(`[data-control="${key}"]`);
-      if (!group) continue;
-      for (const button of group.querySelectorAll("button")) {
-        button.setAttribute(
-          "aria-pressed",
-          String(button.dataset.value === current),
-        );
-      }
-    }
-    readout();
-  }
-
-  function apply(key: Key, value: string) {
-    root.dataset[key] = value;
-    try {
-      localStorage.setItem(`lab:${key}`, value);
-    } catch {
-      // Private browsing — the choice just does not persist.
-    }
-    sync();
-  }
-
-  document.addEventListener("click", (event) => {
-    const button = (event.target as HTMLElement | null)?.closest("button");
-    const group = button?.closest<HTMLElement>("[data-control]");
-    if (!button || !group) return;
-    const key = group.dataset.control as Key | undefined;
-    if (!key || !button.dataset.value) return;
-    apply(key, button.dataset.value);
-  });
-
-  sync();
 </script>

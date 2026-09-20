@@ -5,7 +5,8 @@
 
    Everything is a CSS custom property so that swapping a candidate palette or
    font pairing is a one-line change and so that `/lab` can render several
-   candidates on one page by setting `data-theme` on a wrapper.
+   candidates on one page by setting `data-theme` on a wrapper — which only
+   the frozen palette experiment still does.
 
    Layering, outermost first:
      1. --lab-*  raw palette values (one set per theme)
@@ -13,29 +14,19 @@
      3. @theme   the Tailwind mapping — the only names pages should use
    ========================================================================= */
 
-/* ── Theme candidates ─────────────────────────────────────────────
-   One axis now: `data-theme` picks the hue family, which is the identity
-   decision. The shade axis is gone — each theme carries the darkness that won
-   for it (violet c, navy a, jungle a), folded into the theme itself.
+/* ── Palette ─────────────────────────────────────────────────────
+   Settled 2026-09-20: violet, shade c. Navy and jungle lost, and the axis that
+   compared them is gone with them — the site has one palette, declared once.
 
-   Values are sampled from the reference frames, then put on one shared
-   lightness ladder: only hue and saturation differ between themes, so the
-   switcher compares hue rather than brightness. The Kurzgesagt rule holds in
-   all three — the mass is never neutral black, it always carries hue.
+   The two losing candidates are not deleted, they are quarantined: they live in
+   experiment-01-palette.css, which only /lab/experiments/01-choosing-a-palette
+   imports. Nothing in the site's token layer can reach them, so no component
+   built from here on has to survive a palette the site never renders.
 
-   The `:root` fallback must stay FIRST in source order: it has the same
-   specificity as nothing else here, and a later copy would win over the theme
-   blocks. With a single axis the plain attribute selector matches whether
-   `data-theme` sits on <html> or on a band inside /lab/colour, so the compound
-   and descendant forms the two-axis version needed are gone too. */
+   Sampled from the supernova and canyon-portal frames. The Kurzgesagt rule
+   holds: the mass is never neutral black, it always carries hue. */
 
-/* Violet · category 1
-   Deep violet mass, warm gold light, magenta and cyan rims. Sampled
-   from the supernova and canyon-portal frames. Shade c: same darkness as the
-   original base, cooler hue. */
-
-:root,
-[data-theme="violet"] {
+:root {
   --lab-void: #100c24;
   --lab-bg: #191233;
   --lab-surface: #241e47;
@@ -57,64 +48,10 @@
   --lab-warm: var(--lab-accent-2);
   --lab-glow-a: var(--lab-accent-1);
   --lab-glow-b: var(--lab-decor);
-}
 
-/* Navy · category 2
-   Navy-indigo mass lit by cyan-mint, gold sparks. From the black-hole
-   and Mars-from-space frames. Cooler and less saturated than violet — the
-   reference mass measures 43% saturation against violet’s 84%. Shade a. */
-
-[data-theme="navy"] {
-  --lab-void: #0d0f23;
-  --lab-bg: #141631;
-  --lab-surface: #202445;
-  --lab-raised: #2c3368;
-  --lab-border: #353a75;
-  --lab-line: #564996;
-  --lab-ink: #eceefa;
-  --lab-muted: #aaafcf;
-  --lab-dim: #9ca1bd;
-  --lab-code-bg: #101229;
-
-  --lab-accent-1: #5ee9b5; /* mint — interaction: links, focus, active */
-  --lab-accent-2: #ffcf4d; /* gold — state: current, highlight, primary */
-  --lab-decor: #8b8cf7;   /* glow and edges only, never a text colour */
-  --lab-warn: #ff6b81;
-  --lab-accent-1-name: "mint";
-  --lab-accent-2-name: "gold";
-  --lab-accent: var(--lab-accent-1);
-  --lab-warm: var(--lab-accent-2);
-  --lab-glow-a: var(--lab-accent-1);
-  --lab-glow-b: var(--lab-decor);
-}
-
-/* Jungle · category 3
-   Teal-blue mass under a chartreuse sky, amber points, magenta flora.
-   From the alien-jungle and reactor-jungle frames. The only candidate whose
-   mass is not violet at all. Shade a. */
-
-[data-theme="jungle"] {
-  --lab-void: #0c1c24;
-  --lab-bg: #132732;
-  --lab-surface: #1f3a46;
-  --lab-raised: #254b5d;
-  --lab-border: #335f77;
-  --lab-line: #466799;
-  --lab-ink: #ebf7fb;
-  --lab-muted: #b0cad5;
-  --lab-dim: #a3bbc4;
-  --lab-code-bg: #0f212a;
-
-  --lab-accent-1: #a8e85c; /* lime — interaction: links, focus, active */
-  --lab-accent-2: #ffb545; /* amber — state: current, highlight, primary */
-  --lab-decor: #ff7bb8;   /* glow and edges only, never a text colour */
-  --lab-warn: #ff6250;
-  --lab-accent-1-name: "lime";
-  --lab-accent-2-name: "amber";
-  --lab-accent: var(--lab-accent-1);
-  --lab-warm: var(--lab-accent-2);
-  --lab-glow-a: var(--lab-accent-1);
-  --lab-glow-b: var(--lab-decor);
+  /* Named so the lab readout can state the settled palette without hardcoding
+     it in a component — the readout is meant to report, not to claim. */
+  --lab-theme-name: "violet c";
 }
 
 /* ── Accent policy ──────────────────────────────────────────────
@@ -139,11 +76,12 @@
        also gets weight or an underline — roughly 8% of men cannot reliably
        separate these hues.
 
-   Each theme supplies its own pair and binds these itself, so a band carrying
-   its own data-theme shows that theme's accents rather than the root's. The
-   binding has to live inside each theme: declared once on :root,
-   `var(--lab-accent-1)` would resolve there and inherit down as a fixed colour,
-   which is how the violet band once ended up wearing the jungle theme's lime. */
+   The bindings below live beside the palette rather than on their own, so that
+   a wrapper carrying its own data-theme — which now happens only on the frozen
+   palette experiment — shows that palette's accents rather than the root's. A
+   binding declared once on :root would resolve there and inherit down as a
+   fixed colour, which is how the violet band once ended up wearing jungle's
+   lime. */
 
 /* ── Type ────────────────────────────────────────────────────────
    Settled 2026-09-19. Outfit carries display and text, IBM Plex Mono carries
@@ -159,8 +97,8 @@
 /* ── Tailwind mapping ─────────────────────────────────────────────────────
    `inline` matters: it makes utilities resolve --lab-* at the element rather
    than at :root, which is what lets a `<div data-theme="navy">` wrapper restyle
-   its whole subtree. Without it the candidates could only be compared by
-   switching the whole document. */
+   its whole subtree. The site no longer needs that, but the frozen palette
+   experiment does — it is the whole mechanism that page runs on. */
 
 @theme inline {
   --color-void: var(--lab-void);
@@ -255,16 +193,14 @@
 }
 
 /* ── Glow strength ─────────────────────────────────────────────
-   One value to pick, not a set of states — nothing here uses glow for hover or
-   disabled. Settled at .28; the other three are kept only so the ramp on
-   /lab/colour still demonstrates the range. The ramp sets --glow-strength
-   inline per card,
-   which beats this and so keeps working independently of the switcher. */
+   Settled 2026-09-20 at .28. One value, not a set of states — nothing here
+   uses glow for hover or disabled. The ramp on /lab/colour sets
+   --glow-strength inline per card, which beats this and so still shows the
+   range that was rejected. */
 
-[data-glow="0.12"] { --glow-strength: 0.12; }
-[data-glow="0.28"] { --glow-strength: 0.28; }
-[data-glow="0.5"]  { --glow-strength: 0.5; }
-[data-glow="0.8"]  { --glow-strength: 0.8; }
+:root {
+  --glow-strength: 0.28;
+}
 
 /* Ambient glow — the reference's "bloom", translated to interface.
    Sits behind content, never over text. */

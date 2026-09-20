@@ -1,0 +1,255 @@
+---
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+
+/**
+ * A finished experiment. It is dated, it has a result, and it does not track
+ * the site — see the header of experiment-01-palette.css, which carries the
+ * three candidate palettes and is imported by this page alone.
+ *
+ * The bands below were the actual instrument: a palette reads completely
+ * differently as a 64px swatch than it does filling a screen, so each candidate
+ * got a full band of real content rather than a row of chips.
+ */
+import "../../../styles/experiment-01-palette.css";
+
+const settled = "2026-09-20";
+
+const candidates = [
+  {
+    id: "violet",
+    name: "Violet · category 1",
+    verdict: "Winner",
+    note: "Violet mass, warm gold light, magenta and cyan rims. Sampled from the supernova and canyon-portal frames.",
+  },
+  {
+    id: "navy",
+    name: "Navy · category 2",
+    verdict: "Rejected",
+    note: "Navy-indigo mass lit by cyan-mint, with gold sparks. Measurably calmer: the reference mass is 43% saturated where violet is 84%.",
+  },
+  {
+    id: "jungle",
+    name: "Jungle · category 3",
+    verdict: "Rejected",
+    note: "Teal-blue mass under a chartreuse sky, amber points, magenta flora. The only candidate whose mass was not violet at all.",
+  },
+];
+
+const record = [
+  { label: "Settled", value: settled },
+  { label: "Result", value: "violet · shade c" },
+  { label: "Candidates", value: "4 built, 3 judged" },
+  { label: "Axes", value: "hue × darkness" },
+  { label: "Pairs checked", value: "240" },
+  { label: "AA floor", value: "4.5:1 held" },
+];
+
+const findings = [
+  {
+    title: "The two axes were not independent",
+    body: "The first three candidates were labelled as different palettes, but their base colours sat 1.1° apart in hue. They were testing darkness while claiming to test palette, which is why looking at them settled nothing. Splitting hue and darkness into separate axes — theme and shade — was what made the comparison answerable at all.",
+  },
+  {
+    title: "A fourth candidate was built and rejected for what it cost",
+    body: "Split was a warm/cool scheme: orange glow from below under an indigo sky. Its identity was the split itself rather than the mass, and it was the only candidate that needed the glow's position and height parameterised to exist. A candidate that needs new machinery is paying for itself twice, so it went, and the machinery went with it.",
+  },
+  {
+    title: "The contrast matrix caught a live accessibility failure",
+    body: "The 11px micro-labels were running at 3.26:1 on raised surfaces — a real WCAG AA failure, shipped, in the palette this site was already using. Fixed from both ends: brighten the label as far as it can go while staying quieter than the prose above it, then darken the surface for the rest. This is the entire argument for computing contrast in the page instead of eyeballing swatches.",
+  },
+  {
+    title: "The glow scrolled sideways on a phone",
+    body: "The ambient glow bleeds 10% past its container by design, which is fine until the container is the width of a 360px screen — then it is horizontal scroll on every page. Found by looking at it on a phone, which is the only way this class of bug is ever found.",
+  },
+];
+---
+
+<LabLayout
+  title="Choosing a palette"
+  eyebrow="Experiment 01 · settled"
+  intro="Four palettes were built, three were judged at full-screen scale, and violet c won. This page is the record of that decision, kept as it stood on the day it was made. The two losing palettes still render here and nowhere else on the site."
+>
+  <Section
+    id="record"
+    title="Record"
+    note="A finished experiment, not a live control panel. These numbers describe the day the decision was made and are not expected to move again."
+  >
+    <dl
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+    >
+      {
+        record.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="hypothesis"
+    title="Hypothesis"
+    note="Written before the candidates were built, so that building them could disprove it."
+  >
+    <div class="max-w-measure space-y-4 leading-relaxed text-muted">
+      <p>
+        That the base colour is the identity decision, and that a base which
+        carries hue beats a neutral black by a margin large enough to see
+        without being told — the one lesson the colour reference actually
+        transfers to an interface.
+      </p>
+      <p>
+        And that the choice between hues cannot be made in prose. Arguing about
+        a palette produces adjectives; the only instrument that answers a
+        perceptual question is the thing itself, at the size it will be used, on
+        the device it will be read on.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    id="candidates"
+    title="Candidates"
+    note="Each palette gets a full band of real content, because a base colour reads completely differently as a swatch than it does filling a screen. Body text stays near-white at full contrast in all three — what changes underneath it is the mass."
+  >
+    <div class="space-y-5" data-exp="palette">
+      {
+        candidates.map((candidate) => (
+          <div
+            data-theme={candidate.id}
+            class="glow overflow-hidden rounded-xl border border-border bg-bg"
+          >
+            <div class="px-6 pt-8 pb-10 sm:px-10">
+              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <p class="label !text-accent">{candidate.name}</p>
+                <p class="label" data-verdict={candidate.verdict}>
+                  {candidate.verdict}
+                </p>
+              </div>
+              <h3 class="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+                Experiments, and what they cost
+              </h3>
+              <p class="mt-4 max-w-measure leading-relaxed text-muted">
+                {candidate.note}
+              </p>
+
+              <div class="mt-8 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-xl border border-border bg-surface p-5">
+                  <p class="label">Experiment 02 · Shipped</p>
+                  <h4 class="mt-2.5 font-display text-lg font-semibold">
+                    Grounder
+                  </h4>
+                  <p class="mt-1.5 text-sm leading-relaxed text-muted">
+                    A CLI that links a project to a local markdown vault so an
+                    agent keeps its memory between sessions.
+                  </p>
+                </div>
+                <div class="rounded-xl border border-border bg-surface p-5">
+                  <p class="label">Readout</p>
+                  <dl class="mt-2.5 space-y-1.5 font-mono text-sm tabular-nums">
+                    <div class="flex justify-between">
+                      <dt class="text-dim">Build</dt>
+                      <dd class="text-ink">3.41 s</dd>
+                    </div>
+                    <div class="flex justify-between">
+                      <dt class="text-dim">Output</dt>
+                      <dd class="text-ink">0.35 KiB</dd>
+                    </div>
+                    <div class="flex justify-between">
+                      <dt class="text-dim">Adapters</dt>
+                      <dd class="text-warm">0</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="method"
+    title="Method"
+    note="Four rules, three of which only became obvious after breaking them."
+  >
+    <ol
+      class="max-w-measure list-inside list-decimal space-y-3 leading-relaxed text-muted marker:font-mono marker:text-dim"
+    >
+      <li>
+        Move one variable at a time. A comparison that changes two things
+        answers nothing, however carefully it is looked at.
+      </li>
+      <li>
+        Judge at the size it ships at, with real content in it — headings,
+        prose, cards, micro-labels — never as a swatch.
+      </li>
+      <li>
+        Hold everything else constant. All candidates sit on one shared
+        lightness ladder, so only hue and saturation differ between them.
+      </li>
+      <li>
+        Compute the contrast rather than trusting it, and do it in the page
+        against the live cascade, so the numbers cannot drift from the palette
+        they describe.
+      </li>
+    </ol>
+  </Section>
+
+  <Section
+    id="result"
+    title="Result"
+    note="Violet, shade c. Now the site's only palette, declared once in global.css."
+  >
+    <div class="max-w-measure space-y-4 leading-relaxed text-muted">
+      <p>
+        Violet won by the rule this experiment was set up to apply: the palette
+        that wins is the one you stop noticing, judged at full-screen scale with
+        real content in it rather than as a swatch.
+      </p>
+      <p>
+        Shade c over the original base: the same darkness, a cooler hue. The
+        darkness was never the identity question — it is a trim, and settling it
+        per palette rather than as its own switch removed an axis that had been
+        producing false comparisons.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    id="findings"
+    title="What it turned up"
+    note="The decision was the point. These were the by-products, and two of them were live bugs."
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+      {
+        findings.map((finding) => (
+          <div class="rounded-xl border border-border bg-surface p-5">
+            <h3 class="font-display text-lg font-semibold tracking-tight text-balance">
+              {finding.title}
+            </h3>
+            <p class="mt-2.5 text-sm leading-relaxed text-muted">
+              {finding.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+</LabLayout>
+
+<style>
+  /* The verdict label is the one place on this page where colour carries
+     information, so it follows the accent policy: warm marks state. Weight
+     carries it too — colour is never the only signal. */
+  [data-verdict="Winner"] {
+    color: var(--lab-warm);
+    font-weight: 700;
+  }
+</style>

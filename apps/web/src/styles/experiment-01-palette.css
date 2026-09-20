@@ -1,0 +1,110 @@
+/* ============================================================================
+   Experiment 01 · the palette candidates, as they stood on 2026-09-20.
+
+   THIS FILE IS A RECORD, NOT A TOKEN SOURCE.
+
+   These are the three candidates the palette decision was made between. Violet
+   c won and now lives in global.css as the site's only palette; navy a and
+   jungle a are kept here so the comparison can still be seen rather than
+   described. Violet is repeated below so the experiment page shows all three
+   under identical rules.
+
+   Do not update these values to match the site. If global.css moves on, this
+   file is *supposed* to fall behind — it documents a decision made on a date,
+   and a record that gets edited to stay current stops being a record. If a
+   future palette question comes up, it gets its own experiment and its own
+   file.
+
+   Imported by exactly one page: /lab/experiments/01-choosing-a-palette. Every
+   selector is scoped under [data-exp="palette"] so nothing here can reach the
+   rest of the site — which is what makes keeping the losers free. They are not
+   in the cascade any component lives in, so no component has to survive them.
+
+   The mechanism: @theme inline in global.css resolves --lab-* at the element
+   rather than at :root, so a wrapper carrying data-theme restyles its whole
+   subtree. That is the only reason these bands can sit on one page.
+   ========================================================================= */
+
+/* Violet · category 1 — the winner. Shade c: same darkness as the original
+   base, cooler hue. Deep violet mass, warm gold light, magenta and cyan rims.
+   Sampled from the supernova and canyon-portal frames. */
+
+[data-exp="palette"] [data-theme="violet"] {
+  --lab-void: #100c24;
+  --lab-bg: #191233;
+  --lab-surface: #241e47;
+  --lab-raised: #33286c;
+  --lab-border: #3f3179;
+  --lab-line: #6b449b;
+  --lab-ink: #edebfb;
+  --lab-muted: #ada8d1;
+  --lab-dim: #9d98be;
+  --lab-code-bg: #140f2a;
+
+  --lab-accent-1: #3bb8f5;
+  --lab-accent-2: #ffd23f;
+  --lab-decor: #ff4fb8;
+  --lab-warn: #ff5470;
+  --lab-accent-1-name: "cyan";
+  --lab-accent-2-name: "gold";
+  --lab-accent: var(--lab-accent-1);
+  --lab-warm: var(--lab-accent-2);
+  --lab-glow-a: var(--lab-accent-1);
+  --lab-glow-b: var(--lab-decor);
+}
+
+/* Navy · category 2 — shade a. Navy-indigo mass lit by cyan-mint, gold sparks.
+   From the black-hole and Mars-from-space frames. Measurably calmer than
+   violet: the reference mass is 43% saturated where violet is 84%. */
+
+[data-exp="palette"] [data-theme="navy"] {
+  --lab-void: #0d0f23;
+  --lab-bg: #141631;
+  --lab-surface: #202445;
+  --lab-raised: #2c3368;
+  --lab-border: #353a75;
+  --lab-line: #564996;
+  --lab-ink: #eceefa;
+  --lab-muted: #aaafcf;
+  --lab-dim: #9ca1bd;
+  --lab-code-bg: #101229;
+
+  --lab-accent-1: #5ee9b5;
+  --lab-accent-2: #ffcf4d;
+  --lab-decor: #8b8cf7;
+  --lab-warn: #ff6b81;
+  --lab-accent-1-name: "mint";
+  --lab-accent-2-name: "gold";
+  --lab-accent: var(--lab-accent-1);
+  --lab-warm: var(--lab-accent-2);
+  --lab-glow-a: var(--lab-accent-1);
+  --lab-glow-b: var(--lab-decor);
+}
+
+/* Jungle · category 3 — shade a. Teal-blue mass under a chartreuse sky, amber
+   points, magenta flora. From the alien-jungle and reactor-jungle frames. The
+   only candidate whose mass was not violet at all. */
+
+[data-exp="palette"] [data-theme="jungle"] {
+  --lab-void: #0c1c24;
+  --lab-bg: #132732;
+  --lab-surface: #1f3a46;
+  --lab-raised: #254b5d;
+  --lab-border: #335f77;
+  --lab-line: #466799;
+  --lab-ink: #ebf7fb;
+  --lab-muted: #b0cad5;
+  --lab-dim: #a3bbc4;
+  --lab-code-bg: #0f212a;
+
+  --lab-accent-1: #a8e85c;
+  --lab-accent-2: #ffb545;
+  --lab-decor: #ff7bb8;
+  --lab-warn: #ff6250;
+  --lab-accent-1-name: "lime";
+  --lab-accent-2-name: "amber";
+  --lab-accent: var(--lab-accent-1);
+  --lab-warm: var(--lab-accent-2);
+  --lab-glow-a: var(--lab-accent-1);
+  --lab-glow-b: var(--lab-decor);
+}

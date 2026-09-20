@@ -17,40 +17,13 @@ const sections = [
   { href: "/lab/type", label: "Type" },
   { href: "/lab/colour", label: "Colour" },
   { href: "/lab/components", label: "Components" },
+  { href: "/lab/experiments/01-choosing-a-palette", label: "Experiment 01" },
 ];
 
 const path = Astro.url.pathname.replace(/\/$/, "") || "/lab";
 ---
 
 <BaseLayout title={`${title} · Rey's Lab`} noindex>
-  <Fragment slot="head">
-    {/* Blocking, before first paint: restoring a saved candidate after paint
-        would flash the wrong palette. Same reason dark mode cannot be an
-        island — see the design plan. */}
-    <script is:inline>
-      (function () {
-        var d = document.documentElement;
-        var defaults = {
-          theme: "violet",
-        };
-        // Locked, so it is set rather than restored — a browser that stored a
-        // losing value back when glow had a control would otherwise be stuck
-        // on it with no way left to change it. Shade needs nothing at all now
-        // that each theme carries its own.
-        d.setAttribute("data-glow", "0.28");
-        for (var key in defaults) {
-          var saved = null;
-          try {
-            saved = localStorage.getItem("lab:" + key);
-          } catch (e) {
-            /* private browsing */
-          }
-          d.setAttribute("data-" + key, saved || defaults[key]);
-        }
-      })();
-    </script>
-  </Fragment>
-
   <LabControls />
 
   <div class="mx-auto max-w-5xl px-5 pb-24">

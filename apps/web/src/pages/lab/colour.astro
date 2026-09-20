@@ -41,24 +41,6 @@ const foregrounds = [
 ];
 const backgrounds = ["--lab-void", "--lab-bg", "--lab-surface", "--lab-raised"];
 
-const themes = [
-  {
-    id: "violet",
-    name: "Violet · category 1",
-    note: "Violet mass, warm gold light, magenta and cyan rims. Sampled from the supernova and canyon-portal frames — this is what the site is now.",
-  },
-  {
-    id: "navy",
-    name: "Navy · category 2",
-    note: "Navy-indigo mass lit by cyan-mint, with gold sparks. Measurably calmer: the reference mass is 43% saturated where violet is 84%.",
-  },
-  {
-    id: "jungle",
-    name: "Jungle · category 3",
-    note: "Teal-blue mass under a chartreuse sky, amber points, magenta flora. The only candidate whose mass is not violet at all.",
-  },
-];
-
 const accentRoles = [
   {
     token: "--lab-accent",
@@ -80,70 +62,12 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 <LabLayout
   title="Colour"
   eyebrow="02 / Palette"
-  intro="The base is never neutral black — it carries hue. That single decision is most of the effect and it costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on large fills and never on body text."
+  intro="Violet c, settled and in use everywhere. The base is never neutral black — it carries hue, which is most of the effect and costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on large fills and never on body text. How this palette was chosen, and what it was chosen over, is experiment 01."
 >
-  <Section
-    id="themes"
-    title="Themes at scale"
-    note="A base colour reads completely differently as a 64px swatch than it does filling a screen, so each theme gets a full band with real content in it. Each carries the darkness settled for it — violet c, navy a, jungle a — so you are comparing hue and nothing else. Scroll slowly — the one that wins is the one you stop noticing."
-  >
-    <div class="space-y-5">
-      {
-        themes.map((theme) => (
-          <div
-            data-theme={theme.id}
-            class="glow overflow-hidden rounded-xl border border-border bg-bg"
-          >
-            <div class="px-6 pt-8 pb-10 sm:px-10">
-              <p class="label !text-accent">{theme.name}</p>
-              <h3 class="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-                Experiments, and what they cost
-              </h3>
-              <p class="mt-4 max-w-measure leading-relaxed text-muted">
-                {theme.note} Body text stays near-white at full contrast on
-                every theme; what changes underneath it is the mass.
-              </p>
-
-              <div class="mt-8 grid gap-4 sm:grid-cols-2">
-                <div class="rounded-xl border border-border bg-surface p-5">
-                  <p class="label">Experiment 02 · Shipped</p>
-                  <h4 class="mt-2.5 font-display text-lg font-semibold">
-                    Grounder
-                  </h4>
-                  <p class="mt-1.5 text-sm leading-relaxed text-muted">
-                    A CLI that links a project to a local markdown vault so an
-                    agent keeps its memory between sessions.
-                  </p>
-                </div>
-                <div class="rounded-xl border border-border bg-surface p-5">
-                  <p class="label">Readout</p>
-                  <dl class="mt-2.5 space-y-1.5 font-mono text-sm tabular-nums">
-                    <div class="flex justify-between">
-                      <dt class="text-dim">Build</dt>
-                      <dd class="text-ink">3.41 s</dd>
-                    </div>
-                    <div class="flex justify-between">
-                      <dt class="text-dim">Output</dt>
-                      <dd class="text-ink">0.35 KiB</dd>
-                    </div>
-                    <div class="flex justify-between">
-                      <dt class="text-dim">Adapters</dt>
-                      <dd class="text-warm">0</dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))
-      }
-    </div>
-  </Section>
-
   <Section
     id="tokens"
     title="Tokens"
-    note="Live values, read back out of the cascade. These follow the theme selected in the switcher above."
+    note="Live values, read back out of the cascade rather than copied from it, so a swatch here can never drift from the token it claims to show."
   >
     <div class="space-y-8">
       {
@@ -418,10 +342,4 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
   paint();
 
-  // The switcher rewrites data-theme on <html>; every number above depends
-  // on it.
-  new MutationObserver(paint).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
 </script>

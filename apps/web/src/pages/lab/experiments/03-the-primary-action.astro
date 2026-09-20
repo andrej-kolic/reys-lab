@@ -1,0 +1,699 @@
+---
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+
+/**
+ * An open experiment, opened because the home page shipped a solid gold CTA
+ * and it read as too loud on first look.
+ *
+ * Two things are actually wrong with the control, and they are separable:
+ *
+ *   1. Perceptual. Gold is the highest-luminance colour in the palette after
+ *      body text. As a filled control it becomes the brightest region on the
+ *      page, which puts the loudest element on a secondary action rather than
+ *      on the name.
+ *
+ *   2. Semantic. The accent policy says cool marks interaction and warm marks
+ *      state — and then lists "the primary button" under warm. On the home
+ *      page gold therefore means *current page* in the nav and *click me* on
+ *      the CTA at the same time. That is precisely the failure the two-accent
+ *      rule was written to prevent.
+ *
+ * One thing moves. Every band renders the same hero, the same copy and the
+ * same secondary button; only the primary button's treatment changes. The
+ * secondary is held fixed deliberately — a primary that cannot out-rank a
+ * constant secondary has failed, and letting it move too would hide that.
+ */
+
+const opened = "2026-09-20";
+
+const record = [
+  { label: "Opened", value: opened },
+  { label: "Status", value: "open · undecided" },
+  { label: "Variable", value: "primary button fill" },
+  { label: "Candidates", value: "7, incl. control" },
+  { label: "Floor", value: "4.5:1 · 11px label" },
+  { label: "Measured", value: "separation + label" },
+];
+
+/**
+ * `fill` names what the candidate paints behind the label; `ink` is the label
+ * colour. Both are read back off the rendered element rather than restated
+ * here — see the note about measuring what is painted.
+ */
+const candidates = [
+  {
+    id: "control",
+    name: "A · Solid gold",
+    claim: "The control. What shipped.",
+    note: "What the home page has now, and the reason this experiment exists. It is unambiguous as a button, which is the whole argument for it: a recruiter scanning for seconds gets one obvious thing to press. It is also the candidate that breaks both rules at once — a large fill in the brightest colour the palette has, in the hue that already means something else three inches above it in the nav.",
+  },
+  {
+    id: "cyan-solid",
+    name: "B · Solid cyan",
+    claim: "Same shape, interaction hue.",
+    note: "Keeps everything that works about A and changes only the hue, which resolves the double-booking: cool is defined as anything actionable, and a call to action is the most actionable thing on the site. Still a fill, so it still contradicts the letter of the never-a-large-fill rule — but it is a 200×44 control, not a page background, and the rule was written about the latter.",
+  },
+  {
+    id: "cyan-tint",
+    name: "C · Cyan tint",
+    claim: "14% fill, accent border and label.",
+    note: "The candidate that needs no exception written into the policy. The fill is faint enough to be chrome rather than a colour field, the border does the containment and the label carries the hue. The risk is the opposite of A's: that it reads as a second secondary button rather than as the primary, which is exactly what holding the secondary constant is meant to expose.",
+  },
+  {
+    id: "cyan-outline",
+    name: "D · Cyan outline",
+    claim: "Border and label only. No fill.",
+    note: "The most restrained option and the closest to how the reference sites treat everything else. It is here as the lower bound: if D still reads as the primary against a fixed muted secondary, then the fill was never doing the work and C and B are both overspending.",
+  },
+  {
+    id: "gold-tint",
+    name: "E · Gold tint",
+    claim: "Warm kept, fill dropped.",
+    note: "Answers the perceptual complaint without touching the policy question, and keeps the warm primary button that disko.media — the pairing this site's type came from — actually uses. It only works if the nav's current-page marker stops using colour and leans on weight and the underline alone. That is defensible rather than a dodge: the policy already requires a second non-colour signal on every state warm marks, so the colour is redundant there by its own rules.",
+  },
+  {
+    id: "gold-outline",
+    name: "G · Gold outline",
+    claim: "Warm, no fill at all.",
+    note: "Added after the first look, because the set did not have it and its absence was a confound rather than an omission. Cyan had solid, tint and outline; gold had solid and tint. With no gold outline there was no way to ask whether D beats E for being cool or for being unfilled — the two variables were tangled at exactly the point the comparison was supposed to separate them. G is the cell that untangles them, and it is also the quietest way warm can stay the primary.",
+  },
+  {
+    id: "ink-solid",
+    name: "F · Solid ink",
+    claim: "Neither accent. Near-white.",
+    note: "The move a lot of dark marketing sites make, and it sidesteps the accent policy entirely by not using an accent. It is in the set as a calibration rather than as a favourite: ink is more luminous than gold, so if F reads as calmer than A then the complaint was never about luminance alone and chroma is doing most of the work — which would be worth knowing before amending anything.",
+  },
+];
+
+const method = [
+  "Every band is the same hero block, the same copy and the same secondary button. Only the primary button's treatment moves.",
+  "The secondary is held constant on purpose. It is the ruler: a primary that does not visibly out-rank a fixed muted outline has failed, whatever it measures.",
+  "Separation is the fill's contrast against the page — how far the control jumps off the background, which is what 'too aggressive' actually describes. Label is the ordinary text-contrast check against whatever the label sits on. Both are reported at rest and on hover, and the grade takes the worse of the two.",
+  "The buttons are real anchors with real hover, active and focus states, because those are part of the treatment. Hover is forced by script for the measurement rather than waited for, since an unmeasured hover is the easiest place for a candidate to slip under the floor.",
+  "Both are read off the rendered elements, not from the token names declared above. A tinted fill composites against the page, so the only honest source is what the browser actually painted.",
+  "Judged at full width on a phone first. A filled control takes a larger share of a 390px screen than of a desktop, so the loudness complaint is strictest there.",
+];
+
+const hypothesis = [
+  "B wins. It keeps the affordance that makes A work, resolves the double-booking, and cyan measures roughly two-thirds of gold's separation — enough to stop shouting without becoming timid.",
+  "C is the answer if the policy is read literally, and the reason to prefer B over it is not aesthetic but functional: whether a faint fill still reads as the single primary action to someone who is not looking for one.",
+  "D loses on hierarchy rather than on taste, and it loses to the fixed secondary rather than to the other candidates.",
+  "F is predicted to measure worst and feel middling, which if true is the most useful result in the set — it would mean separation alone does not predict aggression and the instrument needs a chroma term. It does measure worst, at 15.21:1 against the control's 12.37:1; whether it feels louder is the part that has to be looked at.",
+];
+
+const constraints = [
+  {
+    title: "The pair moves together",
+    body: "Whatever wins, the secondary is re-tuned against it afterwards. It is frozen here to make the comparison fair, not because it is finished — if D wins, the secondary has to drop to text-only or the two stop reading as a hierarchy at all.",
+  },
+  {
+    title: "Colour is never the only signal",
+    body: "Whichever hue wins, the primary is also distinguished by fill, border or weight. Roughly 8% of men cannot reliably separate these two hues, and a CTA that depends on telling gold from cyan is a CTA that disappears for them.",
+  },
+  {
+    title: "The label is 11px",
+    body: "It is the mono micro-label like everything else, which puts it under the small-text floor of 4.5:1 rather than the 3:1 large-text one. Every candidate clears it as built; the number is printed anyway so a future tint change cannot quietly drop below it.",
+  },
+  {
+    title: "The policy gets amended, not bent",
+    body: "If a cool candidate wins, 'primary button' comes out of warm's job list in the design plan and in global.css. If a warm one wins, the nav's current-page marker gives up colour. Either way the contradiction is resolved in writing rather than left as a per-component judgement call.",
+  },
+];
+
+/**
+ * Written while building the comparison, before judging it.
+ */
+const notes = [
+  {
+    title: "The measure has to match the complaint",
+    body: "The first instinct was to print contrast ratios, which is what the other experiments do. It would have been useless here: every candidate passes contrast comfortably, including the one that prompted the experiment. The complaint was that the control is too loud, and loudness is the fill's separation from the page, not the label's separation from the fill. Measuring the wrong quantity would have produced six green ticks and no answer.",
+  },
+  {
+    title: "A tinted fill has no colour until it is painted",
+    body: "C and E declare their fill as a colour-mix with transparent, so the token value is not what the eye receives — the page shows through it. Resolving the declared token would have reported cyan's full separation for a fill that is 14% cyan. The probe reads getComputedStyle off each rendered button and composites the alpha against the page background itself, which is the only figure that describes what is on screen.",
+  },
+  {
+    title: "Ink is brighter than gold, which is the interesting part",
+    body: "Relative luminance: ink 0.844, gold 0.677, cyan 0.418. If F reads as calmer than A despite measuring louder, then separation is not the whole story and saturation is carrying the rest of the complaint — in which case the honest conclusion is that this instrument is incomplete, and saying so is worth more than picking a winner it cannot justify.",
+  },
+  {
+    title: "A 14% tint on a base this dark is almost nothing",
+    body: "C measures 1.03:1 separation against D's 1.00:1 — the fill moves the luminance by three hundredths, and on screen C and D are nearly the same button. The cause is the base: violet c sits at 0.009 relative luminance, so mixing 14% of anything into it barely moves the result. A tint that reads as a real fill on a mid-grey surface reads as a rumour here. If C is to be a distinct candidate rather than a slightly warmer D, the mix has to go substantially higher — and the measurement is recorded before changing it, because 'the tint did nothing' is the finding.",
+  },
+  {
+    title: "The instrument is blind to chroma, twice",
+    body: "It under-describes the page in two places, in opposite directions. F measures the loudest of all six at 15.21:1 and will very likely feel calmer than the gold control, because achromatic brightness does not read as aggression the way a saturated hue does. C measures as a rounding error against D and yet is faintly, visibly bluer. Both gaps are the same gap: separation is a luminance ratio and carries no chroma term. That is a limit worth stating on the page rather than a bug to patch — the numbers rank the candidates on one axis honestly, and the eye settles the rest.",
+  },
+  {
+    title: "The ruler impersonated the thing it was measuring",
+    body: "The secondary button was declared constant so it could serve as a fixed reference, and then given a hover that took the accent on both its border and its label — which is candidate D's rest state, exactly. Hovering the secondary in band D produced two identical buttons and destroyed the hierarchy the band exists to demonstrate. Found by looking at D and hovering the wrong button, which is the only way it could have been found: at rest the band is correct, and every number the page prints was correct too. A control has to be a control in every state, not only the one that gets screenshotted.",
+  },
+  {
+    title: "A missing cell is a confound, not an omission",
+    body: "The first set had cyan in solid, tint and outline but gold only in solid and tint. That is not merely incomplete — it makes the question unanswerable, because no comparison between an unfilled cyan candidate and a filled gold one can separate the hue from the treatment. The grid above exists so the hole cannot reopen quietly. This is experiment 01's lesson arriving a second time by a different door: design a comparison so one thing moves, and check that the set actually lets it.",
+  },
+  {
+    title: "The fills and the tints hover in opposite directions",
+    body: "Measured: the filled candidates lose separation on hover — gold 12.37 → 9.15, cyan 7.96 → 6.05, ink 15.21 → 11.17 — while the tinted and outlined ones gain it, 1.03 → 1.06 and 1.00 → 1.04. A solid button dims because brightness is the only axis it has left, so it recedes when you point at it; a tint becomes more of itself and advances. Advancing is the conventional affordance, and it is the one thing the tints do better than the fills rather than merely more quietly. Whichever side wins, the losing side's hover needs rethinking rather than copying — a solid that brightened instead of dimming would clip against a palette where gold already sits near the ceiling.",
+  },
+  {
+    title: "Flex stretch hid a 2px mismatch until the buttons wrapped",
+    body: "A border adds 1px a side, so a bordered button is 2px taller than a filled one at the same padding. In a flex row the two stretch to match and the difference is invisible — until 360px, where they wrap onto separate lines, the stretch stops and the primary sits 33.20px against the secondary's 35.20px. The live home page had it too, for the same reason and with the same pair. Fixed by giving the filled buttons a transparent border rather than by subtracting the border out of the padding: one box model beats a compensation rule that has to be remembered every time a candidate is added. Worth recording because desktop is where this was being built and desktop is exactly where it cannot be seen.",
+  },
+  {
+    title: "A hover you just triggered measures as the state you left",
+    body: "Forcing the hover class and reading getComputedStyle immediately reported every candidate's hover as identical to its rest state — six unchanged numbers, which looked like a correct result rather than a broken probe. The cause is the 150ms transition: computed style returns the value as currently animated, and at the instant the class lands that is still the old one. Taking transitions off for the duration of the read fixes it. Worth writing down because the failure was silent and self-consistent, which is the kind that survives review.",
+  },
+  {
+    title: "The control is the shipped state, not a straw man",
+    body: "A is exactly what is live on the home page, down to the class list, rather than a reconstruction of it. That matters because the whole comparison is an argument for changing it, and an experiment that quietly makes its control worse than reality is not evidence of anything.",
+  },
+];
+---
+
+<LabLayout
+  title="The primary action"
+  eyebrow="Experiment 03 · open"
+  intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Seven treatments of the same button, with the fill's separation from the page measured rather than guessed at."
+  kind="experiment"
+  slug="03-the-primary-action"
+>
+  <Section
+    id="record"
+    title="Record"
+    note="Open, not settled. These values describe the comparison as it stands; the result stays empty until the looking is done."
+  >
+    <dl
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+    >
+      {
+        record.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="hypothesis"
+    title="Hypothesis"
+    note="Written before looking, so that it can be wrong in public."
+  >
+    <ol class="max-w-measure space-y-4">
+      {
+        hypothesis.map((item, index) => (
+          <li class="flex gap-4">
+            <span class="label !text-warm shrink-0 pt-1.5">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <p class="leading-relaxed text-muted">{item}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section
+    id="candidates"
+    title="Candidates"
+    note="Each band is the hero as it would ship. Look at them at full width on a phone before reading a single number below them."
+  >
+    <div class="space-y-6">
+      {
+        candidates.map((candidate) => (
+          <article
+            id={candidate.id}
+            class="scroll-mt-6 overflow-hidden rounded-xl border border-border bg-surface"
+          >
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border px-5 py-3">
+              <h3 class="label !text-ink">{candidate.name}</h3>
+              <p class="font-mono text-xs tracking-tight text-dim">
+                {candidate.claim}
+              </p>
+            </div>
+
+            <div class="bg-bg px-6 py-14 sm:px-10 sm:py-16">
+              <p class="label !text-accent">
+                Full-stack engineer. React and AWS.
+              </p>
+              <h4
+                class="mt-4 font-display text-5xl leading-[1.02] font-bold tracking-tight sm:text-6xl"
+              >
+                Rey&rsquo;s Lab
+              </h4>
+              <p class="mt-5 max-w-measure text-lg leading-relaxed text-muted">
+                I build things and write down what they cost. Placeholder copy,
+                here so the button is judged against a real page rather than
+                against empty space.
+              </p>
+
+              {/*
+                Real anchors, not spans. Hover, focus-visible and active are
+                part of a button's treatment, and a candidate judged only at
+                rest is judged at half — the rest state is the one nobody
+                complains about. They link to the band's own id so pressing
+                one is a near no-op and you stay where you are looking.
+              */}
+              <div class="mt-8 flex flex-wrap gap-x-5 gap-y-3">
+                <a
+                  href={`#${candidate.id}`}
+                  class="cta label rounded-full px-5 py-2.5"
+                  data-candidate={candidate.id}
+                >
+                  See the work
+                </a>
+                {/* Held constant across every band. This is the ruler. */}
+                <a
+                  href={`#${candidate.id}`}
+                  class="cta-secondary label rounded-full border border-border px-5 py-2.5"
+                >
+                  Get in touch
+                </a>
+              </div>
+            </div>
+
+            <div class="border-t border-border px-5 py-4">
+              <p class="max-w-measure text-sm leading-relaxed text-muted">
+                {candidate.note}
+              </p>
+              <p
+                class="mt-3 font-mono text-xs tracking-tight text-dim"
+                data-measure={candidate.id}
+              >
+                measuring&hellip;
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="coverage"
+    title="Coverage"
+    note="Two axes, drawn out because the first version of this page had a hole in it. Letters follow the order the candidates were added, not the grid — renumbering mid-experiment would invalidate every note already written against them."
+  >
+    <div class="overflow-hidden rounded-xl border border-border">
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr class="bg-raised/40">
+            <th class="label px-4 py-3 font-medium">Hue</th>
+            <th class="label px-4 py-3 font-medium">Solid</th>
+            <th class="label px-4 py-3 font-medium">Tint</th>
+            <th class="label px-4 py-3 font-medium">Outline</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono text-sm text-muted">
+          {
+            [
+              ["Cyan", "B", "C", "D"],
+              ["Gold", "A · control", "E", "G"],
+              ["Ink", "F", "—", "—"],
+            ].map(([hue, ...cells]) => (
+              <tr class="border-t border-border">
+                <th class="label px-4 py-3 !text-ink">{hue}</th>
+                {cells.map((cell) => (
+                  <td class="px-4 py-3">{cell}</td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 max-w-measure text-sm leading-relaxed text-muted">
+      Ink is a calibration row rather than a real option, so its empty cells
+      are deliberate — a tinted near-white is just a lighter surface, and an
+      ink outline is the secondary button. The gold outline cell was empty by
+      accident, which meant hue and treatment were confounded for every
+      unfilled candidate.
+    </p>
+  </Section>
+
+  <Section
+    id="method"
+    title="Method"
+    note="Design a comparison so one thing moves. Experiment 01 learned this the expensive way and experiment 02 inherited it."
+  >
+    <ol class="max-w-measure space-y-4">
+      {
+        method.map((step, index) => (
+          <li class="flex gap-4">
+            <span class="label !text-warm shrink-0 pt-1.5">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <p class="leading-relaxed text-muted">{step}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section
+    id="constraints"
+    title="What the winner has to accept"
+    note="These hold whichever candidate wins, and they are why the question is narrow enough to answer by looking."
+  >
+    <div
+      class="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2"
+    >
+      {
+        constraints.map((constraint) => (
+          <div class="bg-surface px-5 py-5">
+            <h3 class="font-display text-base font-semibold tracking-tight text-ink">
+              {constraint.title}
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-muted">
+              {constraint.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="notes"
+    title="Notes from building it"
+    note="Not the result. What the comparison turned up about itself while it was being assembled."
+  >
+    <div class="space-y-5">
+      {
+        notes.map((item) => (
+          <article class="rounded-xl border border-border bg-surface px-5 py-5">
+            <h3 class="font-display text-lg font-semibold tracking-tight text-ink">
+              {item.title}
+            </h3>
+            <p class="mt-2 max-w-measure leading-relaxed text-muted">
+              {item.body}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="result"
+    title="Result"
+    note="Empty on purpose. It gets filled in by looking, and then this page freezes like experiment 01."
+  >
+    <p class="max-w-measure leading-relaxed text-muted">
+      Undecided as of {opened}. When it settles, the winner moves to the home
+      page, the accent policy is amended in the design plan and in
+      <code
+        class="rounded border border-border bg-code-bg px-1.5 py-0.5 font-mono text-sm"
+        >global.css</code
+      > to match, and the losing treatments stay here — scoped to this page, in
+      the same way navy and jungle stayed on experiment 01.
+    </p>
+  </Section>
+</LabLayout>
+
+<style>
+  /**
+   * The six treatments. Each sets only what it paints; nothing here touches
+   * size, radius, padding or type, because those are held constant and a
+   * candidate that quietly changed one would be answering a different
+   * question.
+   *
+   * The tints are declared as a colour-mix with transparent rather than as a
+   * pre-blended hex, which is what makes them composite against whatever is
+   * behind them — and what forces the probe to read the painted value rather
+   * than the declared one.
+   */
+
+  .cta[data-candidate="control"] {
+    background-color: var(--lab-warm);
+    color: var(--lab-void);
+  }
+
+  .cta[data-candidate="cyan-solid"] {
+    background-color: var(--lab-accent);
+    color: var(--lab-void);
+  }
+
+  .cta[data-candidate="cyan-tint"] {
+    background-color: color-mix(in oklab, var(--lab-accent) 14%, transparent);
+    border: 1px solid var(--lab-accent);
+    color: var(--lab-accent);
+  }
+
+  .cta[data-candidate="cyan-outline"] {
+    border: 1px solid var(--lab-accent);
+    color: var(--lab-accent);
+  }
+
+  .cta[data-candidate="gold-tint"] {
+    background-color: color-mix(in oklab, var(--lab-warm) 14%, transparent);
+    border: 1px solid var(--lab-warm);
+    color: var(--lab-warm);
+  }
+
+  .cta[data-candidate="gold-outline"] {
+    border: 1px solid var(--lab-warm);
+    color: var(--lab-warm);
+  }
+
+  .cta[data-candidate="ink-solid"] {
+    background-color: var(--lab-ink);
+    color: var(--lab-void);
+  }
+
+  /* A border adds 1px a side, so a bordered button is 2px taller than a
+     filled one at the same padding. Subtracting the border back out of the
+     padding was the first fix and it only half worked: it aligned the
+     candidates with each other and left the secondary — which has a border
+     and no compensation — 2px taller than all of them. At desktop the flex
+     row stretches both to match and it is invisible; at 360px they wrap onto
+     separate lines, the stretch stops, and the mismatch appears.
+     
+     Giving every candidate a border, transparent where there is nothing to
+     show, is the version that cannot drift: one padding value, one box model,
+     no rule to remember whenever a candidate is added. The secondary is left
+     alone deliberately — it already carries a real border from its utility
+     classes, and a `.cta-secondary` rule here would outrank that utility and
+     turn its border transparent. */
+  .cta {
+    border: 1px solid transparent;
+  }
+
+  /**
+   * Hover, active and focus.
+   *
+   * Every rule below is doubled with an `.is-hover` class so the probe can
+   * force the state and measure what it paints. A hover state that has never
+   * been measured is the easiest place for a candidate to quietly breach the
+   * floor, because nobody screenshots a hover.
+   *
+   * Each treatment hovers in its own logic rather than all sharing one
+   * effect: a fill has nothing to gain but brightness, whereas a tint has the
+   * obvious move of becoming more of itself.
+   */
+
+  .cta,
+  .cta-secondary {
+    display: inline-block;
+    text-decoration: none;
+    transition:
+      background-color 150ms,
+      border-color 150ms,
+      color 150ms,
+      opacity 150ms;
+  }
+
+  /* Filled: the only axis available is brightness, so they dim slightly. */
+  .cta[data-candidate="control"]:hover,
+  .cta[data-candidate="control"].is-hover,
+  .cta[data-candidate="cyan-solid"]:hover,
+  .cta[data-candidate="cyan-solid"].is-hover,
+  .cta[data-candidate="ink-solid"]:hover,
+  .cta[data-candidate="ink-solid"].is-hover {
+    opacity: 0.85;
+  }
+
+  /* Tinted: the fill becomes more of itself, which is the move a tint has and
+     a solid does not. 14% → 26%. */
+  .cta[data-candidate="cyan-tint"]:hover,
+  .cta[data-candidate="cyan-tint"].is-hover {
+    background-color: color-mix(in oklab, var(--lab-accent) 26%, transparent);
+  }
+
+  .cta[data-candidate="gold-tint"]:hover,
+  .cta[data-candidate="gold-tint"].is-hover {
+    background-color: color-mix(in oklab, var(--lab-warm) 26%, transparent);
+  }
+
+  /* Outline: gains the fill it does not have at rest, which is the same move
+     as the tints — it just starts from zero. */
+  .cta[data-candidate="cyan-outline"]:hover,
+  .cta[data-candidate="cyan-outline"].is-hover {
+    background-color: color-mix(in oklab, var(--lab-accent) 16%, transparent);
+  }
+
+  .cta[data-candidate="gold-outline"]:hover,
+  .cta[data-candidate="gold-outline"].is-hover {
+    background-color: color-mix(in oklab, var(--lab-warm) 16%, transparent);
+  }
+
+  /* Corrected 2026-09-20. This used to take the accent on hover — border and
+     label both — which is candidate D's *rest* state exactly. So hovering the
+     ruler turned it into the thing it was measuring, and D's two buttons
+     became indistinguishable in the one interaction that decides whether D
+     has a hierarchy at all.
+
+     It now advances the same way the tints do, but in neutrals, and it moves
+     exactly two things: a faint ink wash and the label to full ink. The
+     border does not move at all.
+
+     Two earlier versions were worse. A violet --lab-line border read as
+     muddy. Brightening the border to 60% ink read as a state change, but a
+     bright achromatic ring is heavier than the primary's thin cyan one — the
+     ruler ended up louder than the thing it measures. The border is the
+     loudest part of a small outlined control, so it is the one part that
+     should stay put. Nothing it can do resembles a
+     candidate, because no candidate is achromatic except F, and F is filled
+     solid. The ruler has to stay a ruler in every state. */
+  .cta-secondary:hover,
+  .cta-secondary.is-hover {
+    background-color: color-mix(in oklab, var(--lab-ink) 10%, transparent);
+    color: var(--lab-ink);
+  }
+
+  /* Pressed. One rule for all of them: the page already forbids decorative
+     motion, so this is a flat step rather than a transform. */
+  .cta:active,
+  .cta-secondary:active {
+    opacity: 0.7;
+  }
+
+  /*
+   * Focus is deliberately NOT restyled here. The global :focus-visible ring is
+   * cyan for everything on the site, and tabbing to candidate E is the point:
+   * a gold button wearing a cyan focus ring is what "cool marks interaction"
+   * looks like when the primary button is warm. If that reads as wrong, it is
+   * an argument about the policy, not about the ring.
+   */
+</style>
+
+<script>
+  /**
+   * Two numbers, because the complaint was about loudness rather than
+   * legibility:
+   *
+   *   separation — the fill's contrast against the page background. This is
+   *                what "too aggressive" actually describes: how far the
+   *                control jumps off the page. A candidate with no fill
+   *                measures 1.00 by definition, and that is the floor.
+   *   label      — ordinary text contrast, the label against whatever it
+   *                actually sits on. 11px puts it under the 4.5:1 small-text
+   *                floor, not the 3:1 large-text one.
+   *
+   * Everything is read off the rendered buttons rather than from the tokens
+   * declared in the style block above. C and E paint a translucent fill, so
+   * the declared colour is not what reaches the eye — the page shows through
+   * it — and only the composited value describes the screen.
+   */
+
+  type Rgb = [number, number, number];
+
+  function parse(value: string): { rgb: Rgb; alpha: number } {
+    const parts = value.match(/[\d.]+/g)?.map(Number) ?? [0, 0, 0];
+    return {
+      rgb: [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0],
+      alpha: parts.length > 3 ? (parts[3] ?? 1) : 1,
+    };
+  }
+
+  /** Source-over composite, which is what the browser did to paint it. */
+  function over(fg: Rgb, alpha: number, bg: Rgb): Rgb {
+    return [0, 1, 2].map(
+      (i) => fg[i]! * alpha + bg[i]! * (1 - alpha),
+    ) as Rgb;
+  }
+
+  function luminance([r, g, b]: Rgb): number {
+    const channel = (value: number) => {
+      const v = value / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+  }
+
+  function ratio(a: Rgb, b: Rgb): number {
+    const la = luminance(a);
+    const lb = luminance(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+
+  const probe = document.createElement("span");
+  probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText =
+    "position:absolute;width:0;height:0;opacity:0;pointer-events:none";
+  document.body.append(probe);
+  probe.style.color = "var(--lab-bg)";
+  const page = parse(getComputedStyle(probe).color).rgb;
+
+  /**
+   * Opacity is not a background colour, so the filled candidates' hover state
+   * does not show up in `backgroundColor` at all — it shows up in `opacity`,
+   * which composites the whole element against the page. Folding it into the
+   * alpha before compositing is what makes a dimmed solid and a strengthened
+   * tint comparable on one number.
+   */
+  function measure(button: HTMLElement) {
+    const styles = getComputedStyle(button);
+    const element = Number(styles.opacity);
+    const fill = parse(styles.backgroundColor);
+    const painted = over(fill.rgb, fill.alpha * element, page);
+    const ink = parse(styles.color);
+    const inked = over(ink.rgb, ink.alpha * element, painted);
+    return { separation: ratio(painted, page), label: ratio(inked, painted) };
+  }
+
+  for (const node of document.querySelectorAll<HTMLElement>("[data-measure]")) {
+    const button = document.querySelector<HTMLElement>(
+      `.cta[data-candidate="${node.dataset.measure}"]`,
+    );
+    if (!button) continue;
+
+    const rest = measure(button);
+
+    // Force the hover rules rather than waiting for a pointer. An unmeasured
+    // hover is the easiest place for a candidate to drop under the floor,
+    // because nobody screenshots a hover.
+    //
+    // Transitions have to come off first. getComputedStyle returns the value
+    // as currently animated, so reading straight after adding the class gives
+    // the state you just left — the first version of this reported every
+    // hover as identical to its rest state, which looked entirely plausible.
+    const prior = button.style.transition;
+    button.style.transition = "none";
+    button.classList.add("is-hover");
+    const hover = measure(button);
+    button.classList.remove("is-hover");
+    button.style.transition = prior;
+
+    const worst = Math.min(rest.label, hover.label);
+    const grade =
+      worst >= 4.5
+        ? "label AA"
+        : worst >= 3
+          ? "label AA large only"
+          : "label fails";
+
+    node.textContent =
+      `separation ${rest.separation.toFixed(2)}:1 ` +
+      `→ ${hover.separation.toFixed(2)}:1 hover · ` +
+      `label ${rest.label.toFixed(2)}:1 ` +
+      `→ ${hover.label.toFixed(2)}:1 · ${grade}`;
+    node.style.color = worst >= 4.5 ? "var(--lab-dim)" : "var(--lab-warn)";
+  }
+</script>

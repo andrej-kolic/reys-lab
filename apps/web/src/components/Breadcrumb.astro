@@ -1,0 +1,41 @@
+---
+/**
+ * The breadcrumb, set as a mono micro-label: `PROJECTS / ROOKIE TRADER`.
+ *
+ * This is what stops the site needing a fourth navigation level. The site has
+ * three — nav, index, detail — and a detail page says where it sits using the
+ * one component every reference site shares, rather than by growing the URL.
+ */
+
+interface Crumb {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  trail: Crumb[];
+  /** The current page. Not a link — you are already on it. */
+  current: string;
+}
+
+const { trail, current } = Astro.props;
+---
+
+<nav class="label flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
+  {
+    trail.map((crumb) => (
+      <>
+        <a
+          href={crumb.href}
+          class="transition-colors duration-150 hover:!text-accent"
+        >
+          {crumb.label}
+        </a>
+        <span aria-hidden="true" class="text-dim">
+          /
+        </span>
+      </>
+    ))
+  }
+  <span class="!text-muted">{current}</span>
+</nav>

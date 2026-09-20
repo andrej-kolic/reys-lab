@@ -1,0 +1,69 @@
+---
+/**
+ * The one-line row. Carries both the blog index and the lab index, because
+ * they are the two lists that actually grow — the row is what lets them reach
+ * fifty entries without pagination or a fourth navigation level.
+ *
+ * The left column is the mono meta: a date on a post, an experiment number in
+ * the lab. `tag` is the optional trailing marker — a status on an experiment,
+ * nothing on a post.
+ */
+
+interface Props {
+  href: string;
+  /** Mono, left column. A date, or `EXPERIMENT 02`. */
+  meta: string;
+  /** Set when `meta` is a date, so the row emits a real <time>. */
+  datetime?: string;
+  /** Second line under `meta`. The experiment's owner, on the lab index. */
+  metaSub?: string;
+  title: string;
+  description: string;
+  tag?: string;
+  /** Warm marks state — `OPEN`. Cool is for interaction only, never this. */
+  tagTone?: "warm" | "dim";
+}
+
+const {
+  href,
+  meta,
+  datetime,
+  metaSub,
+  title,
+  description,
+  tag,
+  tagTone = "dim",
+} = Astro.props;
+
+const Meta = datetime ? "time" : "span";
+---
+
+<a
+  href={href}
+  class="group flex flex-col gap-1 border-b border-border/60 px-6 py-5 transition-colors duration-150 last:border-b-0 hover:bg-raised/40 sm:flex-row sm:items-baseline sm:gap-6"
+>
+  <div class="w-32 shrink-0">
+    <Meta datetime={datetime} class="label tabular-nums">{meta}</Meta>
+    {metaSub && <p class="label mt-1">{metaSub}</p>}
+  </div>
+  <div class="min-w-0 grow">
+    <h3
+      class="font-display text-lg font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent"
+    >
+      {title}
+    </h3>
+    <p class="mt-1 text-sm leading-relaxed text-muted">{description}</p>
+  </div>
+  {
+    tag && (
+      <span
+        class:list={[
+          "label shrink-0",
+          tagTone === "warm" ? "!text-warm" : "",
+        ]}
+      >
+        {tag}
+      </span>
+    )
+  }
+</a>

@@ -1,0 +1,46 @@
+---
+import { nav, isCurrent, site } from "../lib/site";
+
+const path = Astro.url.pathname;
+---
+
+<header class="border-b border-border/70">
+  <div
+    class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-4"
+  >
+    <a
+      href="/"
+      class="font-display text-base font-bold tracking-tight transition-colors duration-150 hover:text-accent"
+    >
+      {site.name}
+    </a>
+
+    <nav class="ml-auto flex flex-wrap gap-x-5 gap-y-2" aria-label="Primary">
+      {
+        nav.map((item) => {
+          const current = isCurrent(path, item);
+          return (
+            <a
+              href={item.href}
+              aria-current={current ? "page" : undefined}
+              /*
+                Current state is the warm accent — but never only the warm
+                accent. Roughly 8% of men cannot reliably separate these two
+                hues, so the weight and the underline carry the same signal
+                on their own.
+              */
+              class:list={[
+                "label transition-colors duration-150 hover:!text-ink",
+                current
+                  ? "!font-semibold !text-warm underline decoration-warm/60 underline-offset-[6px]"
+                  : "",
+              ]}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+  </div>
+</header>

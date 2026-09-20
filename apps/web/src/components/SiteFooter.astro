@@ -1,0 +1,28 @@
+---
+import { site } from "../lib/site";
+---
+
+<footer class="mt-28 border-t border-border/70">
+  <div
+    class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-8"
+  >
+    <p class="label">
+      {site.author} · built in the open
+    </p>
+    <div class="ml-auto flex flex-wrap gap-x-5 gap-y-2">
+      <a
+        href={`mailto:${site.email}`}
+        class="label transition-colors duration-150 hover:!text-accent"
+      >
+        Email
+      </a>
+      <a
+        href={site.github}
+        rel="me noopener"
+        class="label transition-colors duration-150 hover:!text-accent"
+      >
+        GitHub
+      </a>
+    </div>
+  </div>
+</footer>

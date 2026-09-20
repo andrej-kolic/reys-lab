@@ -1,0 +1,17 @@
+---
+title: "A monorepo with one app in it"
+description: "Boundaries are cheap to draw early and expensive to draw late. Abstractions are the opposite."
+date: 2026-08-21
+tags: ["architecture", "tooling"]
+---
+
+*Placeholder copy. The structure is real; the words are not.*
+
+One app, one deploy target, and a workspace file. That looks like overhead until
+you notice what it actually buys: the dependency arrow between the site and its
+deployment is written down in a `package.json`, so if it ever reverses, review
+catches it.
+
+What it does not buy is a shared UI package, a shared config package or a deploy
+CLI. Those wait for a second real consumer. Extract when duplication is felt, not
+on principle.

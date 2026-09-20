@@ -2,6 +2,7 @@ import { defineConfig, fontProviders } from "astro/config";
 
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
+import mdx from "@astrojs/mdx";
 
 const google = fontProviders.google();
 
@@ -50,6 +51,8 @@ export default defineConfig({
   },
 
   integrations: [
+    // Expressive Code must come before MDX — it registers the code-block
+    // renderer that MDX then uses for fenced blocks.
     expressiveCode({
       themes: ["houston"],
       // Dark-only for now, so a single theme is enough.
@@ -70,5 +73,6 @@ export default defineConfig({
         },
       },
     }),
+    mdx(),
   ],
 });

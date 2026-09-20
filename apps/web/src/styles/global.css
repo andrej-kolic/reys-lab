@@ -203,29 +203,175 @@
 }
 
 /* Ambient glow — the reference's "bloom", translated to interface.
-   Sits behind content, never over text. */
+   Sits behind content, never over text.
+
+   Two utilities, same paint, different anchor. The paint is declared once so
+   the two cannot drift; the vars inside it resolve on whichever element uses
+   it, which is what keeps the per-card --glow-strength ramp working. */
+
+@utility glow-paint {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  height: 26rem;
+  background:
+    radial-gradient(
+      42rem 20rem at 22% 0%,
+      color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * 100%), transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      34rem 18rem at 78% 12%,
+      color-mix(in oklab, var(--lab-glow-b) calc(var(--glow-strength, 0.28) * 62%), transparent),
+      transparent 72%
+    );
+  filter: blur(24px);
+}
+
+/* Bounded: for a self-contained demo card that shows the effect inside its own
+   border — the frozen palette candidates, the specimen bands, the strength
+   ramp. The -20% top is a share of the card's own height, which is correct
+   here because the card *is* the subject. */
 @utility glow {
   position: relative;
   isolation: isolate;
 
   &::before {
-    content: "";
-    position: absolute;
+    @apply glow-paint;
     inset: -20% -10% auto;
-    height: 26rem;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(
-        42rem 20rem at 22% 0%,
-        color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * 100%), transparent),
-        transparent 70%
-      ),
-      radial-gradient(
-        34rem 18rem at 78% 12%,
-        color-mix(in oklab, var(--lab-glow-b) calc(var(--glow-strength, 0.28) * 62%), transparent),
-        transparent 72%
-      );
-    filter: blur(24px);
+  }
+}
+
+/* Page-level: one per page, applied by the layout, never by a page.
+   
+   A fixed offset rather than a percentage, and this is the whole point. When
+   each page put `glow` on its own header, the upward bleed was 20% of that
+   header's height — so it varied from 42px on /blog to 83px on /cv, and the
+   nav sat inside the glow on some pages and outside it on others. Measured:
+   /cv overlapped the nav by 35px, /blog missed it by 6. Anchoring it in the
+   layout at a constant offset makes every page identical by construction. */
+@utility page-glow {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    @apply glow-paint;
+    inset: -2rem -10% auto;
+  }
+}
+
+/* ── Prose ────────────────────────────────────────────────────────────────
+   The other half of the job. The home and index pages carry the display
+   energy; a post has to be a good place to read 2000 words, which means a
+   held measure, calmer type and less chrome.
+
+   Written by hand rather than with the typography plugin: the rules below are
+   a dozen selectors, and every one of them has to bind to the palette tokens
+   anyway. Headings inside prose are deliberately quieter than the page h1 —
+   the article title is the loudest thing on the page and nothing inside it
+   competes. */
+
+@utility prose {
+  max-width: var(--container-measure);
+  color: var(--lab-ink);
+  line-height: 1.75;
+
+  & > * + * {
+    margin-top: 1.25em;
+  }
+
+  & h2 {
+    font-family: var(--ff-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin-top: 2.5em;
+    /* Clears the sticky-free header without hiding the heading under it when
+       a table-of-contents link jumps here. */
+    scroll-margin-top: 2rem;
+  }
+
+  & h3 {
+    font-family: var(--ff-display);
+    font-size: 1.175rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    margin-top: 2em;
+    scroll-margin-top: 2rem;
+  }
+
+  & h2 + *,
+  & h3 + * {
+    margin-top: 0.75em;
+  }
+
+  & a {
+    color: var(--lab-accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--lab-accent) 40%, transparent);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 150ms;
+  }
+
+  & a:hover {
+    text-decoration-color: var(--lab-accent);
+  }
+
+  & strong {
+    font-weight: 600;
+  }
+
+  & em {
+    font-style: italic;
+    color: var(--lab-muted);
+  }
+
+  & ul,
+  & ol {
+    padding-left: 1.5em;
+  }
+
+  & ul {
+    list-style: disc;
+  }
+
+  & ol {
+    list-style: decimal;
+  }
+
+  & li::marker {
+    color: var(--lab-line);
+  }
+
+  & li + li {
+    margin-top: 0.4em;
+  }
+
+  & blockquote {
+    border-left: 2px solid var(--lab-line);
+    padding-left: 1.25em;
+    color: var(--lab-muted);
+  }
+
+  & hr {
+    border-color: var(--lab-border);
+    margin-block: 2.5em;
+  }
+
+  /* Inline code only. Expressive Code owns the fenced blocks and styles them
+     from the same tokens, so the two cannot drift apart. */
+  & :not(pre) > code {
+    font-family: var(--ff-mono);
+    font-size: 0.875em;
+    background-color: var(--lab-code-bg);
+    border: 1px solid var(--lab-border);
+    border-radius: 0.3rem;
+    padding: 0.1em 0.35em;
+  }
+
+  & .expressive-code {
+    margin-block: 1.75em;
   }
 }

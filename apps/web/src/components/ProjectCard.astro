@@ -1,0 +1,47 @@
+---
+/**
+ * Cards are for projects only. They have a stack line and an outcome to
+ * carry, and the list stays around ten. Posts and experiments get one-line
+ * rows instead — thirty cards is a scroll, thirty rows is two screens.
+ *
+ * The href is always the internal detail page. Repo and demo links belong at
+ * the bottom of that page: a card linking straight to GitHub means the
+ * write-up never gets opened and the section is a link list.
+ */
+
+interface Props {
+  href: string;
+  label: string;
+  title: string;
+  description: string;
+  stack: string[];
+  status: string;
+}
+
+const { href, label, title, description, stack, status } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group flex flex-col rounded-xl border border-border bg-surface p-6 transition-colors duration-150 hover:border-accent"
+>
+  <p class="label">{label}</p>
+  <h3
+    class="mt-3 font-display text-2xl font-bold tracking-tight transition-colors duration-150 group-hover:text-accent"
+  >
+    {title}
+  </h3>
+  <p class="mt-2.5 grow text-sm leading-relaxed text-muted">{description}</p>
+  <div
+    class="mt-5 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4"
+  >
+    {
+      stack.map((item) => (
+        <span class="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-dim">
+          {item}
+        </span>
+      ))
+    }
+    <span class="label ml-auto !text-warm">{status}</span>
+  </div>
+</a>

@@ -1,0 +1,34 @@
+---
+title: "Grounder"
+description: "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time."
+order: 1
+stack: ["TypeScript", "Node", "Markdown"]
+status: "In daily use"
+repo: "https://github.com/andrej-kolic/grounder"
+---
+
+*Placeholder copy. The structure is real; the words are not.*
+
+## The problem
+
+Every session with a coding agent started from nothing. The context that mattered —
+why a decision was made, what had already been tried, which approach had been
+rejected and for what reason — lived in chat transcripts that were gone the next
+morning.
+
+## The approach
+
+A CLI that links a repository to a plain markdown vault outside it. Plans, handoffs
+and single-fact memories are files, not database rows, so they stay readable and
+diffable without the tool that wrote them.
+
+## The tradeoff
+
+Markdown files have no schema, which makes them trivially portable and impossible
+to query. Structured storage would have been faster to search and would have tied
+the memory to one program. Portability won, and search is a `grep` away.
+
+## What I would do differently
+
+Write the retrieval path before the write path. It was built the other way round,
+and the file format carries a couple of fields that nothing ever reads.

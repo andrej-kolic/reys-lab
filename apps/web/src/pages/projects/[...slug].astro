@@ -1,0 +1,107 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, render } from "astro:content";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { forProject, href as experimentHref } from "../../lib/experiments";
+
+export const getStaticPaths = (async () => {
+  const projects = await getCollection("projects", ({ data }) => !data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+// The project↔experiment relation. Experiments live at one canonical URL
+// under /lab and are selected here rather than nested — nesting would either
+// duplicate each page at two addresses or break the global sequence.
+const experiments = forProject(project.id);
+
+const links: { href: string; label: string }[] = [];
+if (project.data.repo) links.push({ href: project.data.repo, label: "Repository" });
+if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
+---
+
+<SiteLayout
+  title={project.data.title}
+  description={project.data.description}
+  width="measure"
+>
+  <Breadcrumb
+    trail={[{ href: "/projects", label: "Projects" }]}
+    current={project.data.title}
+  />
+
+  <header class="mt-6 border-b border-border pb-8">
+    <h1
+      class="font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
+    >
+      {project.data.title}
+    </h1>
+    <p class="mt-4 text-lg leading-relaxed text-muted text-pretty">
+      {project.data.description}
+    </p>
+    <div class="mt-6 flex flex-wrap items-center gap-2">
+      {
+        project.data.stack.map((item) => (
+          <span class="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-dim">
+            {item}
+          </span>
+        ))
+      }
+      <span class="label ml-auto !text-warm">{project.data.status}</span>
+    </div>
+  </header>
+
+  <article class="prose pt-10">
+    <Content />
+  </article>
+
+  {
+    experiments.length > 0 && (
+      <section class="mt-14 border-t border-border/60 pt-8">
+        <h2 class="font-display text-xl font-semibold tracking-tight">
+          Experiments run for this
+        </h2>
+        <ul class="mt-4 space-y-2">
+          {experiments.map((experiment) => (
+            <li>
+              <a
+                href={experimentHref(experiment)}
+                class="flex flex-wrap items-baseline gap-x-3 text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+              >
+                <span class="label !text-dim">
+                  Experiment {experiment.number}
+                </span>
+                {experiment.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    links.length > 0 && (
+      <section class="mt-14 border-t border-border/60 pt-8">
+        <p class="label">Links</p>
+        <div class="mt-4 flex flex-wrap gap-x-5 gap-y-3">
+          {links.map((link) => (
+            <a
+              href={link.href}
+              rel="noopener"
+              class="label rounded-full border border-border px-5 py-2.5 transition-colors duration-150 hover:border-accent hover:!text-accent"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</SiteLayout>

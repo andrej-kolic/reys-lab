@@ -1,26 +1,117 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import ListRow from "../components/ListRow.astro";
+import { site, formatDate } from "../lib/site";
 
-// Placeholder. The real home page is deliberately downstream of /lab — the
-// font pairing and palette get settled by looking before any real page is
-// assembled from them. See reys-lab-design-plan.md.
+// Who / what / proof / contact, in roughly one and a half screens. A recruiter
+// gives it seconds, so the positioning line has to land without scrolling.
+
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
 ---
 
-<BaseLayout
-  title="Rey's Lab"
+<SiteLayout
+  title={site.name}
+  bare
   description="Portfolio and lab notes by Andrej Kolic."
 >
-  <main
-    class="glow mx-auto flex min-h-screen max-w-measure flex-col justify-center px-6"
-  >
-    <p class="label !text-accent">Under construction</p>
+  {/*
+    The hero signature — experiment 02 — is still open, so the name ships in
+    flat ink for now. Whatever wins is one rule on this one element.
+  */}
+  <section class="pt-10 pb-20">
+    <p class="label !text-accent">{site.positioning}</p>
     <h1
-      class="mt-4 font-display text-6xl leading-[1.05] font-bold tracking-tight"
+      class="mt-4 font-display text-6xl leading-[1.02] font-bold tracking-tight text-balance sm:text-7xl"
     >
       Rey&rsquo;s Lab
     </h1>
-    <p class="mt-5 text-lg leading-relaxed text-muted">
-      Portfolio and lab notes. Being built in the open.
+    <p class="mt-6 max-w-measure text-lg leading-relaxed text-muted text-pretty">
+      I build things and write down what they cost. Projects here come with the
+      tradeoff attached, not just a screenshot — and the site itself is kept in
+      the open, decision by dated decision, in the lab.
     </p>
-  </main>
-</BaseLayout>
+    <div class="mt-8 flex flex-wrap gap-x-5 gap-y-3">
+      {/*
+        `border border-transparent` is not decoration. The secondary below
+        carries a real 1px border, and without a matching one here the filled
+        primary is 2px shorter. The flex row stretches them to match on a
+        desktop, so it only shows once they wrap — which is on a phone.
+      */}
+      <a
+        href="/projects"
+        class="label rounded-full border border-transparent bg-warm px-5 py-2.5 !text-void transition-opacity duration-150 hover:opacity-85"
+      >
+        See the work
+      </a>
+      <a
+        href={`mailto:${site.email}`}
+        class="label rounded-full border border-border px-5 py-2.5 transition-colors duration-150 hover:border-accent hover:!text-accent"
+      >
+        Get in touch
+      </a>
+    </div>
+  </section>
+
+  <section class="border-t border-border/60 pt-10">
+    <div class="mb-6 flex flex-wrap items-baseline gap-x-5">
+      <h2 class="font-display text-2xl font-semibold tracking-tight">
+        Selected projects
+      </h2>
+      <a
+        href="/projects"
+        class="label ml-auto transition-colors duration-150 hover:!text-accent"
+      >
+        All projects
+      </a>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        projects.map((project) => (
+          <ProjectCard
+            href={`/projects/${project.id}`}
+            label={project.data.stack[0] ?? "Project"}
+            title={project.data.title}
+            description={project.data.description}
+            stack={project.data.stack}
+            status={project.data.status}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mt-16 border-t border-border/60 pt-10">
+    <div class="mb-6 flex flex-wrap items-baseline gap-x-5">
+      <h2 class="font-display text-2xl font-semibold tracking-tight">
+        Recent posts
+      </h2>
+      <a
+        href="/blog"
+        class="label ml-auto transition-colors duration-150 hover:!text-accent"
+      >
+        All posts
+      </a>
+    </div>
+    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+      {
+        posts.map((post) => (
+          <ListRow
+            href={`/blog/${post.id}`}
+            meta={formatDate(post.data.date)}
+            datetime={formatDate(post.data.date)}
+            title={post.data.title}
+            description={post.data.description}
+          />
+        ))
+      }
+    </div>
+  </section>
+</SiteLayout>

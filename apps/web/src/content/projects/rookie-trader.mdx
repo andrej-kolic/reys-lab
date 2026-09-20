@@ -1,0 +1,33 @@
+---
+title: "Rookie Trader"
+description: "A paper-trading harness for testing strategies against historical data, without risking a cent or trusting a convincing backtest."
+order: 2
+stack: ["Python", "Pandas", "AWS"]
+status: "14 strategies tested"
+repo: "https://github.com/andrej-kolic/rookie-trader"
+demo: "https://rookie.andrejkolic.com"
+---
+
+*Placeholder copy. The structure is real; the words are not.*
+
+## The problem
+
+A backtest that looks good is the default outcome, not the signal. Lookahead bias,
+survivorship bias and an over-fitted parameter sweep all produce the same green
+equity curve.
+
+## The approach
+
+Replay the data one bar at a time through the same interface a live strategy would
+see, so a strategy physically cannot read a price it would not have had.
+
+## The tradeoff
+
+Bar-by-bar replay is roughly two orders of magnitude slower than a vectorised
+backtest. That rules out large parameter sweeps — which, given what sweeps do to
+out-of-sample results, is arguably the point.
+
+## What I would do differently
+
+Record the slippage and fee model as part of the result. Comparing two runs made
+under different assumptions was a mistake it was too easy to make.

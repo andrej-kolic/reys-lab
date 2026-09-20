@@ -1,0 +1,30 @@
+---
+title: "The adapter is the lock-in"
+description: "Why a static build and a dist directory buy more portability than any deployment abstraction."
+date: 2026-09-19
+tags: ["astro", "architecture"]
+---
+
+*Placeholder copy. The structure is real; the words are not.*
+
+Astro builds two ways. Static output emits plain HTML, CSS and JavaScript that any
+host on earth can serve. Server output needs an adapter, and an adapter is a
+build-time plugin that compiles the site into one vendor's runtime format.
+
+That puts the vendor inside the application package, underneath everything, where
+no amount of deployment wrapping can reach it.
+
+```jsonc title="deploy/cloudflare/wrangler.jsonc"
+{
+  "name": "reys-lab-web",
+  "compatibility_date": "2026-09-19",
+  "assets": {
+    "directory": "../../apps/web/dist",
+    "not_found_handling": "404-page"
+  }
+}
+```
+
+No `main` field: with assets and no script, the Worker is a pure static file host.
+The contract between the app and its deployment is the `dist/` directory, which is
+the most portable interface available and the only one enforced by reality.

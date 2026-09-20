@@ -1,0 +1,87 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, render } from "astro:content";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { formatDate } from "../../lib/site";
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+// The table of contents is the sub-navigation for a long page — not more
+// routes. Inline at the top rather than in the margin: a floated rail reads
+// better but fights the single 68ch column the prose is set in.
+//
+// Only h2 is listed. A two-level contents on a 2000-word post is a map of a
+// map, and h3s are section detail rather than destinations.
+const toc = headings.filter((heading) => heading.depth === 2);
+---
+
+<SiteLayout
+  title={post.data.title}
+  description={post.data.description}
+  width="measure"
+>
+  <Breadcrumb
+    trail={[{ href: "/blog", label: "Blog" }]}
+    current={formatDate(post.data.date)}
+  />
+
+  <header class="mt-6 border-b border-border pb-8">
+    <h1
+      class="font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
+    >
+      {post.data.title}
+    </h1>
+    <p class="mt-4 text-lg leading-relaxed text-muted text-pretty">
+      {post.data.description}
+    </p>
+    <div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+      <time datetime={formatDate(post.data.date)} class="label tabular-nums">
+        {formatDate(post.data.date)}
+      </time>
+      {
+        post.data.tags.map((tag) => (
+          <span class="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-dim">
+            {tag}
+          </span>
+        ))
+      }
+    </div>
+  </header>
+
+  {
+    toc.length > 2 && (
+      <nav
+        class="mt-8 rounded-xl border border-border bg-surface px-6 py-5"
+        aria-label="Table of contents"
+      >
+        <p class="label">Contents</p>
+        <ol class="mt-3 space-y-1.5">
+          {toc.map((heading) => (
+            <li>
+              <a
+                href={`#${heading.slug}`}
+                class="text-sm text-muted underline decoration-border underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )
+  }
+
+  <article class="prose pt-10">
+    <Content />
+  </article>
+</SiteLayout>

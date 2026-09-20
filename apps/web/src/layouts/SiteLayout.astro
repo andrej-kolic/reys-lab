@@ -1,0 +1,46 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import SiteNav from "../components/SiteNav.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { site } from "../lib/site";
+
+interface Props {
+  /** Page title. The site name is appended unless this is the home page. */
+  title: string;
+  description?: string;
+  /** Skips the ` · Rey's Lab` suffix. Home only. */
+  bare?: boolean;
+  noindex?: boolean;
+  /** Width of the content column. Prose pages hold the reading measure. */
+  width?: "wide" | "measure";
+}
+
+const {
+  title,
+  description,
+  bare = false,
+  noindex = false,
+  width = "wide",
+} = Astro.props;
+---
+
+<BaseLayout
+  title={bare ? title : `${title} · ${site.name}`}
+  description={description}
+  noindex={noindex}
+>
+  <div class="page-glow flex min-h-screen flex-col">
+    <SiteNav />
+
+    <main
+      class:list={[
+        "mx-auto w-full grow px-5 pt-12 pb-16",
+        width === "measure" ? "max-w-2xl" : "max-w-5xl",
+      ]}
+    >
+      <slot />
+    </main>
+
+    <SiteFooter />
+  </div>
+</BaseLayout>

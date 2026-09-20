@@ -23,7 +23,7 @@ const record = [
   { label: "Opened", value: opened },
   { label: "Status", value: "open · undecided" },
   { label: "Variable", value: "fill on the name" },
-  { label: "Candidates", value: "5, incl. control" },
+  { label: "Candidates", value: "6, incl. control" },
   { label: "Floor", value: "3:1 · large text" },
   { label: "Measured", value: "worst stop, not mean" },
 ];
@@ -76,6 +76,14 @@ const candidates = [
     stops: ["--lab-accent-1", "#3bc696"],
     measure: "dimmer word",
     note: "Not a gradient. The name splits at the space it already has and each word takes one flat colour — cyan, then the mint hue that was navy's interaction accent before navy lost experiment 01, re-specified to sit at cyan's exact lightness. It asks the question the other three assume away: whether the signature needs a ramp, or whether two colours and the word break do the whole job. The hue is an import from a rejected palette, which is either the most interesting thing about it or the argument against it.",
+  },
+  {
+    id: "tick",
+    name: "F · E with a magenta apostrophe",
+    claim: "Cyan · magenta tick · mint.",
+    stops: ["--lab-accent-1", "--lab-decor", "#3bc696"],
+    measure: "dimmest part",
+    note: "E with one more colour, on the smallest mark in the name. Magenta is far more saturated than the other two, which is why it cannot be a third word — but an apostrophe is small enough that the extra saturation reads as a spark rather than as a lump. It is also the one character in the name that carries no meaning, so colouring it cannot hide anything from anyone, which is exactly the condition the decoration colour is supposed to meet.",
   },
 ];
 
@@ -218,9 +226,9 @@ const constraints = [
                     words inherit `transparent` from the clipped parent and the
                     ramp paints straight through them. */}
                 <span class="signature" data-candidate={candidate.id}>
-                  <span data-word="first">Rey&rsquo;s</span>{" "}<span
-                    data-word="second">Lab</span
-                  >
+                  <span data-word="first"
+                    >Rey<span data-word="tick">&rsquo;</span>s</span
+                  >{" "}<span data-word="second">Lab</span>
                 </span>
               </h4>
               <p class="mt-6 max-w-measure text-lg leading-relaxed text-muted">
@@ -416,6 +424,20 @@ const constraints = [
 
   .signature[data-candidate="duotone"] [data-word="first"] {
     color: var(--lab-accent-1);
+  }
+
+  .signature[data-candidate="tick"] [data-word="first"] {
+    color: var(--lab-accent-1);
+  }
+
+  .signature[data-candidate="tick"] [data-word="second"] {
+    color: #3bc696;
+  }
+
+  /* The only character in the name that means nothing, which is the whole
+     reason it is allowed to carry the decoration colour. */
+  .signature[data-candidate="tick"] [data-word="tick"] {
+    color: var(--lab-decor);
   }
 
   .signature[data-candidate="duotone"] [data-word="second"] {

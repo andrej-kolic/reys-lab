@@ -66,13 +66,16 @@ const candidates = [
   {
     id: "duotone",
     name: "E · Two words, two colours",
-    claim: "Cyan · mint. No ramp at all.",
-    /* #5ee9b5 is navy's interaction accent, quoted from the frozen record in
+    claim: "Cyan · mint, lightness-matched.",
+    /* Navy's interaction accent was #5ee9b5, quoted from the frozen record in
        experiment-01-palette.css rather than imported from it — that file is
-       scoped to experiment 01 and does not get reached into. */
-    stops: ["--lab-accent-1", "#5ee9b5"],
+       scoped to experiment 01 and does not get reached into. As sampled it sat
+       0.10 lighter than cyan in OKLCH and read as the second word shouting
+       over the first, so it is re-specified at cyan's lightness and chroma
+       with only its hue kept. See the note below. */
+    stops: ["--lab-accent-1", "#3bc696"],
     measure: "dimmer word",
-    note: "Not a gradient. The name splits at the space it already has and each word takes one flat colour — cyan, then the mint that was navy's interaction accent before navy lost experiment 01. It asks the question the other three assume away: whether the signature needs a ramp, or whether two colours and the word break do the whole job. The hue is an import from a rejected palette, which is either the most interesting thing about it or the argument against it.",
+    note: "Not a gradient. The name splits at the space it already has and each word takes one flat colour — cyan, then the mint hue that was navy's interaction accent before navy lost experiment 01, re-specified to sit at cyan's exact lightness. It asks the question the other three assume away: whether the signature needs a ramp, or whether two colours and the word break do the whole job. The hue is an import from a rejected palette, which is either the most interesting thing about it or the argument against it.",
   },
 ];
 
@@ -97,6 +100,18 @@ const notes = [
     body: "Painting a gradient through glyphs means the element's own colour goes transparent, and a transparent colour is an invisible name anywhere the clip does not apply. So the solid near-white is unconditional and only the @supports block takes it away. The failure mode of the decoration is losing the decoration, never losing the name.",
   },
   {
+    title: "Harmony between two accents is a lightness match",
+    body: "Navy's mint came in at OKLCH lightness 0.844 against cyan's 0.741 — OKLCH being the colour space whose three numbers are perceptual lightness, chroma and hue, built so that equal lightness looks equal across every hue, which HSL emphatically does not. Chroma was already within 0.005, so the whole visible gap was lightness: at hero scale the second word read as louder than the first rather than as its peer. Re-specifying the mint at cyan's lightness and chroma and keeping only its hue gives #3bc696, which is the same colour idea sitting at the same volume.",
+    demo: [
+      { hex: "#5ee9b5", label: "as sampled · L 0.844" },
+      { hex: "#3bc696", label: "re-specified · L 0.741" },
+    ],
+  },
+  {
+    title: "The site's own accent pair is deliberately not matched",
+    body: "Cyan sits at 0.741 and gold at 0.879, and that gap is correct: they never appear as peers. Cyan marks what can be acted on and gold marks what is current, so they are separated by role and almost always by position, and gold is meant to sit brighter. E is the exception that makes the rule visible — it puts two colours inside one name, adjacent, doing the same job. Colours that are peers have to match; colours that carry different jobs must not.",
+  },
+  {
     title: "A gradient's contrast is its worst stop",
     body: "Averaging the stops would report a comfortable number for a ramp that bottoms out below the floor somewhere in the middle of the word. The probe reports the minimum instead, which is the only figure that describes what a reader actually has to read. All four clear 4.5:1 as built — the spectrum's violet stop is the tightest at just over 5:1, and it is the stop any future edit should be checked against.",
   },
@@ -109,7 +124,7 @@ const constraints = [
   },
   {
     title: "It has to survive the accent pair",
-    body: "Two accents plus a multi-hue wordmark is a lot of colour for one page. B and C spend nothing extra because they are the accents; D asks the page to hold eight hues at once.",
+    body: "Two accents plus a multi-hue wordmark is a lot of colour for one page. B and C spend nothing extra because they are the accents; E spends one hue; D asks the page to hold eight at once.",
   },
   {
     title: "It cannot be the only signal",
@@ -287,6 +302,23 @@ const constraints = [
             <p class="mt-2 max-w-measure leading-relaxed text-muted">
               {item.body}
             </p>
+            {item.demo && (
+              <div class="mt-5 flex flex-wrap gap-x-10 gap-y-4">
+                {item.demo.map((swatch) => (
+                  <div>
+                    <p
+                      class="font-display text-4xl font-bold tracking-tight"
+                      style={`color:${swatch.hex}`}
+                    >
+                      Lab
+                    </p>
+                    <p class="label mt-2">
+                      {swatch.hex} · {swatch.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </article>
         ))
       }
@@ -387,7 +419,10 @@ const constraints = [
   }
 
   .signature[data-candidate="duotone"] [data-word="second"] {
-    color: #5ee9b5;
+    /* oklch(0.741 0.138 165.2) — cyan's lightness and chroma, mint's hue.
+       Written as a hex so it matches how every other colour on the site is
+       declared; the oklch() form is the specification, this is the value. */
+    color: #3bc696;
   }
 </style>
 

@@ -26,12 +26,20 @@ const { title, description, noindex = false } = Astro.props;
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     {/*
-      The locked pairing. Deliberately not preloaded: Astro generates
-      metric-matched local fallbacks, so text paints immediately at close to the
-      right size and swaps in with little shift — a better trade than blocking
-      first paint on the font files.
+      The locked pairing, self-hosted and fingerprinted — /_headers keeps them
+      cached for a year, so only a first visit waits for them at all.
+
+      Outfit is preloaded because it is the one that moves the page. Astro's
+      metric-matched fallback holds the vertical metrics exactly but not the
+      widths, so headings and prose re-wrap when the real font swaps in;
+      preloading starts the download at HTML parse rather than after the CSS,
+      which is what closes most of that window on a cold cache.
+
+      Plex Mono is not preloaded: its fallback measures identically at the sizes
+      this site uses, so it costs nothing to let it swap, and preloading it
+      would mean six files racing the one that matters.
     */}
-    <Font cssVariable="--ff-outfit" />
+    <Font cssVariable="--ff-outfit" preload />
     <Font cssVariable="--ff-plex-mono" />
 
     <slot name="head" />

@@ -1,0 +1,13 @@
+# Cloudflare Workers Assets reads this from the build output.
+#
+# Everything under /_astro/ has a content hash in its filename, so a given URL
+# can never mean two different files — change the source and the name changes
+# with it. That makes a one-year lifetime safe, and it is what stops the fonts
+# being re-fetched on every visit.
+#
+# Without this, Cloudflare's default is `max-age=0, must-revalidate`: the
+# browser has the font but must ask before using it, and that round trip is
+# long enough for text to paint in the fallback and then shift when the real
+# font is allowed. See BaseLayout.astro.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

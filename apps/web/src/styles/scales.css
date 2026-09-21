@@ -1,0 +1,186 @@
+/* ============================================================================
+   Radix Colors — generated scales. Dark only.
+
+   THESE DO NOT DEFINE THE LOOK. They define the states.
+
+   The palette is hand-sampled off the Kurzgesagt frames and stays that way,
+   in global.css. This file supplies hover, pressed, focus, disabled and the
+   translucent layers for things that have no background of their own. That
+   split is the conclusion of a long argument with measurements, and the
+   reasoning is worth keeping because it will otherwise be re-litigated:
+
+   THE GLASS IS THE PAGE-TO-CARD GAP, AND A STEPPED SYSTEM WILL NOT MAKE IT
+   SMALL. Solving for the thinnest translucent layer that turns the page into
+   a card gives 9.8% for the sampled palette and 12-17% for every generated
+   scale tried. Thin and saturated reads as coloured light passing through
+   something; thick and dull reads as pigment sitting on top. The thickness is
+   set by how far the card's blue channel has to climb — sampled moves it +20,
+   Radix's step 3 moves it +35 — so it is a function of step spacing, not of
+   hue or chroma. Pushing the seed bluer and more saturated made it *worse*
+   (16.8%), which is what settled it.
+
+   And step spacing is the guarantee, not an accident: Radix exists to make
+   step 3 visibly distinct from step 1. The sampled palette does the opposite
+   on purpose — surfaces nearly identical, separation carried by the border.
+   That is the reference's rim-light grammar. The two are the same dial turned
+   opposite ways, so no seed reconciles them.
+
+   What is NOT in tension: none of the state values depend on the surfaces.
+   Hover, pressed, focus and disabled were the actual gap, and they generate
+   cleanly against the sampled page.
+
+   Generated against the sampled page #191233. Regenerate with Copy > Copy CSS
+   code; the inputs ARE the record and nothing below was tuned afterwards:
+
+     violet  ?accent-dark=7352DC&gray-dark=9D98BE&bg-dark=191233  -> accent scale
+     gray    ?accent-dark=7352DC&gray-dark=9D98BE&bg-dark=191233  -> gray scale
+     cool    ?accent-dark=3BB8F5&gray-dark=9D98BE&bg-dark=191233  -> accent scale
+     warm    ?accent-dark=FFD23F&gray-dark=9D98BE&bg-dark=191233  -> accent scale
+
+     all under https://www.radix-ui.com/colors/custom
+
+   Violet went through the ACCENT slot, not the gray slot. A Radix gray is
+   low-chroma by construction and all twelve of its steps ride one chroma
+   curve, so seeding it violet sprinkles a little violet everywhere instead of
+   a lot at the dark end and none at the light end — surfaces lost a third of
+   their chroma and text nearly doubled it. The accent slot keeps saturation.
+
+   Step assignments (Radix's, unchanged):
+
+      1  app background            7  element border, focus ring
+      2  subtle background         8  hovered element border
+      3  element background        9  solid background
+      4  hovered element bg       10  hovered solid background
+      5  pressed / selected bg    11  low-contrast text
+      6  subtle border            12  high-contrast text
+
+   Only 4, 5, 8 and the `a` variants are actually wired up. The rest are kept
+   so the scales stay whole — a half-pasted scale is not regenerable, and
+   regenerable is the only reason this file exists.
+
+   P3 wide-gamut blocks omitted for readability. The generator emits them;
+   pasting them back is additive and changes nothing in sRGB.
+   ========================================================================= */
+
+:root {
+  /* -- violet — surface states --
+     Seeded #7352DC. Steps 4 and 5 are hover and pressed; the `a` variants are
+     what makes them glass rather than paint over the ambient glow. */
+
+  --violet-1: #181625;
+  --violet-2: #1b192b;
+  --violet-3: #29214b;
+  --violet-4: #322563;
+  --violet-5: #3b2d70;
+  --violet-6: #45377e;
+  --violet-7: #544593;
+  --violet-8: #6855b5;
+  --violet-9: #7352dc;
+  --violet-10: #6451b1;
+  --violet-11: #b5a6ff;
+  --violet-12: #e0ddff;
+
+  --violet-a1: #00df0005;
+  --violet-a2: #59f20008;
+  --violet-a3: #a192ff1e;
+  --violet-a4: #8463ff3c;
+  --violet-a5: #8a6bfd4d;
+  --violet-a6: #9177ff5e;
+  --violet-a7: #977eff78;
+  --violet-a8: #957bffa3;
+  --violet-a9: #865ffed4;
+  --violet-a10: #9278ff9e;
+  --violet-a11: #b5a6ff;
+  --violet-a12: #e0ddff;
+
+  /* -- gray — disabled only --
+     Seeded #9D98BE. Step 8 is the disabled foreground. Text comes from the
+     sampled palette, not from here. */
+
+  --gray-1: #191720;
+  --gray-2: #201e27;
+  --gray-3: #282632;
+  --gray-4: #2e2b3c;
+  --gray-5: #343145;
+  --gray-6: #3c3950;
+  --gray-7: #494561;
+  --gray-8: #615b83;
+  --gray-9: #6f6893;
+  --gray-10: #7c76a1;
+  --gray-11: #b4afd6;
+  --gray-12: #eeedf5;
+
+  --gray-a1: #1ae70006;
+  --gray-a2: #a3fe000d;
+  --gray-a3: #c7fa2816;
+  --gray-a4: #e0ff881b;
+  --gray-a5: #e4fbba22;
+  --gray-a6: #eeffe32a;
+  --gray-a7: #edf3fe3a;
+  --gray-a8: #d1cdff64;
+  --gray-a9: #d0c8ff78;
+  --gray-a10: #d0cbff8a;
+  --gray-a11: #dbd6ffcc;
+  --gray-a12: #f9f8fff3;
+
+  /* -- cool — cyan. Interaction states. --
+     Seeded #3BB8F5, the sampled accent. Step 9 comes back as the seed exactly,
+     so the brand cyan survives regeneration untouched. a3 and a4 are the ghost
+     hover and pressed layers. */
+
+  --cool-1: #0d1b22;
+  --cool-2: #0f1e27;
+  --cool-3: #002e44;
+  --cool-4: #00385b;
+  --cool-5: #00456c;
+  --cool-6: #00537e;
+  --cool-7: #006594;
+  --cool-8: #007bb3;
+  --cool-9: #3bb8f5;
+  --cool-10: #2aade9;
+  --cool-11: #48c3ff;
+  --cool-12: #bce8ff;
+
+  --cool-a1: #00f8000a;
+  --cool-a2: #00fe000d;
+  --cool-a3: #00f9bf1f;
+  --cool-a4: #00d4ff32;
+  --cool-a5: #00c7fd48;
+  --cool-a6: #00c3ff5e;
+  --cool-a7: #00c0fd7a;
+  --cool-a8: #00b9ffa0;
+  --cool-a9: #3dc0fff3;
+  --cool-a10: #2cbfffe4;
+  --cool-a11: #48c3ff;
+  --cool-a12: #bce8ff;
+
+  /* -- warm — gold. State states. --
+     Seeded #FFD23F, the sampled warm accent. Steps 9 and 11 are the same colour:
+     gold cannot go brighter than itself and still be gold. */
+
+  --warm-1: #1b1913;
+  --warm-2: #211e15;
+  --warm-3: #30270e;
+  --warm-4: #3c2e00;
+  --warm-5: #483700;
+  --warm-6: #54430c;
+  --warm-7: #66551e;
+  --warm-8: #816b28;
+  --warm-9: #ffd23f;
+  --warm-10: #f5c830;
+  --warm-11: #ffd23f;
+  --warm-12: #fbe9b7;
+
+  --warm-a1: #59f20008;
+  --warm-a2: #b6fe000d;
+  --warm-a3: #fbe0001a;
+  --warm-a4: #feca0027;
+  --warm-a5: #fcc50035;
+  --warm-a6: #fdd00042;
+  --warm-a7: #fdd90056;
+  --warm-a8: #fdd61b74;
+  --warm-a9: #ffd23f;
+  --warm-a10: #ffd030f4;
+  --warm-a11: #ffd23f;
+  --warm-a12: #ffedb9fb;
+}

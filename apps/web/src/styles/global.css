@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./scales.css";
 
 /* ============================================================================
    Design tokens.
@@ -27,6 +28,24 @@
    holds: the mass is never neutral black, it always carries hue. */
 
 :root {
+  /* ── Palette — sampled, and staying that way ────────────────────────
+     These are eyedropped off the supernova and canyon-portal frames. They
+     are the identity and they are not generated, because a generated scale
+     cannot reproduce what makes them work.
+
+     The measurement that settled it, kept so it is not re-argued: solving for
+     the thinnest translucent layer that turns the page into a card gives 9.8%
+     here and 12-17% for every generated scale tried. Thin and saturated reads
+     as light through glass; thick and dull reads as paint on top. That
+     thickness is the page-to-card lightness gap, and closing it is precisely
+     what a stepped system refuses to do — Radix exists to make step 3 distinct
+     from step 1, while this palette deliberately makes them near-identical and
+     lets the border carry the separation. Rim-light grammar. Same dial, turned
+     opposite ways.
+
+     What was actually missing was never these values. It was state. See the
+     interaction ladder below, which IS generated, against this page colour. */
+
   --lab-void: #100c24;
   --lab-bg: #191233;
   --lab-surface: #241e47;
@@ -40,7 +59,7 @@
 
   --lab-accent-1: #3bb8f5; /* cyan — interaction: links, focus, active */
   --lab-accent-2: #ffd23f; /* gold — state: current, highlight, primary */
-  --lab-decor: #ff4fb8;   /* glow and edges only, never a text colour */
+  --lab-decor: #ff4fb8; /* glow and edges only, never a text colour */
   --lab-warn: #ff5470;
   --lab-accent-1-name: "cyan";
   --lab-accent-2-name: "gold";
@@ -49,9 +68,151 @@
   --lab-glow-a: var(--lab-accent-1);
   --lab-glow-b: var(--lab-decor);
 
-  /* Named so the lab readout can state the settled palette without hardcoding
-     it in a component — the readout is meant to report, not to claim. */
   --lab-theme-name: "violet c";
+}
+
+/* ── Interaction ladder ──────────────────────────────────────────────────
+   The thing the palette never had, and the only thing the design system was
+   ever needed for. Every value is a step on a generated scale — there is not
+   one percentage here, which was the whole point. The old state values were
+   8%, 14%, 26%, 30% and 60%, each locally defensible and none derived from
+   anything.
+
+   The scales are generated against #191233 above, so these land on the
+   sampled palette rather than beside it.
+
+   Three kinds of thing, because they behave differently:
+
+     surface-owning  a card, a row, an input — swaps its background
+     ghost           a link, an icon button, a nav item — has no background,
+                     so it takes a translucent layer instead
+     solid           the primary button — lives at step 9
+
+   THE STATES USE THE `a` VARIANTS. Over the page the alpha step and the solid
+   step are identical by construction. Over the ambient glow they are not: the
+   alpha step lets the bloom through, the solid stamps a flat hole in it.
+
+   Two of Radix's assignments do not survive this palette, and both were caught
+   by measuring rather than by reading the docs:
+
+   1. FOCUS RING IS STEP 9, NOT STEP 7. Radix assigns rings to step 7. Against
+      this base that measures 2.78:1 on the page — under the 3:1 WCAG 2.2
+      requires of a focus indicator. Step 8 passes at 3.79, too close to the
+      line to spend. Cool step 9 measures 7.91:1, and it is the brand cyan, so
+      the ring reads as the accent rather than as a lighter border.
+
+   2. SOLID BUTTONS TAKE DARK TEXT — BOTH OF THEM. Radix reports
+      `--blue-contrast: #fff` for the cyan, but that is an APCA judgement: in
+      WCAG terms white on cyan is 2.24:1 and fails outright. The page colour as
+      text measures 7.91:1 on cyan and 12.29:1 on gold.
+
+      Consequence for experiment 03: warm and cool are equally legible as a
+      primary, so the choice between them is aesthetic. It was never framed
+      that way, because until the ladder existed there was no way to know the
+      cool one needed dark text too. */
+
+:root {
+  /* surface-owning */
+  --lab-hover: var(--violet-a3);
+  --lab-pressed: var(--violet-a4);
+
+  /* a3 and a4, not a4 and a5, for text headroom on the lifted states.
+
+     Measured against the card, with the dimmest text (#9d98be):
+       a3 hover   #332c5d   dim 4.62  muted 5.60  ink 10.78
+       a4         #3b2e72   dim 4.21  muted 5.11  ink  9.82
+       a5         #43357e   dim 3.74  muted 4.54  ink  8.72
+
+     Nothing is failing today: the only hoverable surfaces are ListRow and the
+     components reference, and ListRow carries `text-muted`, which clears 4.5
+     on any of the three. `text-dim` appears on project cards and CV chips,
+     none of which change background on hover. So this is headroom, not a fix.
+
+     What it buys: with hover at a3, a component that later puts dim text on a
+     hoverable row still passes. Pressed at a4 leaves dim at 4.21, and that is
+     the one sub-threshold pair in the system — it lasts as long as a mouse
+     button is held. Recorded rather than hidden; the contrast gate should
+     report it and pass it, not rediscover it as a bug. There is no assignment
+     where dim clears 4.5 on both a hover and a pressed step above the card,
+     so this is a floor, not an oversight. */
+
+  /* ghost — translucent, hue-matched, precomputed against the page */
+  --lab-ghost-hover: var(--cool-a3);
+  --lab-ghost-pressed: var(--cool-a4);
+
+  /* soft — a fill quiet enough not to shout and present enough to read as a
+     control. The construction is THE SURFACE TINTED WITH THE ACCENT, not the
+     accent darkened, and that is the opposite of what Radix does.
+
+     Radix builds a soft control from the accent scale's step 3. Its scales
+     lean toward the background only at steps 1-2; by step 3 they are
+     committed to their own hue, which on a light theme is a pale tint of the
+     brand and works. Here it is a colour the site does not own — cool step 3
+     is #002e44, a teal, and warm step 3 is #30270e, an olive, and neither
+     appears anywhere else. A soft button built that way introduces a hue
+     rather than quieting one.
+
+     Tinting the surface instead keeps the violet mass and lets the hue ride
+     on top of it, which is what every other surface here already does. One
+     rule, both hues, no foreign colours.
+
+     Mixed in srgb, not oklab, and the space is part of the rule: the values
+     below are srgb output and the strengths were chosen against them. Rey
+     hand-picked #252e52 by eye off a mockup for the outline hover before any
+     of this existed; the 8% srgb mix gives #262a55, about 6 in 255 away. The
+     rule reproduces what the eye chose, which is why the last hand-picked hex
+     in the set could retire.
+
+     Measured against the page, separation / label:
+
+       8%   cool #262a55  1.31 / 6.81    warm #362c46  1.37 / 9.06
+       12%  cool #27305c  1.42 / 6.33    warm #3e3446  1.52 / 8.15
+       16%  cool #283763  1.55 / 5.79    warm #473b46  1.69 / 7.34
+
+     Labels are step 11 and clear 4.5:1 at every strength. Separation stays
+     near 1 because the page sits at 0.009 luminance — a soft fill on this
+     base is nearly nothing however it is built, which is why the treatment
+     carries a border and the border is the part that has to clear 3:1.
+
+     OPEN: the hover is barely visible. 8% to 12% moves ΔL* 2.4 cool and 3.3
+     warm, while every other hover on this site — a card taking `--lab-hover`
+     — moves ΔL* 7.0. Raising the strengths to 8 / 20 / 24 matches it, and
+     was tried and reverted on 2026-09-21: it drags the outline hover with it,
+     because the outline fills to this same token, and that hover was the one
+     value Rey picked by eye. Unresolved, not decided. */
+
+  --lab-soft-mix: 8%;
+  --lab-soft-mix-hover: 12%;
+  --lab-soft-mix-pressed: 16%;
+
+  --lab-soft-cool: color-mix(in srgb, var(--lab-accent) var(--lab-soft-mix), var(--lab-surface));
+  --lab-soft-cool-hover: color-mix(in srgb, var(--lab-accent) var(--lab-soft-mix-hover), var(--lab-surface));
+  --lab-soft-cool-pressed: color-mix(in srgb, var(--lab-accent) var(--lab-soft-mix-pressed), var(--lab-surface));
+
+  --lab-soft-warm: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix), var(--lab-surface));
+  --lab-soft-warm-hover: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix-hover), var(--lab-surface));
+  --lab-soft-warm-pressed: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix-pressed), var(--lab-surface));
+
+  /* solid */
+  --lab-solid: var(--cool-9);
+  --lab-solid-hover: var(--cool-10);
+  --lab-solid-pressed: var(--cool-10);
+  --lab-on-solid: var(--lab-bg); /* dark text — see note 2 above */
+
+  /* focus — see note 1 above */
+  --lab-focus: var(--cool-9);
+  --lab-focus-width: 2px;
+  --lab-focus-offset: 2px;
+
+  /* disabled. gray-8 measures 2.29:1 on a card and that is correct: disabled
+     controls are explicitly exempt from WCAG contrast minimums, and looking
+     unavailable is the entire job. The contrast gate has to know this is
+     deliberate — it is the one exemption. */
+  --lab-disabled-text: var(--gray-8);
+  --lab-disabled-surface: var(--violet-a3);
+
+  /* dragged: deliberately not defined. Nothing on this site drags, and a
+     token nothing uses is a token that drifts. */
 }
 
 /* ── Accent policy ──────────────────────────────────────────────
@@ -118,6 +279,16 @@
   --color-accent-2: var(--lab-accent-2);
   --color-decor: var(--lab-decor);
   --color-warn: var(--lab-warn);
+
+  --color-hover: var(--lab-hover);
+  --color-pressed: var(--lab-pressed);
+  --color-ghost-hover: var(--lab-ghost-hover);
+  --color-ghost-pressed: var(--lab-ghost-pressed);
+  --color-solid: var(--lab-solid);
+  --color-solid-hover: var(--lab-solid-hover);
+  --color-on-solid: var(--lab-on-solid);
+  --color-focus: var(--lab-focus);
+  --color-disabled-text: var(--lab-disabled-text);
 
   --font-display: var(--ff-display);
   --font-text: var(--ff-text);

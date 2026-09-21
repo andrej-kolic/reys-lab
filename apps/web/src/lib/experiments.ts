@@ -73,7 +73,7 @@ export const experiments: Experiment[] = [
     date: "2026-09-20",
     project: "reys-lab",
     summary:
-      "The home page's call to action reads as too loud, and the accent policy contradicts itself about which accent owns it. Six treatments, with the fill's separation from the page measured rather than guessed at.",
+      "The home page's call to action reads as too loud, and the accent policy contradicts itself about which accent owns it. Regenerated on the interaction ladder: three treatments by two hues, no invented percentages left in the set.",
   },
   {
     number: "02",

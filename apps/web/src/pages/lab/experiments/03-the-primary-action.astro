@@ -26,94 +26,125 @@ import Section from "../../../components/lab/Section.astro";
  */
 
 const opened = "2026-09-20";
+const regenerated = "2026-09-21";
 
 const record = [
   { label: "Opened", value: opened },
+  { label: "Regenerated", value: regenerated },
   { label: "Status", value: "open · undecided" },
-  { label: "Variable", value: "primary button fill" },
-  { label: "Candidates", value: "7, incl. control" },
-  { label: "Floor", value: "4.5:1 · 11px label" },
-  { label: "Measured", value: "separation + label" },
+  { label: "Variable", value: "treatment × hue" },
+  { label: "Candidates", value: "8 · 4 × 2, no holes" },
+  { label: "Floor", value: "4.5:1 label · 3:1 border" },
 ];
 
 /**
- * `fill` names what the candidate paints behind the label; `ink` is the label
- * colour. Both are read back off the rendered element rather than restated
- * here — see the note about measuring what is painted.
+ * Regenerated 2026-09-21, after the interaction ladder landed.
+ *
+ * The first set had seven candidates because every treatment was invented:
+ * a 14% tint, a 26% hover, a 16% outline fill. Those numbers were the reason
+ * this experiment could not be closed — settling it would have meant settling
+ * values that had no source. The ladder gives them one, and the set collapses
+ * to the grid it should always have been: three treatments the system defines,
+ * across the two hues the policy is actually arguing about.
+ *
+ *   solid    fill step 9, label the page colour
+ *   soft     fill the surface tinted 8% with the accent, border step 8,
+ *            label step 11
+ *   outline  border step 8, label step 11, and the soft tint one strength up
+ *            when hovered
+ *
+ * Letters were reassigned. The old A-G referred to a set that no longer
+ * exists, and carrying them forward would have meant six letters pointing at
+ * seven things. The findings written against the old letters are kept below
+ * and marked; the ones that were about the old numbers are marked superseded
+ * rather than deleted, because "the tint did nothing" is still the reason the
+ * soft variant looks the way it does.
  */
 const candidates = [
   {
-    id: "control",
-    name: "A · Solid gold",
+    id: "warm-solid",
+    name: "A · Solid warm",
     claim: "The control. What shipped.",
-    note: "What the home page has now, and the reason this experiment exists. It is unambiguous as a button, which is the whole argument for it: a recruiter scanning for seconds gets one obvious thing to press. It is also the candidate that breaks both rules at once — a large fill in the brightest colour the palette has, in the hue that already means something else three inches above it in the nav.",
+    note: "What the home page has now, down to the class list. It is unambiguous as a button, which is the whole argument for it: a recruiter scanning for seconds gets one obvious thing to press. It is also the candidate that breaks both rules at once — a large fill in the brightest colour the palette has, in the hue that already means something else three inches above it in the nav. Separation 12.37:1, the loudest in the set by a wide margin, which is the complaint stated as a number.",
   },
   {
-    id: "cyan-solid",
-    name: "B · Solid cyan",
+    id: "cool-solid",
+    name: "B · Solid cool",
     claim: "Same shape, interaction hue.",
-    note: "Keeps everything that works about A and changes only the hue, which resolves the double-booking: cool is defined as anything actionable, and a call to action is the most actionable thing on the site. Still a fill, so it still contradicts the letter of the never-a-large-fill rule — but it is a 200×44 control, not a page background, and the rule was written about the latter.",
+    note: "Keeps everything that works about A and changes only the hue, which resolves the double-booking: cool is defined as anything actionable, and a call to action is the most actionable thing on the site. Separation 7.96:1 — 64% of gold's, which is the 'quieter without being timid' claim measured rather than asserted. Still a fill, so it still contradicts the letter of the never-a-large-fill rule, but it is a 200×44 control and the rule was written about page backgrounds.",
   },
   {
-    id: "cyan-tint",
-    name: "C · Cyan tint",
-    claim: "14% fill, accent border and label.",
-    note: "The candidate that needs no exception written into the policy. The fill is faint enough to be chrome rather than a colour field, the border does the containment and the label carries the hue. The risk is the opposite of A's: that it reads as a second secondary button rather than as the primary, which is exactly what holding the secondary constant is meant to expose.",
+    id: "cool-soft",
+    name: "C · Soft cool",
+    claim: "Surface tinted 8% with cyan, step 8 border, step 11 label.",
+    note: "The system's own answer to what the old 14% tint was reaching for, arrived at twice. The fill began as the accent scale's step 3, which is #002e44, a dark teal that appears nowhere else on the site — a candidate that introduces a hue is answering a different question than the one being asked. The quick fix was to drop the fill to the plain card surface, which took the teal out and took the cool out with it, leaving a violet button with a cyan border. The fill is now the card surface tinted 8% with the accent itself: #262a55, violet mass with the hue riding on top, which is how every other surface here is built. Separation 1.31:1 — the fill is nearly nothing on a base this dark whatever it is made of, so the affordance is carried by the border at 3.81:1. Whether that still reads as the single primary action is what has to be looked at. Label 6.81:1 on the fill.",
   },
   {
-    id: "cyan-outline",
-    name: "D · Cyan outline",
-    claim: "Border and label only. No fill.",
-    note: "The most restrained option and the closest to how the reference sites treat everything else. It is here as the lower bound: if D still reads as the primary against a fixed muted secondary, then the fill was never doing the work and C and B are both overspending.",
+    id: "warm-soft",
+    name: "D · Soft warm",
+    claim: "Warm kept, fill dropped to an 8% tint.",
+    note: "Answers the loudness complaint without touching the policy question, and keeps the warm primary that disko.media — the pairing this site's type came from — actually uses. Its fill is the same rule as C's with the other accent: #362c46, the card surface tinted 8% with gold, rather than warm step 3's #30270e, which is an olive and is the warm half of the same foreign-hue problem. Separation 1.37:1, within six hundredths of C, which is the point of having both: at this strength the two differ almost entirely in hue, so the band isolates the policy argument from the brightness one. It only works if the nav's current-page marker gives up colour, which the policy already permits, since it requires a second non-colour signal on every state warm marks.",
   },
   {
-    id: "gold-tint",
-    name: "E · Gold tint",
-    claim: "Warm kept, fill dropped.",
-    note: "Answers the perceptual complaint without touching the policy question, and keeps the warm primary button that disko.media — the pairing this site's type came from — actually uses. It only works if the nav's current-page marker stops using colour and leans on weight and the underline alone. That is defensible rather than a dodge: the policy already requires a second non-colour signal on every state warm marks, so the colour is redundant there by its own rules.",
+    id: "cool-outline",
+    name: "E · Outline cool",
+    claim: "Border and label at rest. Fills to the tint on hover.",
+    note: "The lower bound at rest, and the closest to how the reference sites treat everything else. If E still reads as the primary against a fixed muted secondary, the fill was never doing the work and both A and B are overspending. Its hover is the interesting part: the border brightens from step 8 to the brand cyan and a fill appears underneath, so both changes point the same direction and the button gains substance rather than just changing colour. That fill was a hand-sampled hex until 2026-09-21 — Rey picked #252e52 off a mockup by eye, and the tint rule's 8% step landed on #262a55, close enough that the literal retired. E takes the 12% step rather than the 8% one, so that a hovered E is not the same object as C sitting still. Label 8.95:1 on the page at rest, 6.33:1 on the fill when hovered, border 7.96:1.",
   },
   {
-    id: "gold-outline",
-    name: "G · Gold outline",
-    claim: "Warm, no fill at all.",
-    note: "Added after the first look, because the set did not have it and its absence was a confound rather than an omission. Cyan had solid, tint and outline; gold had solid and tint. With no gold outline there was no way to ask whether D beats E for being cool or for being unfilled — the two variables were tangled at exactly the point the comparison was supposed to separate them. G is the cell that untangles them, and it is also the quietest way warm can stay the primary.",
+    id: "warm-outline",
+    name: "F · Outline warm",
+    claim: "Warm, nothing filled.",
+    note: "The cell that keeps the grid square. Without it there is no way to ask whether E beats D for being cool or for being unfilled — the two variables tangle at exactly the point the comparison exists to separate them. It is also the quietest way warm can stay the primary, and its border is the weakest in the set at 3.46:1, which is worth knowing before it wins.",
   },
   {
-    id: "ink-solid",
-    name: "F · Solid ink",
-    claim: "Neither accent. Near-white.",
-    note: "The move a lot of dark marketing sites make, and it sidesteps the accent policy entirely by not using an accent. It is in the set as a calibration rather than as a favourite: ink is more luminous than gold, so if F reads as calmer than A then the complaint was never about luminance alone and chroma is doing most of the work — which would be worth knowing before amending anything.",
+    id: "cool-delayed",
+    name: "G · Delayed solid cool",
+    claim: "Outline at rest. Fills solid on hover.",
+    note: "Rey's suggestion, and the only candidate whose hover is a jump rather than a step. At rest it is E exactly; on hover it becomes B exactly. That is the appeal — the quiet rest state of an outline with the unmistakable affordance of a fill, arriving at the moment a pointer says it is wanted. Two things to watch. It moves six steps where every other state on this site moves one, so it is the largest state change in the system by a wide margin. And the label has to invert: cyan cannot sit on a cyan fill, so it flips to the page colour in the same 150ms. Whether that reads as responsive or as a flash is the question, and it is a question only looking can answer.",
+  },
+  {
+    id: "warm-delayed",
+    name: "H · Delayed solid warm",
+    claim: "Same jump, warm.",
+    note: "Here because the grid rule says so, not because anyone asked for it. G without H would confound the treatment with the hue exactly as the first version of this page did, and the whole coverage section exists to stop that recurring. It is also the more likely of the two to fail: gold's solid is the loudest fill in the set at 12.37:1, so H spends its rest state being the quietest candidate and its hover being the loudest, which is a wider swing than G's and may be more than a hover should carry.",
   },
 ];
 
 const method = [
-  "Every band is the same hero block, the same copy and the same secondary button. Only the primary button's treatment moves.",
+  "Every band is the same hero block, the same copy and the same secondary button. Only the primary button's treatment and hue move.",
   "The secondary is held constant on purpose. It is the ruler: a primary that does not visibly out-rank a fixed muted outline has failed, whatever it measures.",
-  "Separation is the fill's contrast against the page — how far the control jumps off the background, which is what 'too aggressive' actually describes. Label is the ordinary text-contrast check against whatever the label sits on. Both are reported at rest and on hover, and the grade takes the worse of the two.",
+  "Every treatment is a step on a generated scale. There is not one invented percentage in the set — that is the difference between this version and the one it replaces, and the reason this experiment can now be closed rather than deferred.",
+  "Separation is the fill's contrast against the page — how far the control jumps off the background, which is what 'too aggressive' actually describes. Label is the ordinary text check. Border is the control's own edge against the page, which WCAG puts at 3:1 for anything whose shape carries the affordance.",
   "The buttons are real anchors with real hover, active and focus states, because those are part of the treatment. Hover is forced by script for the measurement rather than waited for, since an unmeasured hover is the easiest place for a candidate to slip under the floor.",
-  "Both are read off the rendered elements, not from the token names declared above. A tinted fill composites against the page, so the only honest source is what the browser actually painted.",
+  "Both are read off the rendered elements, not from the token names declared above.",
   "Judged at full width on a phone first. A filled control takes a larger share of a 390px screen than of a desktop, so the loudness complaint is strictest there.",
 ];
 
 const hypothesis = [
-  "B wins. It keeps the affordance that makes A work, resolves the double-booking, and cyan measures roughly two-thirds of gold's separation — enough to stop shouting without becoming timid.",
-  "C is the answer if the policy is read literally, and the reason to prefer B over it is not aesthetic but functional: whether a faint fill still reads as the single primary action to someone who is not looking for one.",
-  "D loses on hierarchy rather than on taste, and it loses to the fixed secondary rather than to the other candidates.",
-  "F is predicted to measure worst and feel middling, which if true is the most useful result in the set — it would mean separation alone does not predict aggression and the instrument needs a chroma term. It does measure worst, at 15.21:1 against the control's 12.37:1; whether it feels louder is the part that has to be looked at.",
+  "B wins. It keeps the affordance that makes A work, resolves the double-booking, and measures 64% of gold's separation — enough to stop shouting without becoming timid.",
+  "C and D will be hard to tell apart, and that is a result rather than a flaw: at 8% on a base this dark the fill contributes almost nothing, so the pair isolates hue from brightness. If one clearly beats the other, the difference is the policy argument and nothing else.",
+  "E loses to the fixed secondary rather than to the other candidates, which is the useful way to lose.",
+  "G is the wildcard and the most likely to overturn the prediction. If a delayed fill reads as calm at rest and obvious on hover, it beats B on both axes at once and the outline treatments stop being a lower bound and become the answer. The label inversion is where it will fail if it fails.",
+  "F is predicted to measure fine and feel wrong — a warm outline is the treatment with the least to distinguish it from the secondary, and if that turns out to be false then the secondary needs re-tuning more urgently than the primary does.",
 ];
 
 const constraints = [
   {
     title: "The pair moves together",
-    body: "Whatever wins, the secondary is re-tuned against it afterwards. It is frozen here to make the comparison fair, not because it is finished — if D wins, the secondary has to drop to text-only or the two stop reading as a hierarchy at all.",
+    body: "Whatever wins, the secondary is re-tuned against it afterwards. It is frozen here to make the comparison fair, not because it is finished — if E wins, the secondary has to drop to text-only or the two stop reading as a hierarchy at all.",
   },
   {
     title: "Colour is never the only signal",
     body: "Whichever hue wins, the primary is also distinguished by fill, border or weight. Roughly 8% of men cannot reliably separate these two hues, and a CTA that depends on telling gold from cyan is a CTA that disappears for them.",
   },
   {
-    title: "The label is 11px",
-    body: "It is the mono micro-label like everything else, which puts it under the small-text floor of 4.5:1 rather than the 3:1 large-text one. Every candidate clears it as built; the number is printed anyway so a future tint change cannot quietly drop below it.",
+    title: "The label is 11px, and both solids take dark text",
+    body: "It is the mono micro-label like everything else, which puts it under the 4.5:1 small-text floor rather than the 3:1 large-text one. Radix reports white as the contrast colour for the cyan solid; in WCAG terms that is 2.24:1 and fails outright, so both A and B take the page colour as their label — 12.37:1 on gold, 7.96:1 on cyan. That matters beyond the label: the legibility argument that quietly favoured gold is gone, and the two solids are now equally readable. What is left between them is the policy, which is what this experiment was always actually about.",
+  },
+  {
+    title: "A control's border is not decoration",
+    body: "For C through F the border is what makes the thing a button, so it falls under WCAG 1.4.11 at 3:1 against the page rather than under the decorative-edge exemption the site's card borders use. Radix assigns element borders to step 7; measured here that is 2.80:1 cool and 2.45:1 warm, both under the floor. Step 8 clears it at 3.81 and 3.46. Every bordered candidate uses step 8, which is the second place on this site where step 7 failed and step 8 was the answer — the focus ring was the first.",
   },
   {
     title: "The policy gets amended, not bent",
@@ -122,7 +153,10 @@ const constraints = [
 ];
 
 /**
- * Written while building the comparison, before judging it.
+ * Written while building the comparison, before judging it. Notes carried over
+ * from the first version are marked, because the set they were written against
+ * no longer exists and a finding that quietly changes scope is worse than one
+ * that is plainly retired.
  */
 const notes = [
   {
@@ -130,52 +164,61 @@ const notes = [
     body: "The first instinct was to print contrast ratios, which is what the other experiments do. It would have been useless here: every candidate passes contrast comfortably, including the one that prompted the experiment. The complaint was that the control is too loud, and loudness is the fill's separation from the page, not the label's separation from the fill. Measuring the wrong quantity would have produced six green ticks and no answer.",
   },
   {
-    title: "A tinted fill has no colour until it is painted",
-    body: "C and E declare their fill as a colour-mix with transparent, so the token value is not what the eye receives — the page shows through it. Resolving the declared token would have reported cyan's full separation for a fill that is 14% cyan. The probe reads getComputedStyle off each rendered button and composites the alpha against the page background itself, which is the only figure that describes what is on screen.",
+    title: "The invented percentages were why this could not be closed",
+    body: "The first set ran on a 14% tint, a 26% hover and a 16% outline fill. None of them came from anywhere. Settling the experiment would have meant settling those numbers, and any later system would have regenerated them — which is precisely why the experiment was left open rather than decided. Every value in this version is a step on a scale, so the set is now judgeable on what it looks like rather than on where its numbers came from.",
   },
   {
-    title: "Ink is brighter than gold, which is the interesting part",
-    body: "Relative luminance: ink 0.844, gold 0.677, cyan 0.418. If F reads as calmer than A despite measuring louder, then separation is not the whole story and saturation is carrying the rest of the complaint — in which case the honest conclusion is that this instrument is incomplete, and saying so is worth more than picking a winner it cannot justify.",
+    title: "The tint did nothing, and now there is a reason",
+    body: "Carried over, and confirmed twice. The old note recorded that a 14% tint measured 1.03:1 against an unfilled 1.00:1 — the fill moved luminance by three hundredths and on screen the two were nearly the same button. The cause was the base: the page sits at 0.009 relative luminance, so mixing anything into it barely moves the result. The soft fills are now built the other way round, as the card surface tinted with the accent, and they measure 1.31:1 and 1.37:1. Better by about a third of a point and still almost nothing. Three constructions have now been tried and the number barely moves, which is the finding: a soft fill on a base this dark is faint by arithmetic, not by choice, and it is why C and D carry a border rather than relying on the fill.",
   },
   {
-    title: "A 14% tint on a base this dark is almost nothing",
-    body: "C measures 1.03:1 separation against D's 1.00:1 — the fill moves the luminance by three hundredths, and on screen C and D are nearly the same button. The cause is the base: violet c sits at 0.009 relative luminance, so mixing 14% of anything into it barely moves the result. A tint that reads as a real fill on a mid-grey surface reads as a rumour here. If C is to be a distinct candidate rather than a slightly warmer D, the mix has to go substantially higher — and the measurement is recorded before changing it, because 'the tint did nothing' is the finding.",
+    title: "The instrument is blind to chroma",
+    body: "Carried over, narrowed. Separation is a luminance ratio and has no chroma term, so it cannot distinguish C from D even though one is visibly bluer than the other. The old set made the same point twice, with a near-white candidate that measured loudest and was expected to feel calmest; that candidate is gone with the rest of the old set, but the limit it exposed is not. It is stated here rather than patched: the numbers rank the candidates honestly on one axis, and the eye settles the rest.",
   },
   {
-    title: "The instrument is blind to chroma, twice",
-    body: "It under-describes the page in two places, in opposite directions. F measures the loudest of all six at 15.21:1 and will very likely feel calmer than the gold control, because achromatic brightness does not read as aggression the way a saturated hue does. C measures as a rounding error against D and yet is faintly, visibly bluer. Both gaps are the same gap: separation is a luminance ratio and carries no chroma term. That is a limit worth stating on the page rather than a bug to patch — the numbers rank the candidates on one axis honestly, and the eye settles the rest.",
+    title: "Each treatment hovers on its own axis",
+    body: "A solid moves to step 10; a soft fill moves up one strength of the tint, 8% to 12%; an outline gains the fill it does not have at rest, at the hovered strength rather than the resting one. That replaces the old arrangement, where fills dimmed by an opacity step and tints brightened by twelve percentage points, so the two sides of the set hovered in opposite directions. They still do, in a sense: a solid at step 10 is slightly darker than at 9, while a soft at 12% is lighter than at 8%. The difference is that the direction is now a property of the ladder rather than a choice made per candidate, and one rule produces both. The outline taking the hovered strength is the one deliberate exception, and it is there because at the resting strength a hovered E and a resting C would paint the same fill.",
+  },
+  {
+    title: "The soft hover is a pressed step wearing a hover's name",
+    body: "Open, and the next thing to settle. The soft fills step 8, 12 and 16 per cent, which looks like a ladder and is not one: the rest-to-hover move measures 2.4 points of lightness cool and 3.3 warm, while every other hover on this site — a card taking the shared hover token — moves 7.0. On screen it is barely visible. Raising the strengths to 8, 20 and 24 matches the site's step and was tried on 2026-09-21, but the outline candidates fill to the same token on hover, so it drags E's hover off the value Rey picked by eye. Either the outline gets its own strength, or the hover moves something other than the fill. Recorded here rather than patched, because picking between those two is the same kind of decision this experiment exists to make.",
+  },
+  {
+    title: "Solids only have two states",
+    body: "The scale gives step 9 for rest and step 10 for hover and stops. There is no step 11 for a solid, because 11 is text. So A and B press to the same colour they hover to, and the distinction is carried by the focus ring and by the pointer itself. Recorded as a limitation rather than solved with an invented value, which would put back exactly what this regeneration removed.",
   },
   {
     title: "The ruler impersonated the thing it was measuring",
-    body: "The secondary button was declared constant so it could serve as a fixed reference, and then given a hover that took the accent on both its border and its label — which is candidate D's rest state, exactly. Hovering the secondary in band D produced two identical buttons and destroyed the hierarchy the band exists to demonstrate. Found by looking at D and hovering the wrong button, which is the only way it could have been found: at rest the band is correct, and every number the page prints was correct too. A control has to be a control in every state, not only the one that gets screenshotted.",
+    body: "Carried over. The secondary button was declared constant so it could serve as a fixed reference, and then given a hover that took the accent on both its border and its label — which was a candidate's rest state exactly. Hovering the secondary produced two identical buttons and destroyed the hierarchy the band exists to demonstrate. Found by hovering the wrong button, which is the only way it could have been found: at rest the band was correct, and every number the page printed was correct too. A control has to be a control in every state, not only the one that gets screenshotted.",
   },
   {
     title: "A missing cell is a confound, not an omission",
-    body: "The first set had cyan in solid, tint and outline but gold only in solid and tint. That is not merely incomplete — it makes the question unanswerable, because no comparison between an unfilled cyan candidate and a filled gold one can separate the hue from the treatment. The grid above exists so the hole cannot reopen quietly. This is experiment 01's lesson arriving a second time by a different door: design a comparison so one thing moves, and check that the set actually lets it.",
-  },
-  {
-    title: "The fills and the tints hover in opposite directions",
-    body: "Measured: the filled candidates lose separation on hover — gold 12.37 → 9.15, cyan 7.96 → 6.05, ink 15.21 → 11.17 — while the tinted and outlined ones gain it, 1.03 → 1.06 and 1.00 → 1.04. A solid button dims because brightness is the only axis it has left, so it recedes when you point at it; a tint becomes more of itself and advances. Advancing is the conventional affordance, and it is the one thing the tints do better than the fills rather than merely more quietly. Whichever side wins, the losing side's hover needs rethinking rather than copying — a solid that brightened instead of dimming would clip against a palette where gold already sits near the ceiling.",
+    body: "Carried over, and now structural. The first set had cyan in three treatments and gold in two, which made the question unanswerable: no comparison between an unfilled cyan candidate and a filled gold one can separate the hue from the treatment. This version is a full 3 × 2 with no empty cells, and the grid below is drawn so a hole cannot reopen quietly.",
   },
   {
     title: "Flex stretch hid a 2px mismatch until the buttons wrapped",
-    body: "A border adds 1px a side, so a bordered button is 2px taller than a filled one at the same padding. In a flex row the two stretch to match and the difference is invisible — until 360px, where they wrap onto separate lines, the stretch stops and the primary sits 33.20px against the secondary's 35.20px. The live home page had it too, for the same reason and with the same pair. Fixed by giving the filled buttons a transparent border rather than by subtracting the border out of the padding: one box model beats a compensation rule that has to be remembered every time a candidate is added. Worth recording because desktop is where this was being built and desktop is exactly where it cannot be seen.",
+    body: "Carried over. A border adds 1px a side, so a bordered button is 2px taller than a filled one at the same padding. In a flex row the two stretch to match and the difference is invisible — until 360px, where they wrap onto separate lines, the stretch stops and the mismatch appears. The live home page had it too, for the same reason and with the same pair. Fixed by giving every candidate a border, transparent where there is nothing to show: one box model beats a compensation rule that has to be remembered every time a candidate is added.",
   },
   {
     title: "A hover you just triggered measures as the state you left",
-    body: "Forcing the hover class and reading getComputedStyle immediately reported every candidate's hover as identical to its rest state — six unchanged numbers, which looked like a correct result rather than a broken probe. The cause is the 150ms transition: computed style returns the value as currently animated, and at the instant the class lands that is still the old one. Taking transitions off for the duration of the read fixes it. Worth writing down because the failure was silent and self-consistent, which is the kind that survives review.",
+    body: "Carried over. Forcing the hover class and reading getComputedStyle immediately reported every candidate's hover as identical to its rest state — unchanged numbers, which looked like a correct result rather than a broken probe. The cause is the 150ms transition: computed style returns the value as currently animated, and at the instant the class lands that is still the old one. Taking transitions off for the duration of the read fixes it. Worth keeping because the failure was silent and self-consistent, which is the kind that survives review.",
   },
   {
     title: "The control is the shipped state, not a straw man",
-    body: "A is exactly what is live on the home page, down to the class list, rather than a reconstruction of it. That matters because the whole comparison is an argument for changing it, and an experiment that quietly makes its control worse than reality is not evidence of anything.",
+    body: "Carried over. A is exactly what is live on the home page, down to the class list, rather than a reconstruction of it. That matters because the whole comparison is an argument for changing it, and an experiment that quietly makes its control worse than reality is not evidence of anything.",
+  },
+  {
+    title: "Renumbering was the lesser harm",
+    body: "The old page warned that renumbering mid-experiment would invalidate every note written against the letters, and it was right. It was done anyway, because the alternative was worse: six letters pointing at seven things, two of which no longer exist. The rule the warning was protecting — that a letter means one thing forever — survives within a set, not across a regeneration that replaces the set. The old letters are not reused with new meanings by accident; they are reassigned deliberately and the fact is recorded here.",
   },
 ];
+
 ---
 
 <LabLayout
   title="The primary action"
   eyebrow="Experiment 03 · open"
-  intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Seven treatments of the same button, with the fill's separation from the page measured rather than guessed at."
+  intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Regenerated on the interaction ladder: three treatments the system defines, across the two hues the policy is arguing about, with every value a step on a scale rather than a percentage somebody picked."
   kind="experiment"
   slug="03-the-primary-action"
 >
@@ -298,7 +341,7 @@ const notes = [
   <Section
     id="coverage"
     title="Coverage"
-    note="Two axes, drawn out because the first version of this page had a hole in it. Letters follow the order the candidates were added, not the grid — renumbering mid-experiment would invalidate every note already written against them."
+    note="Two axes, three treatments by two hues. Letters read across the grid now rather than following the order candidates were added — see the last note for why that renumbering was worth its cost."
   >
     <div class="overflow-hidden rounded-xl border border-border">
       <table class="w-full border-collapse text-left">
@@ -306,16 +349,16 @@ const notes = [
           <tr class="bg-raised/40">
             <th class="label px-4 py-3 font-medium">Hue</th>
             <th class="label px-4 py-3 font-medium">Solid</th>
-            <th class="label px-4 py-3 font-medium">Tint</th>
+            <th class="label px-4 py-3 font-medium">Soft</th>
             <th class="label px-4 py-3 font-medium">Outline</th>
+            <th class="label px-4 py-3 font-medium">Delayed</th>
           </tr>
         </thead>
         <tbody class="font-mono text-sm text-muted">
           {
             [
-              ["Cyan", "B", "C", "D"],
-              ["Gold", "A · control", "E", "G"],
-              ["Ink", "F", "—", "—"],
+              ["Cool", "B", "C", "E", "G"],
+              ["Warm", "A · control", "D", "F", "H"],
             ].map(([hue, ...cells]) => (
               <tr class="border-t border-border">
                 <th class="label px-4 py-3 !text-ink">{hue}</th>
@@ -329,11 +372,14 @@ const notes = [
       </table>
     </div>
     <p class="mt-4 max-w-measure text-sm leading-relaxed text-muted">
-      Ink is a calibration row rather than a real option, so its empty cells
-      are deliberate — a tinted near-white is just a lighter surface, and an
-      ink outline is the secondary button. The gold outline cell was empty by
-      accident, which meant hue and treatment were confounded for every
-      unfilled candidate.
+      Square, with no empty cells, which is the whole reason it is drawn. The
+      previous version had cool in three treatments and warm in two, and a
+      hole in a comparison grid is not an omission — it makes the question
+      unanswerable, because no comparison between an unfilled cool candidate
+      and a filled warm one can separate the hue from the treatment. A third
+      near-white row was dropped with the old set: it was a calibration for an
+      instrument question that has since been stated plainly in the notes
+      instead.
     </p>
   </Section>
 
@@ -419,52 +465,77 @@ const notes = [
 
 <style>
   /**
-   * The six treatments. Each sets only what it paints; nothing here touches
-   * size, radius, padding or type, because those are held constant and a
-   * candidate that quietly changed one would be answering a different
+   * The six treatments, every value a step on a generated scale. Nothing here
+   * touches size, radius, padding or type, because those are held constant and
+   * a candidate that quietly changed one would be answering a different
    * question.
    *
-   * The tints are declared as a colour-mix with transparent rather than as a
-   * pre-blended hex, which is what makes them composite against whatever is
-   * behind them — and what forces the probe to read the painted value rather
-   * than the declared one.
+   * Borders are step 8, not step 7. Radix assigns element borders to 7; on
+   * this page a bordered button's edge is what makes it a button, so it falls
+   * under WCAG 1.4.11 at 3:1 against the page. Step 7 measures 2.80 cool and
+   * 2.45 warm and misses. Step 8 clears at 3.81 and 3.46.
+   *
+   * The soft fills are `--lab-soft-*`: the card surface tinted with the
+   * candidate's own accent, at 8% resting, 12% hovered and 16% pressed. They
+   * are opaque rather than a colour-mix with transparent, so what the probe
+   * reads is what was declared — at the cost of no longer showing the ambient
+   * glow through the button, which at this size is not a loss.
+   *
+   * They are not the accent scale's step 3, which is what Radix would give
+   * and what this page shipped yesterday. Cool step 3 is a teal and warm step
+   * 3 is an olive; both are hues the site does not own anywhere else, so both
+   * candidates were answering a different question than the one being asked.
+   * The rule and its measurements live in global.css beside the rest of the
+   * ladder, because a soft fill is a treatment the whole site gets, not a
+   * property of this experiment.
    */
 
-  .cta[data-candidate="control"] {
-    background-color: var(--lab-warm);
-    color: var(--lab-void);
+  .cta[data-candidate="warm-solid"] {
+    background-color: var(--warm-9);
+    color: var(--lab-on-solid);
   }
 
-  .cta[data-candidate="cyan-solid"] {
-    background-color: var(--lab-accent);
-    color: var(--lab-void);
+  .cta[data-candidate="cool-solid"] {
+    background-color: var(--cool-9);
+    color: var(--lab-on-solid);
   }
 
-  .cta[data-candidate="cyan-tint"] {
-    background-color: color-mix(in oklab, var(--lab-accent) 14%, transparent);
-    border: 1px solid var(--lab-accent);
-    color: var(--lab-accent);
+  .cta[data-candidate="cool-soft"] {
+    background-color: var(--lab-soft-cool);
+    border-color: var(--cool-8);
+    color: var(--cool-11);
   }
 
-  .cta[data-candidate="cyan-outline"] {
-    border: 1px solid var(--lab-accent);
-    color: var(--lab-accent);
+  .cta[data-candidate="warm-soft"] {
+    background-color: var(--lab-soft-warm);
+    border-color: var(--warm-8);
+    color: var(--warm-11);
   }
 
-  .cta[data-candidate="gold-tint"] {
-    background-color: color-mix(in oklab, var(--lab-warm) 14%, transparent);
-    border: 1px solid var(--lab-warm);
-    color: var(--lab-warm);
+  /* The delayed solids. Outline at rest, filled on hover — the one treatment
+     whose hover is a jump rather than a step. The border moves with the fill
+     so the edge does not survive as a ring around a solid button, and the
+     label inverts to the page colour because cyan and gold both fail against
+     their own step 9. */
+
+  .cta[data-candidate="cool-delayed"] {
+    border-color: var(--cool-8);
+    color: var(--cool-11);
   }
 
-  .cta[data-candidate="gold-outline"] {
-    border: 1px solid var(--lab-warm);
-    color: var(--lab-warm);
+  .cta[data-candidate="warm-delayed"] {
+    border-color: var(--warm-8);
+    color: var(--warm-11);
   }
 
-  .cta[data-candidate="ink-solid"] {
-    background-color: var(--lab-ink);
-    color: var(--lab-void);
+  .cta[data-candidate="cool-outline"] {
+    border-color: var(--cool-8);
+    color: var(--cool-11);
+  }
+
+  .cta[data-candidate="warm-outline"] {
+    border-color: var(--warm-8);
+    color: var(--warm-11);
   }
 
   /* A border adds 1px a side, so a bordered button is 2px taller than a
@@ -509,69 +580,135 @@ const notes = [
       opacity 150ms;
   }
 
-  /* Filled: the only axis available is brightness, so they dim slightly. */
-  .cta[data-candidate="control"]:hover,
-  .cta[data-candidate="control"].is-hover,
-  .cta[data-candidate="cyan-solid"]:hover,
-  .cta[data-candidate="cyan-solid"].is-hover,
-  .cta[data-candidate="ink-solid"]:hover,
-  .cta[data-candidate="ink-solid"].is-hover {
-    opacity: 0.85;
+  /* Each treatment hovers on its own axis, and every rule is the same rule:
+     take one step up. A solid goes 9 → 10; a soft fill goes up one strength of
+     the tint, 8% → 12%; an outline gains the fill it does not have at rest,
+     and takes the hovered strength rather than the resting one so that a
+     hovered outline is not the same object as a soft button sitting still.
+     Nothing here is an opacity nudge or a number picked by hand. */
+
+  .cta[data-candidate="warm-solid"]:hover,
+  .cta[data-candidate="warm-solid"].is-hover {
+    background-color: var(--warm-10);
   }
 
-  /* Tinted: the fill becomes more of itself, which is the move a tint has and
-     a solid does not. 14% → 26%. */
-  .cta[data-candidate="cyan-tint"]:hover,
-  .cta[data-candidate="cyan-tint"].is-hover {
-    background-color: color-mix(in oklab, var(--lab-accent) 26%, transparent);
+  .cta[data-candidate="cool-solid"]:hover,
+  .cta[data-candidate="cool-solid"].is-hover {
+    background-color: var(--cool-10);
   }
 
-  .cta[data-candidate="gold-tint"]:hover,
-  .cta[data-candidate="gold-tint"].is-hover {
-    background-color: color-mix(in oklab, var(--lab-warm) 26%, transparent);
+  .cta[data-candidate="cool-soft"]:hover,
+  .cta[data-candidate="cool-soft"].is-hover {
+    background-color: var(--lab-soft-cool-hover);
   }
 
-  /* Outline: gains the fill it does not have at rest, which is the same move
-     as the tints — it just starts from zero. */
-  .cta[data-candidate="cyan-outline"]:hover,
-  .cta[data-candidate="cyan-outline"].is-hover {
-    background-color: color-mix(in oklab, var(--lab-accent) 16%, transparent);
+  .cta[data-candidate="warm-soft"]:hover,
+  .cta[data-candidate="warm-soft"].is-hover {
+    background-color: var(--lab-soft-warm-hover);
   }
 
-  .cta[data-candidate="gold-outline"]:hover,
-  .cta[data-candidate="gold-outline"].is-hover {
-    background-color: color-mix(in oklab, var(--lab-warm) 16%, transparent);
+  .cta[data-candidate="cool-delayed"]:hover,
+  .cta[data-candidate="cool-delayed"].is-hover {
+    background-color: var(--cool-9);
+    border-color: var(--cool-9);
+    color: var(--lab-on-solid);
   }
 
-  /* Corrected 2026-09-20. This used to take the accent on hover — border and
-     label both — which is candidate D's *rest* state exactly. So hovering the
-     ruler turned it into the thing it was measuring, and D's two buttons
-     became indistinguishable in the one interaction that decides whether D
-     has a hierarchy at all.
+  .cta[data-candidate="warm-delayed"]:hover,
+  .cta[data-candidate="warm-delayed"].is-hover {
+    background-color: var(--warm-9);
+    border-color: var(--warm-9);
+    color: var(--lab-on-solid);
+  }
 
-     It now advances the same way the tints do, but in neutrals, and it moves
-     exactly two things: a faint ink wash and the label to full ink. The
-     border does not move at all.
+  /* E gains a fill and brightens its border to the brand cyan. Both changes
+     point the same way, which is what makes it read as one move rather than
+     two. Nothing new enters the palette: the border is the accent already on
+     every link and focus ring, and the fill is the same tint C wears, one
+     strength up.
 
-     Two earlier versions were worse. A violet --lab-line border read as
-     muddy. Brightening the border to 60% ink read as a state change, but a
-     bright achromatic ring is heavier than the primary's thin cyan one — the
-     ruler ended up louder than the thing it measures. The border is the
-     loudest part of a small outlined control, so it is the one part that
-     should stay put. Nothing it can do resembles a
-     candidate, because no candidate is achromatic except F, and F is filled
-     solid. The ruler has to stay a ruler in every state. */
+     This is where the last hand-picked hex in the set used to be. Rey sampled
+     #252e52 off a mockup by eye, and it stayed a literal because no
+     combination of tokens landed on it. The tint rule does: its 8% step is
+     #262a55, about 6 in 255 from what the eye chose. E hovers at the 12% step
+     rather than that one, because at 8% a hovered E and a resting C would be
+     the same fill with different borders. */
+  .cta[data-candidate="cool-outline"]:hover,
+  .cta[data-candidate="cool-outline"].is-hover {
+    background-color: var(--lab-soft-cool-hover);
+    border-color: var(--lab-accent);
+  }
+
+  .cta[data-candidate="warm-outline"]:hover,
+  .cta[data-candidate="warm-outline"].is-hover {
+    background-color: var(--lab-soft-warm-hover);
+  }
+
+  /* The ruler's own states, corrected twice.
+
+     2026-09-20: it used to take the accent on hover — border and label both —
+     which was a candidate's *rest* state exactly. Hovering the ruler turned it
+     into the thing it was measuring, and the band's hierarchy collapsed in the
+     one interaction that decides whether it has a hierarchy at all. Found by
+     hovering the wrong button, which is the only way it could have been found:
+     at rest the band was correct and every printed number was correct too.
+
+     2026-09-21: the replacement was an ink wash at 10% — one of the last
+     invented numbers on the page, painting a colour that appears nowhere else
+     in the system. It now uses `--lab-hover`, which is the same token every
+     hoverable surface on the site uses, so the secondary hovers exactly like a
+     list row. One hover rule, not two, and the next component does not get to
+     invent a third.
+
+     It is fainter than the ink wash was. If that turns out to be too faint,
+     the fix is to move `--lab-hover` up a step globally rather than to
+     special-case this button — that is a fact about the site's hover, not
+     about this control.
+
+     The border still does not move. It is the loudest part of a small outlined
+     control, so it is the one part that should stay put; a bright achromatic
+     ring would make the ruler heavier than the thing it measures. */
   .cta-secondary:hover,
   .cta-secondary.is-hover {
-    background-color: color-mix(in oklab, var(--lab-ink) 10%, transparent);
+    background-color: var(--lab-hover);
     color: var(--lab-ink);
   }
 
-  /* Pressed. One rule for all of them: the page already forbids decorative
-     motion, so this is a flat step rather than a transform. */
-  .cta:active,
+  /* Pressed: one more strength, 12% → 16% for the soft and outlined
+     candidates. The
+     solids have nowhere to go — the scale gives a solid step 9 and step 10 and
+     stops, because 11 is text — so A and B press to the colour they hover to
+     and the pointer carries the rest. Recorded as a limitation in the notes
+     rather than papered over with an invented value, which is exactly what
+     this regeneration removed. */
+  .cta[data-candidate="cool-soft"]:active {
+    background-color: var(--lab-soft-cool-pressed);
+  }
+
+  .cta[data-candidate="cool-outline"]:active {
+    background-color: var(--lab-soft-cool-pressed);
+    border-color: var(--lab-accent);
+  }
+
+
+  /* The delayed solids press the way the solids do, to step 10. */
+  .cta[data-candidate="cool-delayed"]:active {
+    background-color: var(--cool-10);
+    border-color: var(--cool-10);
+  }
+
+  .cta[data-candidate="warm-delayed"]:active {
+    background-color: var(--warm-10);
+    border-color: var(--warm-10);
+  }
+
+  .cta[data-candidate="warm-soft"]:active,
+  .cta[data-candidate="warm-outline"]:active {
+    background-color: var(--lab-soft-warm-pressed);
+  }
+
   .cta-secondary:active {
-    opacity: 0.7;
+    background-color: var(--lab-pressed);
   }
 
   /*
@@ -604,12 +741,48 @@ const notes = [
 
   type Rgb = [number, number, number];
 
+  /**
+   * Rasterise the colour rather than parse it.
+   *
+   * The first version pulled the numbers out of the computed string with a
+   * regex and took the first three as RGB. That works only while every
+   * computed colour happens to serialise as `rgb()`. The soft fills are
+   * `color-mix()`, which Chrome computes as `oklab(0.326 0.0027 -0.0778)` —
+   * so the regex read 0.326, 0.0027 and 0.0778 as channel values, measured a
+   * near-black button, and printed 1.17 where the truth was 1.31. It also
+   * silently dropped the minus sign.
+   *
+   * The failure mode is the dangerous one: plausible numbers, no error, and
+   * a strip that looks like it is working. Painting one pixel and reading it
+   * back asks the same engine that painted the button, so any colour syntax
+   * the browser understands — rgb, oklab, color(srgb ...), whatever comes
+   * next — resolves to what is actually on screen.
+   *
+   * getImageData returns unpremultiplied RGBA, so a translucent fill still
+   * gives its own colour and its alpha separately, which is what `over` then
+   * composites. `fillStyle` keeps its previous value when handed something it
+   * cannot parse, so it is reset to a sentinel first and a colour that fails
+   * to move it is reported as transparent rather than as the last one read.
+   */
+  const swatch = document
+    .createElement("canvas")
+    .getContext("2d", { willReadFrequently: true })!;
+
   function parse(value: string): { rgb: Rgb; alpha: number } {
-    const parts = value.match(/[\d.]+/g)?.map(Number) ?? [0, 0, 0];
-    return {
-      rgb: [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0],
-      alpha: parts.length > 3 ? (parts[3] ?? 1) : 1,
-    };
+    // Two sentinels: a value the canvas rejects leaves fillStyle where it
+    // was, so a colour it cannot parse lands on black once and on white
+    // once, and the disagreement is the rejection.
+    swatch.fillStyle = "#000000";
+    swatch.fillStyle = value;
+    const black = swatch.fillStyle;
+    swatch.fillStyle = "#ffffff";
+    swatch.fillStyle = value;
+    if (swatch.fillStyle !== black) return { rgb: [0, 0, 0], alpha: 0 };
+
+    swatch.clearRect(0, 0, 1, 1);
+    swatch.fillRect(0, 0, 1, 1);
+    const [r, g, b, a] = swatch.getImageData(0, 0, 1, 1).data;
+    return { rgb: [r!, g!, b!], alpha: a! / 255 };
   }
 
   /** Source-over composite, which is what the browser did to paint it. */

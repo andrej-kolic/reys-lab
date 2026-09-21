@@ -58,7 +58,7 @@
   --lab-code-bg: #140f2a;
 
   --lab-accent-1: #3bb8f5; /* cyan — interaction: links, focus, active */
-  --lab-accent-2: #ffd23f; /* gold — state: current, highlight, primary */
+  --lab-accent-2: #ffd23f; /* gold — state: current, highlight, shipped */
   --lab-decor: #ff4fb8; /* glow and edges only, never a text colour */
   --lab-warn: #ff5470;
   --lab-accent-1-name: "cyan";
@@ -409,14 +409,12 @@
 }
 
 /* ── The two buttons ──────────────────────────────────────────────────────
-   Experiment 03, settled 2026-09-21 on candidate G — the delayed solid.
+   Experiment 03, settled 2026-09-21 on candidate J.
 
-   The primary is an outline at rest and fills to the brand cyan on hover,
-   with the label inverting to the page colour in the same 150ms. It is the
-   largest state change on the site by a wide margin: six steps, where
-   everything else moves one. That is the point of it — the quiet rest state
-   of an outline with the affordance of a fill, arriving when a pointer says
-   it is wanted.
+   The primary is filled with the brand cyan at rest and lightens on hover.
+   The secondary is a ring and never gains a fill, in any state. The pair is
+   cool throughout; the hue question the grid was built to answer turned out
+   to be secondary to the rule below.
 
    Both buttons carry a real 1px border, transparent where there is nothing
    to show. A border adds 1px a side, so a bordered button is 2px taller than
@@ -447,16 +445,18 @@
 
    M3 has the right rule and the wrong mechanism, because a state layer over
    0.009 luminance is nothing. So the rule is M3's and the moves are the two
-   this base cannot flatten — the ring climbs 8 -> 9 -> 11 and the label
-   11 -> 12. Both monotonic, both far clear of their floors.
+   this base cannot flatten — the ring climbs 9 -> 12 and falls back to 11
+   pressed, and the label moves 11 -> 12. All far clear of their floors.
 
    Both buttons carry a real 1px border, transparent where there is nothing
    to show — see above.
 
    CLOSED: the secondary's resting border used to measure 1.61:1 against the
    page, under the 3:1 WCAG 1.4.11 asks of a control whose shape carries its
-   affordance. Moving it off the gray ramp onto the cool one puts it at
-   3.81:1. */
+   affordance. It now sits on cool 9, the same value the primary is filled
+   with, and measures 7.96:1. Step 8 was the first candidate and would have
+   cleared at 3.81 — passing, but at 35% lightness against the brand's 60% it
+   read as a second, muddier cyan. Two cyans on the pair, not four. */
 
 @utility btn-primary {
   @apply label;

@@ -11,7 +11,11 @@
       ]
     },
     "gate": {
-      "outputs": []
+      "outputs": [],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/web/src/styles/global.css"
+      ]
     },
     "check": {
       "dependsOn": [

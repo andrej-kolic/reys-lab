@@ -35,10 +35,14 @@ is where a control quietly breaches a floor, because nobody screenshots a
 hover.
 
 **A pair below its floor on purpose is declared, with the reason.** It
-reports as `declared` and does not fail. Five of the twenty-three are:
-dim-on-pressed at 4.21, the card edge and the secondary button's edge in
-both states, and disabled text. Without this they get found again every few
-months and argued about from scratch.
+reports as `declared` and does not fail. Three of the twenty-five are:
+dim-on-pressed at 4.21, the card edge at 1.64 which is decoration rather than
+a control, and disabled text, which WCAG exempts. Without this they get found
+again every few months and argued about from scratch.
+
+The secondary button's edge used to be a fourth and fifth, at 1.61 and 1.96.
+Experiment 03 moved that ring onto the cool ramp, so both are fixed rather
+than waived and neither is listed any more.
 
 ## The scale generator that used to live here
 

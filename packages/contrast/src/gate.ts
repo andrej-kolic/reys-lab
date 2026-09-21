@@ -73,20 +73,20 @@ export const pairs: Pair[] = [
     declared:
       "A decorative edge, not a control. WCAG 1.4.11 applies to the boundaries of user interface components, which a card is not.",
   },
-  {
-    what: "secondary button edge against the page",
-    fg: steps["gray-6"],
-    bg: palette.bg,
-    floor: 3,
-    declared:
-      "1.61:1. This one IS a control whose shape carries its affordance, so it is a real miss rather than an exemption — recorded here so the gate reports it every run instead of it being rediscovered. On the gray ramp step 9 is the first that clears.",
-  },
-  { what: "secondary button edge, hovered", fg: steps["gray-7"], bg: palette.bg, floor: 3, declared: "Same control, same miss, one step up." },
-  { what: "secondary button label", fg: palette.dim, bg: palette.bg, floor: 4.5 },
-  { what: "primary button edge against the page", fg: steps["cool-8"], bg: palette.bg, floor: 3 },
-  { what: "primary button label at rest", fg: steps["cool-11"], bg: palette.bg, floor: 4.5 },
-  { what: "primary button label on its hovered fill", fg: palette.bg, bg: steps["cool-9"], floor: 4.5 },
-  { what: "primary button label on its pressed fill", fg: palette.bg, bg: steps["cool-10"], floor: 4.5 },
+  // The primary is FILLED at rest now, and the secondary is an unfilled ring
+  // that never gains a fill in any state. The old rows measured the reverse —
+  // an outlined primary that filled on hover, and a secondary on the gray
+  // ramp whose edge sat at 1.61:1. That miss is closed by the move onto the
+  // cool ramp rather than waived, so its declaration is gone rather than
+  // reworded.
+  { what: "primary button label on its fill", fg: palette.bg, bg: steps["cool-9"], floor: 4.5 },
+  { what: "primary button label on its hovered fill", fg: palette.bg, bg: steps["cool-12"], floor: 4.5 },
+  { what: "primary button label on its pressed fill", fg: palette.bg, bg: steps["cool-11"], floor: 4.5 },
+  { what: "secondary button edge against the page", fg: steps["cool-9"], bg: palette.bg, floor: 3 },
+  { what: "secondary button edge, hovered", fg: steps["cool-12"], bg: palette.bg, floor: 3 },
+  { what: "secondary button edge, pressed", fg: steps["cool-11"], bg: palette.bg, floor: 3 },
+  { what: "secondary button label at rest", fg: steps["cool-11"], bg: palette.bg, floor: 4.5 },
+  { what: "secondary button label, hovered", fg: steps["cool-12"], bg: palette.bg, floor: 4.5 },
   { what: "focus ring against the page", fg: steps["cool-9"], bg: palette.bg, floor: 3 },
   { what: "cool label on its soft fill", fg: steps["cool-11"], bg: soft.cool, floor: 4.5 },
   { what: "cool label on its hovered soft fill", fg: steps["cool-11"], bg: soft.coolHover, floor: 4.5 },

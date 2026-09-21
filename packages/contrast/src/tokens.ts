@@ -38,13 +38,15 @@ export const palette = {
 export const steps = {
   "violet-a3": "#332c5d", // --lab-hover, composited over the surface
   "violet-a4": "#3b2e72", // --lab-pressed, likewise
-  "cool-8": "#007bb3", // --lab-outline
-  "cool-9": "#3bb8f5", // --lab-solid, --lab-focus
-  "cool-10": "#2aade9", // --lab-solid-hover
-  "cool-11": "#48c3ff", // --lab-outline-ink
+  "cool-8": "#007bb3", // no longer bound to anything the site renders
+  "cool-9": "#3bb8f5", // --lab-solid, --lab-btn-edge, --lab-focus
+  "cool-10": "#2aade9", // unbound: step 10 is DARKER than 9 in the accent
+  //                       scales, so the solid hover climbs to 12 instead
+  "cool-11": "#48c3ff", // --lab-btn-edge-ink, --lab-*-pressed
+  "cool-12": "#bce8ff", // --lab-solid-hover, --lab-btn-edge-*-hover
   "warm-8": "#816b28",
   "warm-11": "#ffd23f",
-  "gray-6": "#3c3950", // the secondary button's resting border
+  "gray-6": "#3c3950", // experiment 03's ruler secondary, resting border
   "gray-7": "#494561", // and its hovered one
   "gray-8": "#615b83", // --lab-disabled-text
 } as const;

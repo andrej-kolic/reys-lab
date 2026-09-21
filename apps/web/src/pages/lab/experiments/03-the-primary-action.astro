@@ -27,13 +27,15 @@ import Section from "../../../components/lab/Section.astro";
 
 const opened = "2026-09-20";
 const regenerated = "2026-09-21";
+const settled = "2026-09-21";
 
 const record = [
   { label: "Opened", value: opened },
   { label: "Regenerated", value: regenerated },
-  { label: "Status", value: "open · undecided" },
+  { label: "Status", value: "settled · J" },
   { label: "Variable", value: "treatment × hue" },
-  { label: "Candidates", value: "8 · 4 × 2, no holes · plus I, off-grid" },
+  { label: "Candidates", value: "8 · 4 × 2, no holes · plus I and J, off-grid" },
+  { label: "Settled", value: settled },
   { label: "Floor", value: "4.5:1 label · 3:1 border" },
 ];
 
@@ -115,6 +117,13 @@ const candidates = [
     claim: "B's primary, and a secondary that is not the ruler.",
     pair: true,
     note: "The only band where the secondary moves, and so the only one that is not a controlled comparison — it is off the grid deliberately and it is not a ninth candidate for the same question. Rey's arrangement: a solid cool primary with a cool outline secondary that fills on hover, which is Bootstrap's btn-primary next to its btn-outline-primary and one of the most-copied pairings on the web. Hierarchy comes from fill rather than from hue, which satisfies the rule that colour is never the only signal. What it cannot do is fill solid on hover: that would land the secondary on the primary's rest state exactly, two identical buttons with the wrong one lit. It fills to the soft tint instead and brightens its border to the brand cyan — E's hover, one rank down from a solid. Filling it to something between was checked and does not exist on this scale: step 8 carries no label at 4.5:1 in any colour the site owns, and step 7 works only with a pale cyan label, which inverts the dark-text-on-solid convention the ladder just established.",
+  },
+  {
+    id: "cool-ruled",
+    name: "J · The pair, ruled",
+    claim: "I again, under one rule: a fill means primary.",
+    pair: "ring",
+    note: "The same two buttons as I, with the collision designed out instead of tolerated. One rule decides everything: A FILL MEANS PRIMARY. The primary is filled at rest; the secondary is a ring and never gains a fill in any state, so hovering it cannot produce a second primary. Three shipping systems were read for this. Bootstrap accepts the collision — `btn-outline-primary:hover` sets its background to `$color`, the identical value `btn-primary` wears at rest, and survives only because their primary moves too. Carbon drops the shared hue: in the g100 dark theme `buttonTertiary` is white hovering to gray-10, so no collision is possible. Material 3 never fills it at all — its outlined button has no hover container colour in the token set and `hover-outline-color` is listed as unsupported. M3 has the right rule and the wrong mechanism, because a state layer over 0.009 luminance is nothing. Second finding, separate and worse: step 10 is the wrong colour to hover a solid to. Every published Radix DARK scale has 10 lighter than 9 — blue 0090ff to 3b9eff, cyan 00a2c7 to 23afd0, amber ffc53d to ffd60a — but all three scales generated here through the ACCENT slot have it darker, because the generator pins step 9 to the seed and these seeds sit above its own curve. Only the gray, generated through the gray slot, came out the right way round. So I's primary dims by 1.13:1 on hover, which is measurably a change and visually nothing. J climbs 9 to 12 instead and presses back to 11. Third: I's resting ring is step 8, the only thing on the site wearing that step — same hue to within a degree but 35% lightness against the brand's 60%, so it reads as a second, muddier cyan with nothing to be read against. J uses two cyans total, step 9 at rest and step 12 on hover, for both controls. This is what ships as of 2026-09-21 — it went into global.css before it was a candidate, which is backwards, and it is here so the comparison exists.",
   },
 ];
 
@@ -200,7 +209,7 @@ const notes = [
   },
   {
     title: "A missing cell is a confound, not an omission",
-    body: "Carried over, and now structural. The first set had cyan in three treatments and gold in two, which made the question unanswerable: no comparison between an unfilled cyan candidate and a filled gold one can separate the hue from the treatment. This version is a full 3 × 2 with no empty cells, and the grid below is drawn so a hole cannot reopen quietly.",
+    body: "Carried over, and now structural. The first set had cyan in three treatments and gold in two, which made the question unanswerable: no comparison between an unfilled cyan candidate and a filled gold one can separate the hue from the treatment. This version is a full 4 × 2 with no empty cells, and the grid below is drawn so a hole cannot reopen quietly.",
   },
   {
     title: "Flex stretch hid a 2px mismatch until the buttons wrapped",
@@ -225,14 +234,14 @@ const notes = [
 <LabLayout
   title="The primary action"
   eyebrow="Experiment 03 · open"
-  intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Regenerated on the interaction ladder: three treatments the system defines, across the two hues the policy is arguing about, with every value a step on a scale rather than a percentage somebody picked."
+  intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Regenerated on the interaction ladder: three treatments the system defines, across the two hues the policy is arguing about, with every value a step on a scale rather than a percentage somebody picked. Settled on J, which is not in the grid: the question turned out to be about the pair rather than about the primary alone."
   kind="experiment"
   slug="03-the-primary-action"
 >
   <Section
     id="record"
     title="Record"
-    note="Open, not settled. These values describe the comparison as it stands; the result stays empty until the looking is done."
+    note="Settled 2026-09-21 on J. These values describe the comparison that produced it; the page is a record from here and is not updated again."
   >
     <dl
       class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
@@ -326,7 +335,7 @@ const notes = [
                 <a
                   href={`#${candidate.id}`}
                   class="cta-secondary label rounded-full border px-5 py-2.5"
-                  data-secondary={candidate.pair ? "outline" : undefined}
+                  data-secondary={candidate.pair === true ? "outline" : (candidate.pair ?? undefined)}
                 >
                   Get in touch
                 </a>
@@ -353,7 +362,7 @@ const notes = [
   <Section
     id="coverage"
     title="Coverage"
-    note="Two axes, three treatments by two hues. Letters read across the grid now rather than following the order candidates were added — see the last note for why that renumbering was worth its cost."
+    note="Two axes, four treatments by two hues, plus I and J off the grid. Letters read across the grid now rather than following the order candidates were added — see the last note for why that renumbering was worth its cost."
   >
     <div class="overflow-hidden rounded-xl border border-border">
       <table class="w-full border-collapse text-left">
@@ -461,16 +470,39 @@ const notes = [
   <Section
     id="result"
     title="Result"
-    note="Empty on purpose. It gets filled in by looking, and then this page freezes like experiment 01."
+    note="Settled. This page is a record from here and is not updated again."
   >
     <p class="max-w-measure leading-relaxed text-muted">
-      Undecided as of {opened}. When it settles, the winner moves to the home
-      page, the accent policy is amended in the design plan and in
-      <code
+      <strong class="text-ink">J wins, and it is not one of the eight.</strong>
+      The grid asked which treatment and which hue the primary should take, and
+      held the secondary still so the answer would be clean. That question has
+      an answer — cool, filled — but it was the wrong question. What was
+      actually wrong with the home page was a rule the pair did not have: a
+      filled secondary is a primary, whatever colour it is, so any candidate
+      whose secondary could fill had two primaries the moment someone hovered
+      the wrong one. J states the rule instead of tuning around it. A fill
+      means primary. The primary is filled; the secondary is a ring and never
+      fills.
+    </p>
+    <p class="mt-4 max-w-measure leading-relaxed text-muted">
+      Two defects fell out of getting there, both visible in the strip above.
+      Band I's primary hovers from step 9 to step 10 and its separation goes
+      <em>down</em>, 7.96:1 to 7.02:1 — because all three scales generated
+      through the accent slot put step 10 below step 9, which is backwards for
+      a dark theme and the opposite of every published Radix dark scale. J
+      climbs to step 12 instead and reads 7.96:1 to 13.72:1. And I's resting
+      ring is step 8, the only thing on the site wearing that step: the same
+      hue to within a degree but at 35% lightness against the brand's 60%, so
+      it read as a second, muddier cyan. J uses two cyans and no more.
+    </p>
+    <p class="mt-4 max-w-measure leading-relaxed text-muted">
+      The order was wrong and is worth recording as such: J went into <code
         class="rounded border border-border bg-code-bg px-1.5 py-0.5 font-mono text-sm"
         >global.css</code
-      > to match, and the losing treatments stay here — scoped to this page, in
-      the same way navy and jungle stayed on experiment 01.
+      > before it was a candidate here, so the comparison was built after the
+      decision rather than before it. Bands A–H and I stay exactly as they
+      were — scoped to this page, the way navy and jungle stayed on experiment
+      01.
     </p>
   </Section>
 </LabLayout>
@@ -555,6 +587,49 @@ const notes = [
 
   .cta-secondary[data-secondary="outline"]:active {
     background-color: var(--lab-soft-cool-pressed);
+  }
+
+  /* Band J. I's pair with the collision designed out — see the note. The
+     primary is filled at rest and climbs, skipping step 10 because the
+     accent scales put it BELOW step 9. The secondary is a ring that never
+     fills, so nothing but the primary is ever a filled pill.
+
+     These are the shipped values: `btn-primary` and `btn-secondary` in
+     global.css are this band. */
+  .cta[data-candidate="cool-ruled"] {
+    background-color: var(--cool-9);
+    border-color: var(--cool-9);
+    color: var(--lab-on-solid);
+  }
+
+  .cta[data-candidate="cool-ruled"]:hover,
+  .cta[data-candidate="cool-ruled"].is-hover {
+    background-color: var(--cool-12);
+    border-color: var(--cool-12);
+  }
+
+  .cta[data-candidate="cool-ruled"]:active {
+    background-color: var(--cool-11);
+    border-color: var(--cool-11);
+  }
+
+  .cta-secondary[data-secondary="ring"] {
+    background-color: transparent;
+    border-color: var(--cool-9);
+    color: var(--cool-11);
+  }
+
+  .cta-secondary[data-secondary="ring"]:hover,
+  .cta-secondary[data-secondary="ring"].is-hover {
+    background-color: transparent;
+    border-color: var(--cool-12);
+    color: var(--cool-12);
+  }
+
+  .cta-secondary[data-secondary="ring"]:active {
+    background-color: transparent;
+    border-color: var(--cool-11);
+    color: var(--cool-12);
   }
 
   /* The delayed solids. Outline at rest, filled on hover — the one treatment

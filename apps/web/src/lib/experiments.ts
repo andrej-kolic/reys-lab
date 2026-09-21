@@ -69,11 +69,11 @@ export const experiments: Experiment[] = [
     number: "03",
     slug: "03-the-primary-action",
     title: "The primary action",
-    status: "open",
-    date: "2026-09-20",
+    status: "settled",
+    date: "2026-09-21",
     project: "reys-lab",
     summary:
-      "The home page's call to action reads as too loud, and the accent policy contradicts itself about which accent owns it. Regenerated on the interaction ladder: three treatments by two hues, no invented percentages left in the set.",
+      "Ten candidates, and the winner was not in the grid. The question looked like which treatment and hue the primary should take; it was really a rule the pair never had — a fill means primary, so the secondary never gets one.",
   },
   {
     number: "02",

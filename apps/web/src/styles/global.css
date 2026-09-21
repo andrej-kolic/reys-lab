@@ -193,20 +193,40 @@
   --lab-soft-warm-hover: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix-hover), var(--lab-surface));
   --lab-soft-warm-pressed: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix-pressed), var(--lab-surface));
 
-  /* outline — the primary button's rest state. Experiment 03 settled on
-     candidate G, the delayed solid: an outline until it is wanted, filling
-     to the solid on hover. So the primary needs a resting border and a
-     resting label as well as a fill, and both are steps like everything
-     else. Step 8 rather than 7 for the border: this control's shape carries
-     its affordance, so it falls under WCAG 1.4.11 at 3:1, and step 7
-     measures 2.80 against the page while step 8 clears at 3.81. */
-  --lab-outline: var(--cool-8);
-  --lab-outline-ink: var(--cool-11);
+  /* outline — the SECONDARY button. Step 9, the brand cyan, the same value
+     the primary is filled with. Step 8 was here first and was picked against
+     a floor rather than against the palette: it clears WCAG 1.4.11's 3:1 at
+     3.81, but at 35% lightness to the brand's 60% it is the only thing on the
+     site wearing that step, so it read as a second, muddier cyan. Same hue
+     to within a degree; nothing to read it against.
 
-  /* solid */
+     The pair now uses exactly two cyans — step 9 at rest, step 12 on hover —
+     and the hierarchy comes from fill versus ring, which is the rule. */
+  --lab-btn-edge: var(--cool-9);
+  --lab-btn-edge-ink: var(--cool-11);
+  --lab-btn-edge-hover: var(--cool-12);
+  --lab-btn-edge-ink-hover: var(--cool-12);
+  --lab-btn-edge-pressed: var(--cool-11);
+
+  /* solid — the primary button, filled at rest.
+
+     NOT step 10 on hover, which is what Radix assigns and what this file used
+     to say. In every published Radix DARK scale step 10 is lighter than 9
+     (blue 0090ff -> 3b9eff, cyan 00a2c7 -> 23afd0, amber ffc53d -> ffd60a).
+     In the three scales generated here through the ACCENT slot it is darker
+     — cool 3bb8f5 -> 2aade9, warm ffd23f -> f5c830, violet 7352dc -> 6451b1
+     — because the generator pins step 9 to the seed and these seeds sit above
+     its own curve. Only the gray, generated through the gray slot, comes out
+     the right way round. A hover that dims a bright cyan by 1.13:1 is
+     measurably a change and visually nothing; two screenshots of it are two
+     levels apart out of 255.
+
+     So the fill climbs instead: 9 -> 12 on hover, back to 11 when pressed.
+     Luminance 0.418 -> 0.756 -> 0.476, which moves the same direction as
+     every other hover on this site and keeps the dark label throughout. */
   --lab-solid: var(--cool-9);
-  --lab-solid-hover: var(--cool-10);
-  --lab-solid-pressed: var(--cool-10);
+  --lab-solid-hover: var(--cool-12);
+  --lab-solid-pressed: var(--cool-11);
   --lab-on-solid: var(--lab-bg); /* dark text — see note 2 above */
 
   /* focus — see note 1 above */
@@ -404,68 +424,90 @@
    hides it until they wrap, which is on a phone. One box model beats a
    compensation rule someone has to remember.
 
-   The secondary takes its border from the gray ramp rather than from
-   `--lab-border`. That ramp is seeded #9D98BE, which is `--lab-dim`, which
-   `label` already paints the text — so both halves of the control sit on one
-   ramp and differ only in step, which is what every candidate in the
-   experiment did. It hovers with `--lab-hover`, the same token every
-   hoverable surface uses, and its border moves one step. It must never take
-   the accent on hover: that is the primary's rest state now, and the two
-   would collide.
+   THE ONE RULE: A FILL MEANS PRIMARY. The primary is filled at rest and the
+   secondary is never filled in any state. Everything else follows from that.
 
-   OPEN: the secondary's resting border measures 1.61:1 against the page.
-   Its shape carries its affordance, so WCAG 1.4.11 asks 3:1 of it exactly as
-   it does of the primary. It has been under that floor for as long as it has
-   existed. On this ramp step 9 is the first that clears. */
+   This replaces candidate G, and the reason is worth keeping. G was an
+   outline that filled on hover, sitting beside an outline secondary that also
+   filled on hover — so hovering the secondary produced the primary's own
+   appearance and the hierarchy inverted. Three shipping systems answer this:
+
+     Bootstrap accepts it. `btn-outline-primary:hover` sets its background to
+     `$color`, the identical value `btn-primary` wears at rest. It survives
+     because their primary moves too, so the two are never the same at the
+     same instant. A still frame of it is ambiguous.
+
+     Carbon drops the shared hue. In the g100 dark theme `buttonTertiary` is
+     white, hovering to gray-10, while the primary stays blue — so no
+     collision is possible.
+
+     Material 3 never fills it: its outlined button has no hover container
+     colour in the token set at all, only a state layer, and
+     `hover-outline-color` is listed as unsupported.
+
+   M3 has the right rule and the wrong mechanism, because a state layer over
+   0.009 luminance is nothing. So the rule is M3's and the moves are the two
+   this base cannot flatten — the ring climbs 8 -> 9 -> 11 and the label
+   11 -> 12. Both monotonic, both far clear of their floors.
+
+   Both buttons carry a real 1px border, transparent where there is nothing
+   to show — see above.
+
+   CLOSED: the secondary's resting border used to measure 1.61:1 against the
+   page, under the 3:1 WCAG 1.4.11 asks of a control whose shape carries its
+   affordance. Moving it off the gray ramp onto the cool one puts it at
+   3.81:1. */
 
 @utility btn-primary {
   @apply label;
   display: inline-block;
-  border: 1px solid var(--lab-outline);
+  background-color: var(--lab-solid);
+  border: 1px solid var(--lab-solid);
   border-radius: calc(infinity * 1px);
   padding: 0.625rem 1.25rem;
-  color: var(--lab-outline-ink);
+  color: var(--lab-on-solid);
   text-decoration: none;
   transition:
     background-color 150ms,
     border-color 150ms,
     color 150ms;
 
+  /* The fill lightens; the label does not move. 7.96:1 at rest, 13.72:1
+     hovered, 8.95:1 pressed. */
   &:hover {
-    background-color: var(--lab-solid);
-    border-color: var(--lab-solid);
-    color: var(--lab-on-solid);
-  }
-
-  /* Pressed goes to step 10 with the fill. The solid has nowhere further —
-     the scale gives 9 and 10 and stops, because 11 is text. */
-  &:active {
     background-color: var(--lab-solid-hover);
     border-color: var(--lab-solid-hover);
-    color: var(--lab-on-solid);
+  }
+
+  &:active {
+    background-color: var(--lab-solid-pressed);
+    border-color: var(--lab-solid-pressed);
   }
 }
 
 @utility btn-secondary {
   @apply label;
   display: inline-block;
-  border: 1px solid var(--gray-6);
+  background-color: transparent;
+  border: 1px solid var(--lab-btn-edge);
   border-radius: calc(infinity * 1px);
   padding: 0.625rem 1.25rem;
+  color: var(--lab-btn-edge-ink);
   text-decoration: none;
   transition:
     background-color 150ms,
     border-color 150ms,
     color 150ms;
 
+  /* No fill, ever. The ring and the label carry both states. */
   &:hover {
-    background-color: var(--lab-hover);
-    border-color: var(--gray-7);
-    color: var(--lab-ink);
+    border-color: var(--lab-btn-edge-hover);
+    color: var(--lab-btn-edge-ink-hover);
   }
 
   &:active {
-    background-color: var(--lab-pressed);
+    border-color: var(--lab-btn-edge-pressed);
+    color: var(--lab-btn-edge-ink-hover);
   }
 }
 

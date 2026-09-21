@@ -1,11 +1,22 @@
-# @reys-lab/contrast
+# @reys-lab/design-rules
 
-The contrast gate. Every colour pair the site renders, against the floor it
-has to clear, with the ones that sit below their floor on purpose declared
-rather than rediscovered.
+The design plan's rules, checked. Not all of them — only the ones that are
+rules rather than taste, and so can be decided by a program.
+
+Two of them so far:
+
+- **Contrast.** Every colour pair the site renders, against the floor it has
+  to clear, with the ones that sit below their floor on purpose declared
+  rather than rediscovered.
+- **The fill rule.** Among controls, only the primary carries a background.
+  Settled by experiment 03 on 2026-09-21.
+
+It was called `contrast` until the second one arrived, which is the drift the
+name now avoids: the plan has more of this shape waiting — colour is never
+the only signal, neither accent is ever a large fill, warm is never a link.
 
 ```
-pnpm --filter @reys-lab/contrast gate
+pnpm --filter @reys-lab/design-rules gate
 ```
 
 Exits non-zero on a failure, so it can be a build step.

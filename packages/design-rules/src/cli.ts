@@ -1,7 +1,7 @@
 /**
  * Run the gate.
  *
- *   pnpm --filter @reys-lab/scale gate
+ *   pnpm --filter @reys-lab/design-rules gate
  *
  * Exits non-zero on a failure, so it can be a build step. A pair that is
  * below its floor on purpose is declared in gate.ts and reported without

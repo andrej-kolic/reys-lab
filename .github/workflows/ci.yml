@@ -1,0 +1,50 @@
+# The design rules, checked on every pull request.
+#
+# `build` dependsOn `^gate` in turbo.json, so building the site runs the gate
+# — the contrast matrix and the fill rule — and fails the run if a pair drops
+# below its floor or a control other than btn-primary declares a background.
+# Building rather than running `gate` alone is deliberate: it is the same
+# command the deploy runs, so a green check means the thing that ships works,
+# not just that the rules pass.
+#
+# Until this existed the gate protected local builds only, which is how a
+# broken cache key reached main on 2026-09-21: the gate reads global.css from
+# another package and turbo was not hashing it, so a CSS-only change could hit
+# the cache and pass. Nothing caught it but a read of the branch.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A second push to the same PR cancels the first; main is never cancelled.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Gate, lint and types
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Runs the gate through `^gate`, then builds the site.
+      - run: pnpm run build
+
+      - run: pnpm run lint
+
+      - run: pnpm run check

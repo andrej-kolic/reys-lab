@@ -1,0 +1,18 @@
+# Action versions drift silently: an old major keeps working, so nothing fails
+# and nobody looks. The first version of ci.yml pinned three actions that were
+# two and three majors behind on the day it was written.
+#
+# Weekly, grouped into one pull request — which the CI workflow then gates,
+# because a bumped action either still runs the gate or does not.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Bump"

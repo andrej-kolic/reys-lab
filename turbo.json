@@ -2,11 +2,21 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "dependsOn": [
+        "^build",
+        "^gate"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "gate": {
+      "outputs": []
     },
     "check": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {},
     "dev": {
@@ -14,7 +24,9 @@
       "persistent": true
     },
     "deploy": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     }
   }

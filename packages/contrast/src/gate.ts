@@ -19,6 +19,7 @@
  */
 
 import { contrast } from "./colour.ts";
+import { fillViolations } from "./fills.ts";
 import { palette, softMix, steps } from "./tokens.ts";
 
 const mix = (accent: string, base: string, amount: number): string => {
@@ -144,6 +145,22 @@ export function gate(): GateResult {
     "",
     `${pairs.length} pairs · ${declared} declared below floor · ${failures} failing`,
   );
+
+  // The fill rule. Not a ratio, so it does not belong in the table above, but
+  // it fails the same build for the same reason: it is a rule that holds in
+  // every screenshot and breaks under a pointer.
+  const fills = fillViolations();
+  lines.push("", "fill rule — only the primary carries a background");
+  if (fills.length === 0) {
+    lines.push("  ok    no control but btn-primary declares one");
+  }
+  for (const finding of fills) {
+    failures++;
+    lines.push(
+      `  FAIL  ${finding.utility} declares a background`,
+      `          global.css:${finding.line}  ${finding.declaration}`,
+    );
+  }
 
   return { text: lines.join("\n"), failures };
 }

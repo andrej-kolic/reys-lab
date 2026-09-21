@@ -150,17 +150,19 @@ export function gate(): GateResult {
 
   // The fill rule. Not a ratio, so it does not belong in the table above, but
   // it fails the same build for the same reason: it is a rule that holds in
-  // every screenshot and breaks under a pointer.
+  // every screenshot and breaks under a pointer. Three sightlines, because a
+  // fill arrives three ways — declared, applied, or pasted onto the control
+  // in the markup. See the header of fills.ts.
   const fills = fillViolations();
   lines.push("", "fill rule — only the primary carries a background");
   if (fills.length === 0) {
-    lines.push("  ok    no control but btn-primary declares one");
+    lines.push("  ok    no control but btn-primary gets one");
   }
   for (const finding of fills) {
     failures++;
     lines.push(
-      `  FAIL  ${finding.utility} declares a background`,
-      `          global.css:${finding.line}  ${finding.declaration}`,
+      `  FAIL  ${finding.control} gets a background`,
+      `          ${finding.file}:${finding.line}  ${finding.source}`,
     );
   }
 

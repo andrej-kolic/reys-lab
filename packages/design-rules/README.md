@@ -21,6 +21,13 @@ pnpm --filter @reys-lab/design-rules gate
 
 Exits non-zero on a failure, so it can be a build step.
 
+## What the fill rule watches
+
+A background reaches a control three ways: declared in its `btn-*` block,
+`@apply`d into it, or put on the element in the markup. All three are
+checked — see the header of `src/fills.ts` for which, and for what the scan
+still cannot see.
+
 ## Why a program and not a page
 
 `/lab/reference/colour` already prints a contrast matrix, and it caught a

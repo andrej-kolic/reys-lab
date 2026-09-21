@@ -14,7 +14,7 @@
       "outputs": [],
       "inputs": [
         "$TURBO_DEFAULT$",
-        "$TURBO_ROOT$/apps/web/src/styles/global.css"
+        "$TURBO_ROOT$/apps/web/src/**"
       ]
     },
     "check": {

@@ -34,6 +34,16 @@ const mix = (accent: string, base: string, amount: number): string => {
   return `#${channel(ar, br)}${channel(ag, bg)}${channel(ab, bb)}`;
 };
 
+/**
+ * The hover a card row actually paints: `hover:bg-raised/40` composited over
+ * the card. Not `--lab-hover`, which is the ladder's hover step and is
+ * referenced once, on the experiment 03 page — see issue #6. Measuring the
+ * ladder here reported a colour the site does not paint, which is a gate
+ * telling the truth about the wrong thing. This moves back to
+ * `steps["violet-a3"]` if and when the ladder is adopted in the markup.
+ */
+const rowHover = mix(palette.raised, palette.surface, 0.4);
+
 const soft = {
   cool: mix(palette.accent, palette.surface, softMix.rest),
   coolHover: mix(palette.accent, palette.surface, softMix.hover),
@@ -58,7 +68,7 @@ export const pairs: Pair[] = [
   { what: "muted text on the page", fg: palette.muted, bg: palette.bg, floor: 4.5 },
   { what: "dim text on the page", fg: palette.dim, bg: palette.bg, floor: 4.5 },
   { what: "dim text on a card", fg: palette.dim, bg: palette.surface, floor: 4.5 },
-  { what: "dim text on a hovered card", fg: palette.dim, bg: steps["violet-a3"], floor: 4.5 },
+  { what: "dim text on a hovered card", fg: palette.dim, bg: rowHover, floor: 4.5 },
   {
     what: "dim text on a pressed card",
     fg: palette.dim,

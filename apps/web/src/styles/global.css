@@ -193,6 +193,16 @@
   --lab-soft-warm-hover: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix-hover), var(--lab-surface));
   --lab-soft-warm-pressed: color-mix(in srgb, var(--lab-warm) var(--lab-soft-mix-pressed), var(--lab-surface));
 
+  /* outline — the primary button's rest state. Experiment 03 settled on
+     candidate G, the delayed solid: an outline until it is wanted, filling
+     to the solid on hover. So the primary needs a resting border and a
+     resting label as well as a fill, and both are steps like everything
+     else. Step 8 rather than 7 for the border: this control's shape carries
+     its affordance, so it falls under WCAG 1.4.11 at 3:1, and step 7
+     measures 2.80 against the page while step 8 clears at 3.81. */
+  --lab-outline: var(--cool-8);
+  --lab-outline-ink: var(--cool-11);
+
   /* solid */
   --lab-solid: var(--cool-9);
   --lab-solid-hover: var(--cool-10);
@@ -217,17 +227,32 @@
 
 /* ── Accent policy ──────────────────────────────────────────────
    Settled 2026-09-19: both accents, not one.
+   Amended 2026-09-21: the primary button is cool. See below.
 
    Two accents only work if each has exactly one job. The moment either is used
    because it "looks better here", colour stops carrying information and becomes
    decoration — at which point one accent would have been the better choice.
    So the rule, and it is not negotiable per-component:
 
-     --lab-accent  (cool)  INTERACTION. Links, focus rings, hover, anything the
-                           user can act on. Never decoration, never state.
+     --lab-accent  (cool)  INTERACTION. Links, focus rings, hover, the primary
+                           button, anything the user can act on. Never
+                           decoration, never state.
 
-     --lab-warm    (warm)  STATE. Current page, active filter, "shipped",
-                           the primary button. Never a link.
+     --lab-warm    (warm)  STATE. Current page, active filter, "shipped".
+                           Never a link.
+
+   The primary button moved from warm to cool on 2026-09-21, which resolves a
+   contradiction this policy shipped with: it reserved warm for state and then
+   listed under warm the one element on the page that is purely an action. On
+   the home page that meant gold said *current page* in the nav and *click me*
+   on the CTA, three inches apart — the exact failure the two-accent rule was
+   written to prevent.
+
+   Settled by experiment 03 and not by argument. The thing that made it
+   decidable was measuring: white on the brand cyan is 2.24:1 and fails, so
+   both solids take the page colour as their label, at 7.96:1 on cyan and
+   12.37:1 on gold. Once both are legible the legibility argument that had
+   quietly favoured gold is gone, and what is left is the policy.
 
    Two further constraints that come with the pair:
 
@@ -361,6 +386,87 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--lab-dim);
+}
+
+/* ── The two buttons ──────────────────────────────────────────────────────
+   Experiment 03, settled 2026-09-21 on candidate G — the delayed solid.
+
+   The primary is an outline at rest and fills to the brand cyan on hover,
+   with the label inverting to the page colour in the same 150ms. It is the
+   largest state change on the site by a wide margin: six steps, where
+   everything else moves one. That is the point of it — the quiet rest state
+   of an outline with the affordance of a fill, arriving when a pointer says
+   it is wanted.
+
+   Both buttons carry a real 1px border, transparent where there is nothing
+   to show. A border adds 1px a side, so a bordered button is 2px taller than
+   a filled one at the same padding; a flex row stretches them to match and
+   hides it until they wrap, which is on a phone. One box model beats a
+   compensation rule someone has to remember.
+
+   The secondary takes its border from the gray ramp rather than from
+   `--lab-border`. That ramp is seeded #9D98BE, which is `--lab-dim`, which
+   `label` already paints the text — so both halves of the control sit on one
+   ramp and differ only in step, which is what every candidate in the
+   experiment did. It hovers with `--lab-hover`, the same token every
+   hoverable surface uses, and its border moves one step. It must never take
+   the accent on hover: that is the primary's rest state now, and the two
+   would collide.
+
+   OPEN: the secondary's resting border measures 1.61:1 against the page.
+   Its shape carries its affordance, so WCAG 1.4.11 asks 3:1 of it exactly as
+   it does of the primary. It has been under that floor for as long as it has
+   existed. On this ramp step 9 is the first that clears. */
+
+@utility btn-primary {
+  @apply label;
+  display: inline-block;
+  border: 1px solid var(--lab-outline);
+  border-radius: calc(infinity * 1px);
+  padding: 0.625rem 1.25rem;
+  color: var(--lab-outline-ink);
+  text-decoration: none;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+
+  &:hover {
+    background-color: var(--lab-solid);
+    border-color: var(--lab-solid);
+    color: var(--lab-on-solid);
+  }
+
+  /* Pressed goes to step 10 with the fill. The solid has nowhere further —
+     the scale gives 9 and 10 and stops, because 11 is text. */
+  &:active {
+    background-color: var(--lab-solid-hover);
+    border-color: var(--lab-solid-hover);
+    color: var(--lab-on-solid);
+  }
+}
+
+@utility btn-secondary {
+  @apply label;
+  display: inline-block;
+  border: 1px solid var(--gray-6);
+  border-radius: calc(infinity * 1px);
+  padding: 0.625rem 1.25rem;
+  text-decoration: none;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+
+  &:hover {
+    background-color: var(--lab-hover);
+    border-color: var(--gray-7);
+    color: var(--lab-ink);
+  }
+
+  &:active {
+    background-color: var(--lab-pressed);
+  }
 }
 
 /* ── Glow strength ─────────────────────────────────────────────

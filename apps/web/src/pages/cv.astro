@@ -67,18 +67,8 @@ const roles = [
         Recruiters ask for a PDF and it costs a link. Whether it is
         hand-maintained or generated from this same data is still open.
       */}
-      <a
-        href="/cv.pdf"
-        class="label rounded-full bg-warm px-5 py-2.5 !text-on-solid transition-opacity duration-150 hover:opacity-85"
-      >
-        Download PDF
-      </a>
-      <a
-        href={`mailto:${site.email}`}
-        class="label rounded-full border border-border px-5 py-2.5 transition-colors duration-150 hover:border-accent hover:!text-accent"
-      >
-        Email
-      </a>
+      <a href="/cv.pdf" class="btn-primary">Download PDF</a>
+      <a href={`mailto:${site.email}`} class="btn-secondary">Email</a>
     </div>
   </header>
 

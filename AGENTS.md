@@ -45,13 +45,14 @@ them today:
    hovered and pressed states, measured against its WCAG floor. A pair below floor on
    purpose is *declared* with a reason and reported without failing; silence is not an
    option.
-2. **A fill means primary.** Only `btn-primary` may declare a background. `fills.ts` reads
-   `global.css` and fails on any background inside another `btn-*` block.
+2. **A fill means primary.** Only `btn-primary` may carry a background. `fills.ts` fails
+   on any background another `btn-*` gets — declared, `@apply`d, or applied in the
+   markup — reading `global.css` and every markup file under `apps/web/src`.
 
 `build` dependsOn `^gate` in `turbo.json`, so building runs it. The `gate` task declares
-`apps/web/src/styles/global.css` in its `inputs` because it reads a file outside its own
-package — remove that and turbo will cache past a stylesheet the gate never read, which
-has already happened once.
+`apps/web/src/**` in its `inputs` because it reads files outside its own package — narrow
+that and turbo will cache past a file the gate never read, which has already happened
+once.
 
 Run it alone with `pnpm run gate`. It prints every pair, so read the output rather than
 just the exit code.

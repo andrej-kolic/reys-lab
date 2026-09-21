@@ -40,10 +40,14 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
     </p>
     <div class="mt-8 flex flex-wrap gap-x-5 gap-y-3">
       {/*
-        Experiment 03's candidate G, applied 2026-09-21. Both treatments live
+        Experiment 03's candidate J, settled 2026-09-21. Both treatments live
         in global.css — including the matching 1px border that keeps the two
         the same height once they wrap onto separate lines, which is on a
         phone.
+
+        The rule J established: among controls, only the primary carries a
+        background. The secondary is a ring and never fills, in any state,
+        because a filled secondary is a second primary.
       */}
       <a href="/projects" class="btn-primary">See the work</a>
       <a href={`mailto:${site.email}`} class="btn-secondary">Get in touch</a>

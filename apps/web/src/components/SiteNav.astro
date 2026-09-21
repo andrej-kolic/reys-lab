@@ -8,9 +8,19 @@ const path = Astro.url.pathname;
   <div
     class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-4"
   >
+    {/*
+      Large and light, not small and bold. At 16px/700 the wordmark was body
+      size carrying identity, which is why the header read flat; the reference
+      sets its wordmark large at a low weight and this follows it. 20px against
+      the 11px mono nav labels is the hierarchy the row was missing.
+
+      Deliberately undecorated. On the home page these same words appear again
+      in the hero at 60px, and experiment 02 is still choosing whether that one
+      carries a gradient. A treatment here would compete with it.
+    */}
     <a
       href="/"
-      class="font-display text-base font-bold tracking-tight transition-colors duration-150 hover:text-accent"
+      class="font-display text-xl font-medium tracking-tight transition-colors duration-150 hover:text-accent"
     >
       {site.name}
     </a>

@@ -189,7 +189,7 @@ const notes = [
   },
   {
     title: "The ruler impersonated the thing it was measuring",
-    body: "Carried over. The secondary button was declared constant so it could serve as a fixed reference, and then given a hover that took the accent on both its border and its label — which was a candidate's rest state exactly. Hovering the secondary produced two identical buttons and destroyed the hierarchy the band exists to demonstrate. Found by hovering the wrong button, which is the only way it could have been found: at rest the band was correct, and every number the page printed was correct too. A control has to be a control in every state, not only the one that gets screenshotted.",
+    body: "Carried over. The secondary button was declared constant so it could serve as a fixed reference, and then given a hover that took the accent on both its border and its label — which was a candidate's rest state exactly. Hovering the secondary produced two identical buttons and destroyed the hierarchy the band exists to demonstrate. Found by hovering the wrong button, which is the only way it could have been found: at rest the band was correct, and every number the page printed was correct too. A control has to be a control in every state, not only the one that gets screenshotted. The border does move now, one step up the gray ramp — the lesson was about the accent, not about movement, and holding the ruler still in every respect had started to read as the ruler being broken.",
   },
   {
     title: "A missing cell is a confound, not an omission",
@@ -314,7 +314,7 @@ const notes = [
                 {/* Held constant across every band. This is the ruler. */}
                 <a
                   href={`#${candidate.id}`}
-                  class="cta-secondary label rounded-full border border-border px-5 py-2.5"
+                  class="cta-secondary label rounded-full border px-5 py-2.5"
                 >
                   Get in touch
                 </a>
@@ -548,10 +548,13 @@ const notes = [
      
      Giving every candidate a border, transparent where there is nothing to
      show, is the version that cannot drift: one padding value, one box model,
-     no rule to remember whenever a candidate is added. The secondary is left
-     alone deliberately — it already carries a real border from its utility
-     classes, and a `.cta-secondary` rule here would outrank that utility and
-     turn its border transparent. */
+     no rule to remember whenever a candidate is added. The secondary is not a
+     `.cta` and so is not swept up by this: it keeps its own border, declared
+     on `.cta-secondary` below. It used to take that border from a
+     `border-border` utility, and the note here warned against declaring one
+     in this block — correctly, while `1px solid transparent` was the only
+     thing that would have landed. The rule below sets `border-color` alone,
+     so the utility's width survives and only the colour is ours. */
   .cta {
     border: 1px solid transparent;
   }
@@ -568,6 +571,28 @@ const notes = [
    * effect: a fill has nothing to gain but brightness, whereas a tint has the
    * obvious move of becoming more of itself.
    */
+
+  /* The ruler's border comes off the gray ramp, not off `--lab-border`.
+     `--lab-border` is a saturated violet and `.label` paints the text
+     `--lab-dim`, a grey-violet, so the one control on the page whose two
+     halves were on different hues was the control everything else is judged
+     against. Every candidate keeps both halves on one ramp and varies only
+     the step — E is cool 8 and 11, F is warm 8 and 11 — and the gray scale
+     is seeded #9D98BE, which IS `--lab-dim`, so the ruler's own ramp was
+     already generated and sitting unused.
+
+     Contrast is held, which was the condition: step 6 measures 1.61:1
+     against the page where the violet border measured 1.64. The label does
+     not move at all.
+
+     The resting border is still under the 3:1 of WCAG 1.4.11 — see the hover
+     rule below, where that is recorded. What changes here is only the hue it
+     fails at. On this ramp step 9 (3.47:1) is the first that clears, and
+     that is the value to reach for if the floor gets fixed rather than
+     noted. */
+  .cta-secondary {
+    border-color: var(--gray-6);
+  }
 
   .cta,
   .cta-secondary {
@@ -665,12 +690,28 @@ const notes = [
      special-case this button — that is a fact about the site's hover, not
      about this control.
 
-     The border still does not move. It is the loudest part of a small outlined
-     control, so it is the one part that should stay put; a bright achromatic
-     ring would make the ruler heavier than the thing it measures. */
+     The border moves too, as of 2026-09-21, and the earlier note here said it
+     should not. That note was answering a different proposal — it was written
+     against taking the *accent* on hover, which is the failure above. A step
+     up the violet is not that: the ruler gains an edge without borrowing the
+     interaction hue, so it cannot be mistaken for a candidate's rest state.
+
+     It moves one step, 6 to 7 on the gray ramp — the same ramp the resting
+     border now comes from, for the reason recorded on that rule. ΔL* +5.5,
+     against the site's own hover move of 7.0. Step 8 would be +15.5, a jump
+     rather than a step.
+
+     Still open, and not fixed here: the resting border measures 1.61:1
+     against the page. This control's shape carries its affordance, so the
+     3:1 in WCAG 1.4.11 applies to it exactly as it does to the candidates —
+     which all use step 8 for that reason. The secondary has been under the
+     floor for as long as it has existed and nothing caught it, because it is
+     not a candidate and so nothing measures it. Hovering does not fix it:
+     step 7 is 1.96:1 and step 9 is the first that clears. */
   .cta-secondary:hover,
   .cta-secondary.is-hover {
     background-color: var(--lab-hover);
+    border-color: var(--gray-7);
     color: var(--lab-ink);
   }
 

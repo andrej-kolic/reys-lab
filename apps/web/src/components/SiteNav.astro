@@ -1,5 +1,5 @@
 ---
-import { nav, isCurrent, site } from "../lib/site";
+import { nav, isCurrent, isHome, site } from "../lib/site";
 
 const path = Astro.url.pathname;
 ---
@@ -17,9 +17,18 @@ const path = Astro.url.pathname;
       Deliberately undecorated. On the home page these same words appear again
       in the hero at 60px, and experiment 02 is still choosing whether that one
       carries a gradient. A treatment here would compete with it.
+
+      It does carry `aria-current` on the home page, though. Home is the
+      wordmark rather than a fifth nav item, which meant `/` was the one page
+      where nothing in the document was marked current — the nav items all
+      resolve to not-current and the wordmark said nothing either. The mark is
+      free and the page is the only one that can claim it. What it should look
+      like when current is a separate question, unsettled, and not answered by
+      copying the nav's warm underline at a size it was not drawn for.
     */}
     <a
       href="/"
+      aria-current={isHome(path) ? "page" : undefined}
       class="font-display text-xl font-medium tracking-tight transition-colors duration-150 hover:text-accent"
     >
       {site.name}

@@ -923,18 +923,20 @@ const notes = [
     );
     if (!button) continue;
 
+    // Transitions come off for the whole measurement, not just the forced
+    // hover. getComputedStyle returns the value as currently animated, so a
+    // read taken while anything is in flight is a read of the state being
+    // left, not the state being asked for. The first version only disabled
+    // them around the hover and reported every candidate's hover as
+    // identical to its rest state — a silent, self-consistent wrong answer.
+    const prior = button.style.transition;
+    button.style.transition = "none";
+
     const rest = measure(button);
 
     // Force the hover rules rather than waiting for a pointer. An unmeasured
     // hover is the easiest place for a candidate to drop under the floor,
     // because nobody screenshots a hover.
-    //
-    // Transitions have to come off first. getComputedStyle returns the value
-    // as currently animated, so reading straight after adding the class gives
-    // the state you just left — the first version of this reported every
-    // hover as identical to its rest state, which looked entirely plausible.
-    const prior = button.style.transition;
-    button.style.transition = "none";
     button.classList.add("is-hover");
     const hover = measure(button);
     button.classList.remove("is-hover");

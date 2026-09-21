@@ -8,6 +8,8 @@ packages:
 # pnpm blocks install scripts by default, so it is approved explicitly.
 allowBuilds:
   esbuild: true
+  # rulesync's dependency; its postinstall only refreshes a public-suffix list.
+  tldjs: false
   workerd: true
 
 # Shared versions pinned once, referenced as "catalog:" by every package.

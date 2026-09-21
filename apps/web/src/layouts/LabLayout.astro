@@ -5,6 +5,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import LabControls from "../components/lab/LabControls.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import { bySlug, owner } from "../lib/experiments";
+import { site } from "../lib/site";
 
 interface Props {
   title: string;
@@ -41,7 +42,7 @@ const project = experiment ? owner(experiment) : undefined;
 ---
 
 <BaseLayout
-  title={`${title} · Rey's Lab`}
+  title={`${title} · ${site.name}`}
   noindex={kind === "reference"}
 >
   <div class="page-glow flex min-h-screen flex-col">

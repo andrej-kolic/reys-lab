@@ -33,7 +33,7 @@ const record = [
   { label: "Regenerated", value: regenerated },
   { label: "Status", value: "open · undecided" },
   { label: "Variable", value: "treatment × hue" },
-  { label: "Candidates", value: "8 · 4 × 2, no holes" },
+  { label: "Candidates", value: "8 · 4 × 2, no holes · plus I, off-grid" },
   { label: "Floor", value: "4.5:1 label · 3:1 border" },
 ];
 
@@ -108,6 +108,13 @@ const candidates = [
     name: "H · Delayed solid warm",
     claim: "Same jump, warm.",
     note: "Here because the grid rule says so, not because anyone asked for it. G without H would confound the treatment with the hue exactly as the first version of this page did, and the whole coverage section exists to stop that recurring. It is also the more likely of the two to fail: gold's solid is the loudest fill in the set at 12.37:1, so H spends its rest state being the quietest candidate and its hover being the loudest, which is a wider swing than G's and may be more than a hover should carry.",
+  },
+  {
+    id: "cool-pair",
+    name: "I · The pair",
+    claim: "B's primary, and a secondary that is not the ruler.",
+    pair: true,
+    note: "The only band where the secondary moves, and so the only one that is not a controlled comparison — it is off the grid deliberately and it is not a ninth candidate for the same question. Rey's arrangement: a solid cool primary with a cool outline secondary that fills on hover, which is Bootstrap's btn-primary next to its btn-outline-primary and one of the most-copied pairings on the web. Hierarchy comes from fill rather than from hue, which satisfies the rule that colour is never the only signal. What it cannot do is fill solid on hover: that would land the secondary on the primary's rest state exactly, two identical buttons with the wrong one lit. It fills to the soft tint instead and brightens its border to the brand cyan — E's hover, one rank down from a solid. Filling it to something between was checked and does not exist on this scale: step 8 carries no label at 4.5:1 in any colour the site owns, and step 7 works only with a pale cyan label, which inverts the dark-text-on-solid convention the ladder just established.",
   },
 ];
 
@@ -311,10 +318,15 @@ const notes = [
                 >
                   See the work
                 </a>
-                {/* Held constant across every band. This is the ruler. */}
+                {/*
+                  Held constant across every band. This is the ruler — except
+                  in band I, which exists to ask about the pair rather than
+                  about the primary, and so is the one place it moves.
+                */}
                 <a
                   href={`#${candidate.id}`}
                   class="cta-secondary label rounded-full border px-5 py-2.5"
+                  data-secondary={candidate.pair ? "outline" : undefined}
                 >
                   Get in touch
                 </a>
@@ -510,6 +522,39 @@ const notes = [
     background-color: var(--lab-soft-warm);
     border-color: var(--warm-8);
     color: var(--warm-11);
+  }
+
+  /* Band I's primary is B exactly — the comparison there is about the
+     secondary, so the primary has to be a candidate that already exists or
+     the band changes two things at once. */
+  .cta[data-candidate="cool-pair"] {
+    background-color: var(--cool-9);
+    color: var(--lab-on-solid);
+  }
+
+  .cta[data-candidate="cool-pair"]:hover,
+  .cta[data-candidate="cool-pair"].is-hover {
+    background-color: var(--cool-10);
+  }
+
+  /* Band I's secondary. E's treatment, one rank down from the primary: a
+     cool outline that gains the soft fill and brightens its border to the
+     brand cyan. It must not fill solid — that is the primary's rest state,
+     and hovering the secondary would produce a second primary. */
+  .cta-secondary[data-secondary="outline"] {
+    border-color: var(--cool-8);
+    color: var(--cool-11);
+  }
+
+  .cta-secondary[data-secondary="outline"]:hover,
+  .cta-secondary[data-secondary="outline"].is-hover {
+    background-color: var(--lab-soft-cool-hover);
+    border-color: var(--lab-accent);
+    color: var(--cool-11);
+  }
+
+  .cta-secondary[data-secondary="outline"]:active {
+    background-color: var(--lab-soft-cool-pressed);
   }
 
   /* The delayed solids. Outline at rest, filled on hover — the one treatment

@@ -1,0 +1,388 @@
+---
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+import { palette, steps as scaleSteps, oklchOf } from "@reys-lab/contrast";
+
+/**
+ * The palette's shape, drawn.
+ *
+ * This page began as evidence for a generator: plot the sampled colours,
+ * show they lie on a curve, fill the gaps. They do not lie on a curve, and
+ * the generator is deleted. What is left is the more useful half — the
+ * measurement of what the palette actually is, which nobody had made.
+ *
+ * Read the brightness plot first. Consecutive steps range from 0.018 to
+ * 0.197 apart: eleven times. That is not a scale, it is eleven colours
+ * chosen one at a time, and knowing it is a fact about the palette rather
+ * than a complaint about it. The near-black end is deliberately compressed —
+ * that compression is the rim-light grammar the whole look rests on, page
+ * and card nearly identical with the border carrying the separation. An
+ * evenly spaced scale exists to make adjacent steps clearly distinct, which
+ * is the opposite instruction. No single curve does both, which is why the
+ * attempt is recorded here and not shipped.
+ */
+
+/** The ramp in the order it is used, darkest first. */
+const ramp = [
+  { name: "void", hex: palette.void, role: "Code chip inset" },
+  { name: "page", hex: palette.bg, role: "The app background" },
+  { name: "surface", hex: palette.surface, role: "A card" },
+  { name: "raised", hex: palette.raised, role: "A hovered card" },
+  { name: "border", hex: palette.border, role: "A resting edge" },
+  { name: "line", hex: palette.line, role: "A strong edge" },
+  { name: "dim", hex: palette.dim, role: "Quiet text" },
+  { name: "muted", hex: palette.muted, role: "Secondary text" },
+  { name: "ink", hex: palette.ink, role: "Body text" },
+];
+
+const accents = [
+  { name: "cyan", hex: palette.accent, role: "Interaction" },
+  { name: "gold", hex: palette.warm, role: "State" },
+  { name: "cool 8", hex: scaleSteps["cool-8"], role: "Primary button edge" },
+  { name: "cool 11", hex: scaleSteps["cool-11"], role: "Primary button label" },
+];
+
+const points = ramp.map((entry, index) => ({
+  ...entry,
+  index: index + 1,
+  ...oklchOf(entry.hex),
+}));
+
+const gaps = points.slice(1).map((point, i) => ({
+  from: points[i]!.name,
+  to: point.name,
+  delta: point.l - points[i]!.l,
+}));
+
+const smallest = Math.min(...gaps.map((gap) => gap.delta));
+const largest = Math.max(...gaps.map((gap) => gap.delta));
+
+const plots = [
+  {
+    id: "brightness",
+    title: "Brightness",
+    note: "OKLab lightness, 0 is black and 1 is white. This is the one that sets how far apart two colours look. The dark end is packed and the light end is wide open, and the gap between the widest and narrowest step is what makes this a set of choices rather than a scale.",
+    min: 0,
+    max: 1,
+    ticks: [0, 0.25, 0.5, 0.75, 1],
+    format: (value: number) => value.toFixed(2),
+    of: (point: (typeof points)[number]) => point.l,
+  },
+  {
+    id: "colourfulness",
+    title: "Colourfulness",
+    note: "OKLab chroma. Zero is grey. It rises to a peak at the strong edge and falls away toward white — which is why the text colours read as almost-grey and the borders do not, and why nothing on this site is both light and saturated.",
+    min: 0,
+    max: 0.18,
+    ticks: [0, 0.06, 0.12, 0.18],
+    format: (value: number) => value.toFixed(3),
+    of: (point: (typeof points)[number]) => point.c,
+  },
+  {
+    id: "hue",
+    title: "Hue",
+    note: "Degrees round the colour wheel. Eight of the nine sit between 285° and 292°; the strong edge is at 302°, picked pinker by eye. That wobble is small and it is real — a generated scale would have flattened it, which is one of the things it would have cost.",
+    min: 270,
+    max: 310,
+    ticks: [270, 280, 290, 300, 310],
+    format: (value: number) => `${Math.round(value)}°`,
+    of: (point: (typeof points)[number]) => point.h,
+  },
+];
+
+// Geometry, shared by all three so the eye can carry a position between them.
+const W = 760;
+const H = 250;
+const PAD = { top: 18, right: 96, bottom: 44, left: 52 };
+const plotW = W - PAD.left - PAD.right;
+const plotH = H - PAD.top - PAD.bottom;
+
+const x = (index: number) => PAD.left + ((index - 1) / (points.length - 1)) * plotW;
+const y = (value: number, min: number, max: number) =>
+  PAD.top + plotH - ((value - min) / (max - min)) * plotH;
+---
+
+<LabLayout
+  title="How the palette is shaped"
+  eyebrow="Reference · palette"
+  kind="reference"
+  intro="The eleven sampled colours, plotted. Not a specification — a measurement. It was made while testing whether a generator could continue the palette's shape, and the answer it produced is that the palette does not have one: consecutive brightness steps run from 0.018 to 0.197 apart. That is worth knowing and worth keeping, whether or not anything is ever generated from it."
+>
+  <Section
+    id="reading"
+    title="Reading these"
+    note="Three plots of the same nine colours, one per dimension. Read them together: a colour is a brightness, a colourfulness and a hue."
+  >
+    <ul class="max-w-measure space-y-2 text-sm text-muted">
+      <li>
+        Every dot is painted in the colour it represents and sits at its own
+        position, so a dot that looks wrong beside its neighbours is wrong.
+      </li>
+      <li>
+        The line joins them in ramp order. It is a reading aid, not a curve —
+        there is no function here, which is the finding.
+      </li>
+      <li>
+        Hover a dot for its name, hex and value. Everything is also in the
+        table below, because a chart is not a source.
+      </li>
+      <li>
+        The two accents are not on these plots. They are not on the ramp —
+        they sit off it by design, which is what makes them accents.
+      </li>
+    </ul>
+  </Section>
+
+  {
+    plots.map((plot) => (
+      <Section id={plot.id} title={plot.title} note={plot.note}>
+        <figure class="chart">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            role="img"
+            aria-label={`${plot.title} for each of the nine sampled ramp colours`}
+          >
+            {plot.ticks.map((tick) => (
+              <g>
+                <line
+                  class="grid"
+                  x1={PAD.left}
+                  x2={PAD.left + plotW}
+                  y1={y(tick, plot.min, plot.max)}
+                  y2={y(tick, plot.min, plot.max)}
+                />
+                <text
+                  class="axis"
+                  x={PAD.left - 10}
+                  y={y(tick, plot.min, plot.max)}
+                  text-anchor="end"
+                  dominant-baseline="middle"
+                >
+                  {plot.format(tick)}
+                </text>
+              </g>
+            ))}
+
+            {points.map((point) => (
+              <text
+                class="axis"
+                x={x(point.index)}
+                y={H - 14}
+                text-anchor="middle"
+              >
+                {point.name}
+              </text>
+            ))}
+
+            <path
+              class="line"
+              d={points
+                .map(
+                  (point, i) =>
+                    `${i === 0 ? "M" : "L"}${x(point.index)} ${y(plot.of(point), plot.min, plot.max)}`,
+                )
+                .join(" ")}
+            />
+
+            {points.map((point) => (
+              <circle
+                class="dot"
+                cx={x(point.index)}
+                cy={y(plot.of(point), plot.min, plot.max)}
+                r={5.5}
+                style={`fill: ${point.hex}`}
+                data-tip={`${point.name} · ${point.hex} · ${plot.format(plot.of(point))}`}
+              >
+                <title>{`${point.name}, ${point.hex}, ${plot.format(plot.of(point))}`}</title>
+              </circle>
+            ))}
+          </svg>
+        </figure>
+      </Section>
+    ))
+  }
+
+  <Section
+    id="gaps"
+    title="The gaps"
+    note="Brightness distance between each colour and the one before it — the number that says whether this is a scale."
+  >
+    <div class="overflow-x-auto">
+      <table class="w-full max-w-measure border-collapse text-left font-mono text-xs">
+        <tbody>
+          {gaps.map((gap) => (
+            <tr class="border-b border-border/40">
+              <td class="py-2 pr-4 text-muted">
+                {gap.from} → {gap.to}
+              </td>
+              <td class="py-2 pr-4 text-dim">{gap.delta.toFixed(3)}</td>
+              <td class="w-full py-2">
+                <span
+                  class="bar"
+                  style={`width: ${(gap.delta / largest) * 100}%`}
+                  aria-hidden="true"
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-5 max-w-measure text-sm leading-relaxed text-muted">
+      Smallest {smallest.toFixed(3)}, largest {largest.toFixed(3)} — a factor
+      of {(largest / smallest).toFixed(1)}. An evenly spaced scale would have
+      them all the same, or growing by a fixed ratio. This does neither, and
+      the compression at the dark end is the reason: page and card are nearly
+      the same colour and the border carries the separation, which is the
+      reference's rim-light grammar and the thing the whole look rests on. A
+      scale that spaced them evenly would be a different site.
+    </p>
+  </Section>
+
+  <Section
+    id="values"
+    title="Every value"
+    note="The ramp, then the accents that sit off it."
+  >
+    <table class="w-full border-collapse text-left font-mono text-xs">
+      <tbody>
+        {points.map((point) => (
+          <tr class="border-b border-border/40">
+            <td class="py-2 pr-2">
+              <span
+                class="swatch"
+                style={`background: ${point.hex}`}
+                aria-hidden="true"
+              />
+            </td>
+            <td class="py-2 pr-4 text-ink">{point.name}</td>
+            <td class="py-2 pr-4 text-muted">{point.hex}</td>
+            <td class="py-2 pr-4 text-dim">L {point.l.toFixed(3)}</td>
+            <td class="py-2 pr-4 text-dim">C {point.c.toFixed(3)}</td>
+            <td class="py-2 pr-4 text-dim">H {point.h.toFixed(1)}°</td>
+            <td class="py-2 text-dim">{point.role}</td>
+          </tr>
+        ))}
+        {accents.map((accent) => (
+          <tr class="border-b border-border/40">
+            <td class="py-2 pr-2">
+              <span
+                class="swatch"
+                style={`background: ${accent.hex}`}
+                aria-hidden="true"
+              />
+            </td>
+            <td class="py-2 pr-4 text-ink">{accent.name}</td>
+            <td class="py-2 pr-4 text-muted">{accent.hex}</td>
+            <td class="py-2 pr-4 text-dim" colspan="3">off the ramp</td>
+            <td class="py-2 text-dim">{accent.role}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </Section>
+
+  <div class="chart-tip label" data-chart-tip hidden></div>
+</LabLayout>
+
+<style>
+  .chart {
+    border: 1px solid var(--lab-border);
+    border-radius: 0.75rem;
+    background: var(--lab-surface);
+    padding: 1rem 1rem 0.75rem;
+  }
+
+  .chart svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Recessive: the grid is a reading aid, not data. */
+  .grid {
+    stroke: var(--lab-border);
+    stroke-width: 1;
+  }
+
+  .axis {
+    fill: var(--lab-dim);
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Dimmer than the dots on purpose. It connects them in order; it does not
+     claim they are samples of anything. */
+  .line {
+    fill: none;
+    stroke: var(--lab-border);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  /* A ring in the page colour so two dots that land close stay two dots. */
+  .dot {
+    stroke: var(--lab-bg);
+    stroke-width: 2;
+  }
+
+  .bar {
+    display: block;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--lab-line);
+  }
+
+  .chart-tip {
+    position: fixed;
+    z-index: 40;
+    pointer-events: none;
+    border: 1px solid var(--lab-line);
+    border-radius: 0.4rem;
+    background: var(--lab-void);
+    padding: 0.35rem 0.55rem;
+    color: var(--lab-ink);
+    letter-spacing: 0.08em;
+  }
+
+  .swatch {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1rem;
+    border: 1px solid var(--lab-border);
+    border-radius: 0.2rem;
+    vertical-align: middle;
+  }
+</style>
+
+<script>
+  /**
+   * Per-mark hover, following the pointer. The dots are small and discrete,
+   * and at this size a readout in a fixed corner means looking away from the
+   * thing being read.
+   *
+   * `<title>` is on every dot as well, which is not redundant: it is what a
+   * screen reader and a long-press get, and neither reaches a pointer
+   * handler.
+   */
+  const tip = document.querySelector<HTMLElement>("[data-chart-tip]");
+
+  if (tip) {
+    for (const dot of document.querySelectorAll<SVGCircleElement>("[data-tip]")) {
+      const move = (event: PointerEvent) => {
+        tip.style.left = `${event.clientX + 14}px`;
+        tip.style.top = `${event.clientY - 8}px`;
+      };
+      dot.addEventListener("pointerenter", (event) => {
+        tip.textContent = dot.dataset.tip ?? "";
+        tip.hidden = false;
+        move(event);
+      });
+      dot.addEventListener("pointermove", move);
+      dot.addEventListener("pointerleave", () => {
+        tip.hidden = true;
+      });
+    }
+  }
+</script>

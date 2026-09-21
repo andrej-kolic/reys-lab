@@ -40,6 +40,7 @@ const soft = {
   coolPressed: mix(palette.accent, palette.surface, softMix.pressed),
   warm: mix(palette.warm, palette.surface, softMix.rest),
   warmHover: mix(palette.warm, palette.surface, softMix.hover),
+  warmPressed: mix(palette.warm, palette.surface, softMix.pressed),
 };
 
 export interface Pair {
@@ -94,6 +95,7 @@ export const pairs: Pair[] = [
   { what: "cool label on its pressed soft fill", fg: steps["cool-11"], bg: soft.coolPressed, floor: 4.5 },
   { what: "warm label on its soft fill", fg: steps["warm-11"], bg: soft.warm, floor: 4.5 },
   { what: "warm label on its hovered soft fill", fg: steps["warm-11"], bg: soft.warmHover, floor: 4.5 },
+  { what: "warm label on its pressed soft fill", fg: steps["warm-11"], bg: soft.warmPressed, floor: 4.5 },
   { what: "warm button edge against the page", fg: steps["warm-8"], bg: palette.bg, floor: 3 },
   { what: "page colour on the warm solid", fg: palette.bg, bg: palette.warm, floor: 4.5 },
   {

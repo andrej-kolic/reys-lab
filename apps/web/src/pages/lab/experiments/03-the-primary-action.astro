@@ -3,8 +3,8 @@ import LabLayout from "../../../layouts/LabLayout.astro";
 import Section from "../../../components/lab/Section.astro";
 
 /**
- * An open experiment, opened because the home page shipped a solid gold CTA
- * and it read as too loud on first look.
+ * Settled 2026-09-21 on candidate J. Opened because the home page shipped a
+ * solid gold CTA and it read as too loud on first look.
  *
  * Two things are actually wrong with the control, and they are separable:
  *
@@ -233,7 +233,7 @@ const notes = [
 
 <LabLayout
   title="The primary action"
-  eyebrow="Experiment 03 · open"
+  eyebrow="Experiment 03 · settled"
   intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Regenerated on the interaction ladder: three treatments the system defines, across the two hues the policy is arguing about, with every value a step on a scale rather than a percentage somebody picked. Settled on J, which is not in the grid: the question turned out to be about the pair rather than about the primary alone."
   kind="experiment"
   slug="03-the-primary-action"
@@ -800,10 +800,14 @@ const notes = [
 
      2026-09-21: the replacement was an ink wash at 10% — one of the last
      invented numbers on the page, painting a colour that appears nowhere else
-     in the system. It now uses `--lab-hover`, which is the same token every
-     hoverable surface on the site uses, so the secondary hovers exactly like a
-     list row. One hover rule, not two, and the next component does not get to
-     invent a third.
+     in the system. It now uses `--lab-hover`, the ladder's hover step, so the
+     band stops inventing a colour of its own.
+
+     It is not what the site paints, yet. Production hovers — ListRow, the
+     components reference — are still on `raised/40`, the pre-ladder model, so
+     there are two hover rules on the site and this is the newer one. Closing
+     that is issue #6: it changes what every list row looks like, which is a
+     decision by looking rather than a tidy-up.
 
      It is fainter than the ink wash was. If that turns out to be too faint,
      the fix is to move `--lab-hover` up a step globally rather than to

@@ -51,7 +51,7 @@ const accentRoles = [
   {
     token: "--lab-warm",
     role: "State",
-    rule: "Current page, active filter, shipped status, the primary button.",
+    rule: "Current page, active filter, shipped status. Not the primary button — that is cool, settled by experiment 03.",
     never: "Never a link.",
   },
 ];
@@ -62,7 +62,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 <LabLayout
   title="Colour"
   eyebrow="02 / Palette"
-  intro="Violet c, settled and in use everywhere. The base is never neutral black — it carries hue, which is most of the effect and costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on large fills and never on body text. How this palette was chosen, and what it was chosen over, is experiment 01."
+  intro="Violet c, settled and in use everywhere. The base is never neutral black — it carries hue, which is most of the effect and costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on a large fill such as a page or card background, and never on body text. A control is not a large fill — the primary button is a cool fill at rest, settled by experiment 03. How this palette was chosen, and what it was chosen over, is experiment 01."
   kind="reference"
 >
   <Section
@@ -229,8 +229,9 @@ const glows = [0.12, 0.28, 0.5, 0.8];
     </div>
 
     <p class="mt-3 max-w-measure text-sm text-dim">
-      Two constraints come with the pair. Neither accent is ever a large fill or
-      body text — they live on edges, rules, micro-labels, focus rings and glow.
+      Two constraints come with the pair. Neither accent is ever a page or card
+      background, or body text — they live on edges, rules, micro-labels, focus
+      rings, glow, and the one filled control the fill rule allows.
       And colour is never the only signal: if warm marks the current page, that
       page also gets weight or an underline, because roughly 8% of men cannot
       reliably separate these hues.

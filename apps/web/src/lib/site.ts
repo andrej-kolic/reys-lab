@@ -12,7 +12,10 @@
  */
 
 export const site = {
-  name: "Rey's Lab",
+  /* A typographic apostrophe, not a straight one. The hero has always set the
+     name with \u2019 and the wordmark with \u0027, so the two rendered the same
+     words differently on the same page, about 200px apart. */
+  name: "Rey\u2019s Lab",
   author: "Andrej Kolic",
   positioning: "Full-stack engineer. React and AWS, currently learning the edge.",
   email: "andrej.kolic@gmail.com",
@@ -30,6 +33,18 @@ export const nav: NavItem[] = [
   { href: "/cv", label: "CV" },
   { href: "/lab", label: "Lab" },
 ];
+
+/**
+ * Home is the wordmark rather than a nav item, so it needs its own check.
+ * Without one the home page is the only page on the site where nothing is
+ * marked current — no `aria-current` anywhere in the document, so the nav's
+ * whole current-page system simply does not fire there.
+ *
+ * Exact match after normalising the trailing slash. `/` is current; `/blog`
+ * is not, and neither is anything below it, because every other path has a
+ * nav item of its own to carry the mark.
+ */
+export const isHome = (pathname: string) => pathname.replace(/\/+$/, "") === "";
 
 /**
  * A nav item is current for its whole subtree, so /blog/a-post still marks

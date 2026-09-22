@@ -27,7 +27,7 @@ export interface Project {
 }
 
 export const projects: Record<string, Project> = {
-  "reys-lab": { name: "Rey's Lab", note: "this site" },
+  "reys-lab": { name: "Rey’s Lab", note: "this site" },
   "rookie-trader": {
     name: "Rookie Trader",
     href: "/projects/rookie-trader",

@@ -2,6 +2,7 @@
 import BaseLayout from "./BaseLayout.astro";
 import SiteNav from "../components/SiteNav.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import SubNav from "../components/SubNav.astro";
 import { site } from "../lib/site";
 
 interface Props {
@@ -31,6 +32,13 @@ const {
 >
   <div class="page-glow flex min-h-screen flex-col">
     <SiteNav />
+    {
+      Astro.slots.has("subnav") && (
+        <SubNav>
+          <slot name="subnav" />
+        </SubNav>
+      )
+    }
 
     <main
       class:list={[

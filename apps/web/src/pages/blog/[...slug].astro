@@ -31,11 +31,12 @@ const toc = headings.filter((heading) => heading.depth === 2);
   width="measure"
 >
   <Breadcrumb
+    slot="subnav"
     trail={[{ href: "/blog", label: "Blog" }]}
     current={formatDate(post.data.date)}
   />
 
-  <header class="mt-6 border-b border-border pb-8">
+  <header class="border-b border-border pb-8">
     <h1
       class="font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
     >

@@ -1,0 +1,58 @@
+---
+/**
+ * The CV timeline, the mikes.cv model: a thin vertical line as the spine, a
+ * dot per role, years in small mono to the left of the line, projects nested
+ * under each role.
+ *
+ * From `sm` up, the list is indented by the width of the year column, so the
+ * years sit inside the text column instead of hanging out past its edge.
+ */
+
+export interface Role {
+  years: string;
+  role: string;
+  org?: string;
+  detail: string;
+  projects?: string[];
+}
+
+interface Props {
+  roles: Role[];
+}
+
+const { roles } = Astro.props;
+---
+
+{/* The spine: one border on the list, dots pulled onto it per role. */}
+<ol class="ml-2 border-l border-border pl-8 sm:ml-32">
+  {
+    roles.map((role) => (
+      <li class="relative pb-12 last:pb-0">
+        <span
+          aria-hidden="true"
+          class="absolute top-1.5 -left-[calc(2rem+4.5px)] h-2 w-2 rounded-full bg-accent ring-4 ring-bg"
+        />
+        <p class="label whitespace-nowrap tabular-nums sm:absolute sm:top-0 sm:-left-[calc(2rem+8rem)] sm:w-32 sm:pr-4 sm:text-right">
+          {role.years}
+        </p>
+        <h3 class="mt-2 font-display text-xl font-semibold tracking-tight sm:mt-0">
+          {role.role}
+        </h3>
+        {role.org && <p class="mt-1 font-mono text-sm text-dim">{role.org}</p>}
+        <p class="mt-3 max-w-measure leading-relaxed text-muted">
+          {role.detail}
+        </p>
+        {role.projects && role.projects.length > 0 && (
+          <div class="mt-4 flex flex-wrap items-center gap-2">
+            <span class="label">Projects</span>
+            {role.projects.map((project) => (
+              <span class="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-dim">
+                {project}
+              </span>
+            ))}
+          </div>
+        )}
+      </li>
+    ))
+  }
+</ol>

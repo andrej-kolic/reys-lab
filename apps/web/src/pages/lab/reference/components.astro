@@ -4,6 +4,7 @@ import LabLayout from "../../../layouts/LabLayout.astro";
 import Section from "../../../components/lab/Section.astro";
 import ProjectCard from "../../../components/ProjectCard.astro";
 import ListRow from "../../../components/ListRow.astro";
+import Timeline from "../../../components/Timeline.astro";
 
 // Samples render through the real components, not copies of their markup —
 // this page is maintained, and a copy stops matching the site the moment the
@@ -69,18 +70,23 @@ const experiments = [
 
 const timeline = [
   {
-    year: "2026",
+    years: "2026 —",
     role: "Building Rey’s Lab",
+    org: "Personal",
     detail: "Astro, Tailwind, Cloudflare. A portfolio that is also the work sample.",
+    projects: ["Rey’s Lab", "Grounder"],
   },
   {
-    year: "2024",
+    years: "2024 – 2026",
     role: "Senior Frontend Engineer",
+    org: "Placeholder Company",
     detail: "React and AWS. Design systems, build pipelines, and the odd backend.",
+    projects: ["Rookie Trader"],
   },
   {
-    year: "2021",
+    years: "2021 – 2024",
     role: "Frontend Engineer",
+    org: "Placeholder Company",
     detail: "Where the habit of writing the tradeoff down started.",
   },
 ];
@@ -274,26 +280,8 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
   <Section
     id="timeline"
     title="Timeline node"
-    note="For the Experience page, which comes later. The spine is the page structure, the years are mono and small, and the line is the only place a bright colour is allowed to run vertically."
+    note="The spine of /cv. Years are mono and small, set left of the line inside the text column; the line is the only place a bright colour runs vertically."
   >
-    <ol class="relative ml-2 border-l border-border pl-8">
-      {
-        timeline.map((entry) => (
-          <li class="relative pb-10 last:pb-0">
-            <span class="absolute top-1.5 -left-[2.3125rem] h-2.5 w-2.5 rounded-full border-2 border-accent bg-bg" />
-            <span class="label absolute top-1 -left-[7.5rem] hidden w-16 text-right tabular-nums lg:block">
-              {entry.year}
-            </span>
-            <p class="label tabular-nums lg:hidden">{entry.year}</p>
-            <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight lg:mt-0">
-              {entry.role}
-            </h3>
-            <p class="mt-1 max-w-measure text-sm leading-relaxed text-muted">
-              {entry.detail}
-            </p>
-          </li>
-        ))
-      }
-    </ol>
+    <Timeline roles={timeline} />
   </Section>
 </LabLayout>

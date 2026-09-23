@@ -39,7 +39,6 @@ const count = `${projects.length} ${projects.length === 1 ? "project" : "project
       projects.map((project) => (
         <ProjectCard
           href={`/projects/${project.id}`}
-          label={project.data.stack[0] ?? "Project"}
           title={project.data.title}
           description={project.data.description}
           stack={project.data.stack}

@@ -408,6 +408,21 @@
   color: var(--lab-dim);
 }
 
+/* ── The tag: a stack item or topic, never a link ────────────────────────
+   Square corners and a tight box, settled 2026-09-23 against a rounded
+   outline, dots, and two faint-background variants. Rounded outlines are
+   the secondary button's shape, and a tag in that shape reads as clickable. */
+
+@utility tag {
+  border: 1px solid var(--lab-border);
+  border-radius: 0.125rem;
+  padding: 0.125rem 0.375rem;
+  font-family: var(--ff-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  color: var(--lab-dim);
+}
+
 /* ── The two buttons ──────────────────────────────────────────────────────
    Experiment 03, settled 2026-09-21 on candidate J.
 

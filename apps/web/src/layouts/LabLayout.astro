@@ -89,7 +89,7 @@ const label = experiment
         class:list={[
           "pt-12",
           // /lab's first section draws its own line right below.
-          kind !== "index" && "border-b border-border pb-12",
+          kind !== "index" && "border-b border-border/70 pb-12",
         ]}
       >
         {label && <p class="label !text-accent">{label}</p>}
@@ -135,7 +135,7 @@ const label = experiment
 
       {
         kind === "reference" && (
-          <p class="label mt-20 border-t border-border pt-6">
+          <p class="label mt-20 border-t border-border/70 pt-6">
             Reference · noindex · maintained, not frozen — this page always
             shows the site as it is now
           </p>
@@ -143,7 +143,7 @@ const label = experiment
       }
       {
         kind === "experiment" && (
-          <p class="label mt-20 border-t border-border pt-6">
+          <p class="label mt-20 border-t border-border/70 pt-6">
             Experiment · frozen once dated — a record, never updated to match
             the site
           </p>

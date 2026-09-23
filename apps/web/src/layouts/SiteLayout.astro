@@ -12,7 +12,11 @@ interface Props {
   /** Skips the ` · Rey’s Lab` suffix. Home only. */
   bare?: boolean;
   noindex?: boolean;
-  /** Width of the content column. Prose pages hold the reading measure. */
+  /**
+   * Width of the content column. Prose pages hold the reading measure, but
+   * left-aligned inside the same 5xl frame as the nav and strip, so every page
+   * shares one left edge; a centred narrow column started ~100px further in.
+   */
   width?: "wide" | "measure";
 }
 
@@ -40,13 +44,16 @@ const {
       )
     }
 
-    <main
-      class:list={[
-        "mx-auto w-full grow px-5 pt-12 pb-16",
-        width === "measure" ? "max-w-2xl" : "max-w-5xl",
-      ]}
-    >
-      <slot />
+    <main class="mx-auto w-full max-w-5xl grow px-5 pt-12 pb-16">
+      {
+        width === "measure" ? (
+          <div class="max-w-2xl">
+            <slot />
+          </div>
+        ) : (
+          <slot />
+        )
+      }
     </main>
 
     <SiteFooter />

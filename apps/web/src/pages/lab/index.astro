@@ -34,8 +34,6 @@ const readout = [
   { label: "Output", value: "static / no adapter" },
   { label: "Experiments", value: `${settled.length} settled · ${open.length} open` },
   { label: "Routes", value: String(await countRoutes()) },
-  // Kept to a multiple of three: the grid draws its gaps with a background
-  // colour, so a half-filled last row shows up as a bare slab.
   { label: "AA floor", value: "4.5:1 held" },
 ];
 ---

@@ -9,8 +9,11 @@ import { site } from "../lib/site";
 
 interface Props {
   title: string;
-  /** Mono eyebrow above the page heading. */
-  eyebrow: string;
+  /**
+   * Mono eyebrow above the page heading. Ignored for kind="experiment", whose
+   * eyebrow is its status and date, read from the registry.
+   */
+  eyebrow?: string;
   intro: string;
   /**
    * Which half of the lab this page is.
@@ -39,6 +42,20 @@ const { title, eyebrow, intro, kind, slug } = Astro.props;
 
 const experiment = slug ? bySlug(slug) : undefined;
 const project = experiment ? owner(experiment) : undefined;
+
+// The breadcrumb names what kind of page this is and the eyebrow says more
+// about it, so neither repeats the h1 below them. Reference is not a page of
+// its own, so it is the unlinked last segment rather than a link in the trail.
+const current = experiment
+  ? `Experiment ${experiment.number}`
+  : kind === "reference"
+    ? "Reference"
+    : title;
+const label = experiment
+  ? experiment.status === "settled"
+    ? `Settled ${experiment.date}`
+    : `Open since ${experiment.date}`
+  : eyebrow;
 ---
 
 <BaseLayout
@@ -55,7 +72,7 @@ const project = experiment ? owner(experiment) : undefined;
           <div class="pt-8">
             <Breadcrumb
               trail={[{ href: "/lab", label: "Lab" }]}
-              current={title}
+              current={current}
             />
           </div>
         )
@@ -67,7 +84,7 @@ const project = experiment ? owner(experiment) : undefined;
           kind === "index" ? "pt-12" : "pt-6",
         ]}
       >
-        <p class="label !text-accent">{eyebrow}</p>
+        <p class="label !text-accent">{label}</p>
         <h1
           class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl"
         >

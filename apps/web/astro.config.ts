@@ -34,6 +34,9 @@ export default defineConfig({
       cssVariable: "--ff-outfit",
       provider: google,
       weights: ["400 800"],
+      // latin-ext carries ć, the author's name. unicode-range means a page
+      // downloads it only when it uses one of those letters.
+      subsets: ["latin", "latin-ext"],
       fallbacks: sans,
     },
     {
@@ -42,6 +45,7 @@ export default defineConfig({
       provider: google,
       // 400 code, 500 micro-labels, 600 bold tokens in code blocks.
       weights: [400, 500, 600],
+      subsets: ["latin", "latin-ext"],
       fallbacks: mono,
     },
   ],

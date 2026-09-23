@@ -4,6 +4,7 @@ import Section from "../../components/lab/Section.astro";
 import ListRow from "../../components/ListRow.astro";
 import pkg from "../../../package.json";
 import { countRoutes } from "../../lib/routes";
+import { reference } from "../../lib/reference";
 import {
   byStatus,
   href as experimentHref,
@@ -23,33 +24,6 @@ const settled = byStatus("settled");
 // The eyebrow carries a fact the h1 does not, like the other list pages.
 const total = open.length + settled.length;
 const count = `${total} ${total === 1 ? "experiment" : "experiments"} · ${open.length} open`;
-
-const reference = [
-  {
-    href: "/lab/reference/type",
-    title: "Type",
-    label: "Specimen",
-    body: "Outfit over IBM Plex Mono. The full specimen, the micro-label tracking ramp and the scale — the place to check a size before it ships.",
-  },
-  {
-    href: "/lab/reference/colour",
-    title: "Colour",
-    label: "Palette",
-    body: "Violet c as live token swatches, plus a contrast matrix computed in the page against WCAG AA — the minimum text-contrast standard.",
-  },
-  {
-    href: "/lab/reference/scale",
-    title: "Scale",
-    label: "Measured",
-    body: "The palette plotted by brightness, colourfulness and hue. A measurement rather than a specification — including the finding that its steps are eleven times apart, which is why it is not generated.",
-  },
-  {
-    href: "/lab/reference/components",
-    title: "Components",
-    label: "Parts",
-    body: "The pieces that actually recur: project card, list row, micro-label, code block, link states, timeline node.",
-  },
-];
 
 const readout = [
   { label: "Build", value: new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC" },

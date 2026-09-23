@@ -1,6 +1,7 @@
 ---
 import { Code } from "astro-expressive-code/components";
 import LabLayout from "../../../layouts/LabLayout.astro";
+import { labelFor } from "../../../lib/reference";
 import Section from "../../../components/lab/Section.astro";
 import ProjectCard from "../../../components/ProjectCard.astro";
 import ListRow from "../../../components/ListRow.astro";
@@ -105,7 +106,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 
 <LabLayout
   title="Components"
-  eyebrow="Parts"
+  eyebrow={labelFor("/lab/reference/components")}
   intro="The pieces that actually recur, built from tokens rather than ad-hoc values, and rendered here through the same components the site uses."
   kind="reference"
 >

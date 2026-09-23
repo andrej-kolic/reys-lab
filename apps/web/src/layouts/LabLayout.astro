@@ -43,14 +43,10 @@ const { title, eyebrow, intro, kind, slug } = Astro.props;
 const experiment = slug ? bySlug(slug) : undefined;
 const project = experiment ? owner(experiment) : undefined;
 
-// The breadcrumb names what kind of page this is and the eyebrow says more
-// about it, so neither repeats the h1 below them. Reference is not a page of
-// its own, so it is the unlinked last segment rather than a link in the trail.
-const current = experiment
-  ? `Experiment ${experiment.number}`
-  : kind === "reference"
-    ? "Reference"
-    : title;
+// An experiment's breadcrumb names it by number, which nothing else on the
+// page shows. A reference page is named by its title, like a blog post or a
+// project: "Reference" alone did not say which of the four you were on.
+const current = experiment ? `Experiment ${experiment.number}` : title;
 const label = experiment
   ? experiment.status === "settled"
     ? `Settled ${experiment.date}`

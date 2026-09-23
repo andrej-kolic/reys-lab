@@ -87,10 +87,9 @@ const readout = [
             metaSub={owner(experiment).name}
             title={experiment.title}
             description={experiment.summary}
-            tag={
-              experiment.status === "open"
-                ? "Open"
-                : `Settled ${experiment.date}`
+            tag={experiment.status === "open" ? "Open" : "Settled"}
+            tagSub={
+              experiment.status === "settled" ? experiment.date : undefined
             }
             tagTone={experiment.status === "open" ? "warm" : "dim"}
           />

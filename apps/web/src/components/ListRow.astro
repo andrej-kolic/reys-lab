@@ -20,6 +20,8 @@ interface Props {
   title: string;
   description: string;
   tag?: string;
+  /** Second line under `tag`, set like `metaSub`. A settled experiment's date. */
+  tagSub?: string;
   /** Warm marks state — `OPEN`. Cool is for interaction only, never this. */
   tagTone?: "warm" | "dim";
 }
@@ -32,6 +34,7 @@ const {
   title,
   description,
   tag,
+  tagSub,
   tagTone = "dim",
 } = Astro.props;
 
@@ -63,15 +66,19 @@ const Meta = datetime ? "time" : "span";
     <p class="mt-1 text-sm leading-relaxed text-muted">{description}</p>
   </div>
   {
+    // Fixed width, so a long status does not narrow one row's description
+    // and not the next. It mirrors the left column: capitals, then plain.
     tag && (
-      <span
-        class:list={[
-          "label shrink-0",
-          tagTone === "warm" ? "!text-warm" : "",
-        ]}
-      >
-        {tag}
-      </span>
+      <div class="w-28 shrink-0 sm:text-right">
+        <span
+          class:list={["label", tagTone === "warm" ? "!text-warm" : ""]}
+        >
+          {tag}
+        </span>
+        {tagSub && (
+          <p class="mt-1 text-xs text-dim tabular-nums">{tagSub}</p>
+        )}
+      </div>
     )
   }
 </a>

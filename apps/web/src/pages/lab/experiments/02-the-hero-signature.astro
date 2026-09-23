@@ -158,7 +158,7 @@ const constraints = [
     note="Open, not settled. These values describe the comparison as it stands; the result row stays empty until the looking is done."
   >
     <dl
-      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+      class="grid grid-cols-2 grid-ruled overflow-hidden rounded-xl border border-border sm:grid-cols-3"
     >
       {
         record.map((item) => (
@@ -283,7 +283,7 @@ const constraints = [
     title="What the winner has to accept"
     note="These hold whichever candidate wins, and they are the reason the question is narrow enough to answer by looking."
   >
-    <div class="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+    <div class="grid grid-ruled overflow-hidden rounded-xl border border-border sm:grid-cols-2">
       {
         constraints.map((constraint) => (
           <div class="bg-surface px-5 py-5">
@@ -516,9 +516,11 @@ const constraints = [
           : "fails at any size";
 
     node.textContent = `${worst.toFixed(2)}:1 · ${label} · ${grade}`;
+    // Loudness follows the problem: a pass is dim, a failure is the only
+    // grade in colour. Gold marks state, and a grade is not one.
     node.style.color =
       worst >= 4.5
-        ? "var(--lab-accent-2)"
+        ? "var(--lab-dim)"
         : worst >= 3
           ? "var(--lab-muted)"
           : "var(--lab-warn)";

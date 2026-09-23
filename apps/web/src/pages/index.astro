@@ -20,13 +20,13 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
 <SiteLayout
   title={site.name}
   bare
-  description="Portfolio and lab notes by Andrej Kolic."
+  description={`Portfolio and lab notes by ${site.author}.`}
 >
   {/*
     The hero signature — experiment 02 — is still open, so the name ships in
     flat ink for now. Whatever wins is one rule on this one element.
   */}
-  <section class="pt-10 pb-20">
+  <section class="pb-20">
     <p class="label !text-accent">{site.positioning}</p>
     <h1
       class="mt-4 font-display text-6xl leading-[1.02] font-bold tracking-tight text-balance sm:text-7xl"
@@ -54,7 +54,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
     </div>
   </section>
 
-  <section class="border-t border-border/60 pt-10">
+  <section>
     <div class="mb-6 flex flex-wrap items-baseline gap-x-5">
       <h2 class="font-display text-2xl font-semibold tracking-tight">
         Selected projects
@@ -81,7 +81,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
     </div>
   </section>
 
-  <section class="mt-16 border-t border-border/60 pt-10">
+  <section class="mt-20">
     <div class="mb-6 flex flex-wrap items-baseline gap-x-5">
       <h2 class="font-display text-2xl font-semibold tracking-tight">
         Recent posts

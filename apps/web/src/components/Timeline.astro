@@ -4,6 +4,9 @@
  * dot per role, years in small mono to the left of the line, projects nested
  * under each role.
  *
+ * Year, dot and heading share one centre line: the year takes the heading's
+ * 28px line box, and the dot sits 10px down so its 8px centre lands at 14px.
+ *
  * From `sm` up, the list is indented by the width of the year column, so the
  * years sit inside the text column instead of hanging out past its edge.
  */
@@ -30,12 +33,12 @@ const { roles } = Astro.props;
       <li class="relative pb-12 last:pb-0">
         <span
           aria-hidden="true"
-          class="absolute top-1.5 -left-[calc(2rem+4.5px)] h-2 w-2 rounded-full bg-accent ring-4 ring-bg"
+          class="absolute top-2.5 -left-[calc(2rem+4.5px)] h-2 w-2 rounded-full bg-accent ring-4 ring-bg"
         />
-        <p class="label whitespace-nowrap tabular-nums sm:absolute sm:top-0 sm:-left-[calc(2rem+8rem)] sm:w-32 sm:pr-4 sm:text-right">
+        <p class="label !leading-7 whitespace-nowrap tabular-nums sm:absolute sm:top-0 sm:-left-[calc(2rem+8rem)] sm:w-32 sm:pr-4 sm:text-right">
           {role.years}
         </p>
-        <h3 class="mt-2 font-display text-xl font-semibold tracking-tight sm:mt-0">
+        <h3 class="font-display text-xl leading-7 font-semibold tracking-tight">
           {role.role}
         </h3>
         {role.org && <p class="mt-1 font-mono text-sm text-dim">{role.org}</p>}

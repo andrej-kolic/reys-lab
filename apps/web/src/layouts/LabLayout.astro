@@ -125,26 +125,15 @@ const label = experiment
         }
       </header>
 
+      {/*
+        No closing line stating the page's contract. It was written for the
+        maintainer, not the reader, and on an open experiment "frozen once
+        dated" read as if the page were already settled. The eyebrow carries
+        status and date, which is the part a reader needs.
+      */}
       <main class="pt-14">
         <slot />
       </main>
-
-      {
-        kind === "reference" && (
-          <p class="label mt-20 border-t border-border/70 pt-6">
-            Reference · noindex · maintained, not frozen — this page always
-            shows the site as it is now
-          </p>
-        )
-      }
-      {
-        kind === "experiment" && (
-          <p class="label mt-20 border-t border-border/70 pt-6">
-            Experiment · frozen once dated — a record, never updated to match
-            the site
-          </p>
-        )
-      }
     </div>
 
     <SiteFooter />

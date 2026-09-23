@@ -331,8 +331,10 @@ const glows = [0.12, 0.28, 0.5, 0.8];
         : large
           ? "AA · large only"
           : "Fail · no text";
+      // Loudness follows the problem: a pass is dim, a failure is the only
+      // grade in colour. Gold marks state, and a grade is not one.
       gradeNode.style.color = body
-        ? "var(--lab-accent-2)"
+        ? "var(--lab-dim)"
         : large
           ? "var(--lab-muted)"
           : "var(--lab-warn)";

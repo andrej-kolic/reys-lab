@@ -21,13 +21,11 @@
  */
 export interface Project {
   name: string;
-  /** Shown after the name, in parentheses. For the site, says so. */
-  note?: string;
   href?: string;
 }
 
 export const projects: Record<string, Project> = {
-  "reys-lab": { name: "Rey’s Lab", note: "this site" },
+  "reys-lab": { name: "Rey’s Lab" },
   "rookie-trader": {
     name: "Rookie Trader",
     href: "/projects/rookie-trader",

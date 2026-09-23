@@ -15,7 +15,10 @@ interface Props {
   meta: string;
   /** Set when `meta` is a date, so the row emits a real <time>. */
   datetime?: string;
-  /** Second line under `meta`. The experiment's owner, on the lab index. */
+  /**
+   * Second line under `meta`: the experiment's project, as a tag — the same
+   * tag the experiment page shows. Never a link: the whole row already is one.
+   */
   metaSub?: string;
   title: string;
   description: string;
@@ -48,14 +51,14 @@ const Meta = datetime ? "time" : "span";
   <div class="w-32 shrink-0">
     {/*
       With a second line, the two must not read as one: the first is brighter
-      and keeps the capitals, the second drops them and goes smaller.
+      and keeps the capitals, the second is a tag.
     */}
     <Meta
       datetime={datetime}
       class:list={["label tabular-nums", metaSub && "!text-muted"]}
       >{meta}</Meta
     >
-    {metaSub && <p class="mt-1 text-xs text-dim">{metaSub}</p>}
+    {metaSub && <p class="mt-1.5"><span class="tag">{metaSub}</span></p>}
   </div>
   <div class="min-w-0 grow">
     <h3

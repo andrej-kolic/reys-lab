@@ -104,23 +104,22 @@ const label = experiment
         </p>
 
         {
+          // The project as the same tag the /lab row shows. A tag is never a
+          // link, so a project with its own page gets a separate link beside
+          // it. Chosen in #14 over the project joined to the eyebrow.
           project && (
-            <dl class="mt-7 flex flex-wrap items-baseline gap-x-3">
-              <dt class="label">Run for</dt>
-              <dd class="font-mono text-sm text-muted">
-                {project.href ? (
-                  <a
-                    href={project.href}
-                    class="!text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
-                  >
-                    {project.name}
-                  </a>
-                ) : (
-                  project.name
-                )}
-                {project.note && ` (${project.note})`}
-              </dd>
-            </dl>
+            <div class="mt-7 flex flex-wrap items-center gap-3">
+              <span class="label">Run for</span>
+              <span class="tag">{project.name}</span>
+              {project.href && (
+                <a
+                  href={project.href}
+                  class="label transition-colors duration-150 hover:!text-accent"
+                >
+                  Project →
+                </a>
+              )}
+            </div>
           )
         }
       </header>

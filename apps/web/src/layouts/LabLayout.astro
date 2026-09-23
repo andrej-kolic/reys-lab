@@ -85,7 +85,13 @@ const label = experiment
     </SubNav>
 
     <div class="mx-auto w-full max-w-5xl grow px-5 pb-20">
-      <header class="border-b border-border pt-12 pb-12">
+      <header
+        class:list={[
+          "pt-12",
+          // /lab's first section draws its own line right below.
+          kind !== "index" && "border-b border-border pb-12",
+        ]}
+      >
         {label && <p class="label !text-accent">{label}</p>}
         <h1
           class:list={[

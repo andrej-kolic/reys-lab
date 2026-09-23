@@ -34,7 +34,7 @@ const {
     <SiteNav />
     {
       Astro.slots.has("subnav") && (
-        <SubNav>
+        <SubNav width={width}>
           <slot name="subnav" />
         </SubNav>
       )

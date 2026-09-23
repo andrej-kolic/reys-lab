@@ -61,14 +61,10 @@
   --lab-accent-2: #ffd23f; /* gold — state: current, highlight, shipped */
   --lab-decor: #ff4fb8; /* glow and edges only, never a text colour */
   --lab-warn: #ff5470;
-  --lab-accent-1-name: "cyan";
-  --lab-accent-2-name: "gold";
   --lab-accent: var(--lab-accent-1);
   --lab-warm: var(--lab-accent-2);
   --lab-glow-a: var(--lab-accent-1);
   --lab-glow-b: var(--lab-decor);
-
-  --lab-theme-name: "violet c";
 }
 
 /* ── Interaction ladder ──────────────────────────────────────────────────

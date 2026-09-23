@@ -1,5 +1,6 @@
 ---
 import LabLayout from "../../../layouts/LabLayout.astro";
+import { labelFor } from "../../../lib/reference";
 import Section from "../../../components/lab/Section.astro";
 import { palette, steps as scaleSteps, oklchOf } from "@reys-lab/design-rules";
 
@@ -105,7 +106,7 @@ const y = (value: number, min: number, max: number) =>
 
 <LabLayout
   title="How the palette is shaped"
-  eyebrow="Measured"
+  eyebrow={labelFor("/lab/reference/scale")}
   kind="reference"
   intro="The eleven sampled colours, plotted. Not a specification — a measurement. It was made while testing whether a generator could continue the palette's shape, and the answer it produced is that the palette does not have one: consecutive brightness steps run from 0.018 to 0.197 apart. That is worth knowing and worth keeping, whether or not anything is ever generated from it."
 >

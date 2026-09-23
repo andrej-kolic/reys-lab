@@ -1,5 +1,6 @@
 ---
 import LabLayout from "../../../layouts/LabLayout.astro";
+import { labelFor } from "../../../lib/reference";
 import Section from "../../../components/lab/Section.astro";
 
 /**
@@ -61,7 +62,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
 <LabLayout
   title="Colour"
-  eyebrow="Palette"
+  eyebrow={labelFor("/lab/reference/colour")}
   intro="Violet c, settled and in use everywhere. The base is never neutral black — it carries hue, which is most of the effect and costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on a large fill such as a page or card background, and never on body text. A control is not a large fill — the primary button is a cool fill at rest, settled by experiment 03. How this palette was chosen, and what it was chosen over, is experiment 01."
   kind="reference"
 >

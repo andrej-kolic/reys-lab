@@ -38,8 +38,9 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
   />
 
   <header class="border-b border-border/70 pb-8">
+    <p class="label !text-accent">{project.data.status}</p>
     <h1
-      class="font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
+      class="mt-3 font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
     >
       {project.data.title}
     </h1>
@@ -54,7 +55,6 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
           </span>
         ))
       }
-      <span class="label ml-auto !text-warm">{project.data.status}</span>
     </div>
   </header>
 

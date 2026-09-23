@@ -12,6 +12,11 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 );
 
 const years = [...new Set(posts.map((post) => year(post.data.date)))];
+
+// The eyebrow carries a fact the h1 does not, rather than restating it.
+const count = `${posts.length} ${posts.length === 1 ? "post" : "posts"}${
+  years.length ? ` since ${years.at(-1)}` : ""
+}`;
 ---
 
 <SiteLayout
@@ -19,7 +24,7 @@ const years = [...new Set(posts.map((post) => year(post.data.date)))];
   description="Notes on building things, and what the decisions cost."
 >
   <header class="border-b border-border pb-10">
-    <p class="label !text-accent">Writing</p>
+    <p class="label !text-accent">{count}</p>
     <h1
       class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl"
     >

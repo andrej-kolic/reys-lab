@@ -9,6 +9,10 @@ import { site } from "../lib/site";
 // The timeline is the mikes.cv model: a thin vertical line as the page spine,
 // a dot per role, years in tiny mono, projects nested under each role.
 
+// Set by hand whenever this page's content changes. A build date would move
+// on every deploy and claim edits that never happened.
+const updated = "2026-09-23";
+
 const intro = [
   "Placeholder. Two paragraphs of narrative go here — the part that used to be an About page. Who I am, what I work on, and what I am looking for, written as prose rather than as a bullet list of technologies.",
   "The second paragraph is the one that earns the read: what kind of problem I like, and the sort of engineering judgement I bring to it. Evidence beats adjectives, so it should point at something on this site rather than assert a quality.",
@@ -47,7 +51,7 @@ const roles = [
   description={`${site.author} — experience, and how to get in touch.`}
 >
   <header class="border-b border-border pb-10">
-    <p class="label !text-accent">{site.author}</p>
+    <p class="label !text-accent">Updated {updated}</p>
     <h1
       class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl"
     >

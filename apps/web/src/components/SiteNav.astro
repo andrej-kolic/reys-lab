@@ -34,7 +34,12 @@ const path = Astro.url.pathname;
       {site.name}
     </a>
 
-    <nav class="ml-auto flex flex-wrap gap-x-5 gap-y-2" aria-label="Primary">
+    {/*
+      Each link pads its own hit area to about 40px tall; the negative margins
+      keep the header's height and the right edge where they were. The 20px
+      between words is now the two paddings rather than a gap (#14).
+    */}
+    <nav class="-my-3 -mr-2.5 ml-auto flex flex-wrap" aria-label="Primary">
       {
         nav.map((item) => {
           const current = isCurrent(path, item);
@@ -49,7 +54,7 @@ const path = Astro.url.pathname;
                 on their own.
               */
               class:list={[
-                "label transition-colors duration-150 hover:!text-ink",
+                "label px-2.5 py-3.5 transition-colors duration-150 hover:!text-ink",
                 current
                   ? "!font-semibold !text-warm underline decoration-warm/60 underline-offset-[6px]"
                   : "",

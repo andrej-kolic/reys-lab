@@ -66,8 +66,10 @@ const label = experiment
     <SiteNav />
     <SubNav>
       {
+        // Left is where you are, right is where you can go on this page. /lab
+        // has no parent to show, so its left side stays empty.
         kind === "index" ? (
-          <nav class="label flex flex-wrap gap-x-6 gap-y-2" aria-label="On this page">
+          <nav class="label ml-auto flex flex-wrap gap-x-6 gap-y-2" aria-label="On this page">
             <a href="#experiments" class="transition-colors duration-150 hover:!text-accent">
               Experiments
             </a>

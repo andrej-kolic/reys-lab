@@ -16,7 +16,7 @@ export const site = {
      name with \u2019 and the wordmark with \u0027, so the two rendered the same
      words differently on the same page, about 200px apart. */
   name: "Rey\u2019s Lab",
-  author: "Andrej Kolic",
+  author: "Andrej Kolić",
   positioning: "Full-stack engineer. React and AWS, currently learning the edge.",
   email: "andrej.kolic@gmail.com",
   github: "https://github.com/andrej-kolic",

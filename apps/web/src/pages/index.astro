@@ -20,7 +20,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
 <SiteLayout
   title={site.name}
   bare
-  description="Portfolio and lab notes by Andrej Kolic."
+  description={`Portfolio and lab notes by ${site.author}.`}
 >
   {/*
     The hero signature — experiment 02 — is still open, so the name ships in

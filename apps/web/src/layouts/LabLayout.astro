@@ -83,7 +83,10 @@ const label = experiment
     </SubNav>
 
     <div class="mx-auto w-full max-w-5xl grow px-5 pb-20">
-      {/* No line under the intro: the first section draws its own right below. */}
+      {/*
+        No line under the intro. The first section is almost always a box, whose
+        own edge separates it; a line here drew a second one.
+      */}
       <header class="pt-12">
         {label && <p class="label !text-accent">{label}</p>}
         <h1

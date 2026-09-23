@@ -45,7 +45,12 @@ const count = `${posts.length} ${posts.length === 1 ? "post" : "posts"}${
     {
       years.map((groupYear) => (
         <section class="mb-12 last:mb-0">
-          <h2 class="label mb-4 !text-warm">{groupYear}</h2>
+          {/*
+            Only once posts span more than one year: every row already shows
+            its full date, so a lone year heading says nothing. Dim, not warm —
+            a year is not a state.
+          */}
+          {years.length > 1 && <h2 class="label mb-4">{groupYear}</h2>}
           <div class="overflow-hidden rounded-xl border border-border bg-surface">
             {posts
               .filter((post) => year(post.data.date) === groupYear)

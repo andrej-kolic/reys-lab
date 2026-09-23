@@ -61,12 +61,13 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
 <LabLayout
   title="Colour"
-  eyebrow="02 / Palette"
+  eyebrow="Palette"
   intro="Violet c, settled and in use everywhere. The base is never neutral black — it carries hue, which is most of the effect and costs nothing. Everything else here is about restraint: bright colour belongs on edges, rules, micro-labels, focus rings and glow, never on a large fill such as a page or card background, and never on body text. A control is not a large fill — the primary button is a cool fill at rest, settled by experiment 03. How this palette was chosen, and what it was chosen over, is experiment 01."
   kind="reference"
 >
   <Section
     id="tokens"
+    rule={false}
     title="Tokens"
     note="Live values, read back out of the cascade rather than copied from it, so a swatch here can never drift from the token it claims to show."
   >
@@ -91,7 +92,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
                       {item.token}
                     </p>
                     <p
-                      class="label mt-1 !tracking-wider !text-warm"
+                      class="label mt-1 !tracking-wider"
                       data-hex={item.token}
                     >
                       …
@@ -109,6 +110,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
   <Section
     id="contrast"
+    rule={false}
     title="Contrast matrix"
     note="Every foreground against every background, computed live against WCAG AA — 4.5:1 for body text, 3:1 for large text. This is what catches magenta-on-violet automatically instead of by eye, and it re-runs whenever you change the base candidate."
   >
@@ -164,12 +166,12 @@ const glows = [0.12, 0.28, 0.5, 0.8];
       </table>
     </div>
     <p class="mt-3 max-w-measure text-sm text-dim">
-      A <span class="font-mono text-warm">FAIL</span> is not automatically a
+      A <span class="font-mono text-muted">FAIL</span> is not automatically a
       problem — it means that pair is not allowed to carry text.
     </p>
     <p class="mt-3 max-w-measure text-sm text-dim">
       Worth noting, because it contradicts the design plan: at these values
-      magenta <em class="text-warm not-italic">passes</em> AA on every surface
+      magenta <em class="text-muted not-italic">passes</em> AA on every surface
       except the raised one. The plan assumed it would fail. It stays decoration
       anyway — seven per cent of men cannot reliably separate it from the coral
       beside it, and an accent that has to be explained is not an accent — but
@@ -180,6 +182,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
   <Section
     id="accents"
+    rule={false}
     title="The two accents"
     note="Settled 2026-09-19: both, not one. Two accents only work if each has exactly one job — the moment either gets used because it looks better there, colour stops carrying information and becomes decoration, at which point one accent would have been the better choice. Each theme supplies its own pair."
   >
@@ -217,12 +220,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
           </a>{" "}
           in it.
         </p>
-        <button
-          type="button"
-          class="cursor-pointer rounded-lg bg-warm px-3.5 py-2 font-mono text-xs font-semibold tracking-wider text-on-solid uppercase transition-opacity duration-150 hover:opacity-85"
-        >
-          Primary
-        </button>
+        <button type="button" class="btn-primary">Primary</button>
         <span class="label !text-warm">Current · 2026</span>
         <span class="label !text-accent">Shipped</span>
       </div>
@@ -240,6 +238,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
 
   <Section
     id="glow"
+    rule={false}
     title="Glow ramp"
     note="The reference's bloom, translated to interface. Too little and it is invisible; too much and it looks like a stock gradient hero. The right answer is probably lower than it feels."
   >

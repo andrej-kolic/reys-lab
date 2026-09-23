@@ -67,13 +67,13 @@ const findings = [
 
 <LabLayout
   title="Choosing a palette"
-  eyebrow="Experiment 01 · settled"
   intro="Four palettes were built, three were judged at full-screen scale, and violet c won. This page is the record of that decision, kept as it stood on the day it was made. The two losing palettes still render here and nowhere else on the site."
   kind="experiment"
   slug="01-choosing-a-palette"
 >
   <Section
     id="record"
+    rule={false}
     title="Record"
     note="A finished experiment, not a live control panel. These numbers describe the day the decision was made and are not expected to move again."
   >
@@ -116,6 +116,7 @@ const findings = [
 
   <Section
     id="candidates"
+    rule={false}
     title="Candidates"
     note="Each palette gets a full band of real content, because a base colour reads completely differently as a swatch than it does filling a screen. Body text stays near-white at full contrast in all three — what changes underneath it is the mass."
   >
@@ -226,6 +227,7 @@ const findings = [
 
   <Section
     id="findings"
+    rule={false}
     title="What it turned up"
     note="The decision was the point. These were the by-products, and two of them were live bugs."
   >

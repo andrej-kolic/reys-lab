@@ -20,6 +20,10 @@ import {
 const open = byStatus("open");
 const settled = byStatus("settled");
 
+// The eyebrow carries a fact the h1 does not, like the other list pages.
+const total = open.length + settled.length;
+const count = `${total} ${total === 1 ? "experiment" : "experiments"} · ${open.length} open`;
+
 const reference = [
   {
     href: "/lab/reference/type",
@@ -65,11 +69,12 @@ const readout = [
 <LabLayout
   kind="index"
   title="The Lab"
-  eyebrow="Experiments"
+  eyebrow={count}
   intro="Perceptual questions need an instrument, not an argument. So: build the candidates, deploy them, look at them on a phone, and let the winner be obvious. An experiment is a question answered that way, ending in a dated verdict — if it has no candidates and no verdict, it is a blog post instead. Every experiment names the project it was run for; the ones marked Rey’s Lab are this site, which has no other project page."
 >
   <Section
     id="experiments"
+    rule={false}
     title="Experiments"
     note="Dated and, once settled, frozen — a record, never updated to match the site. That is what stops the lab drifting into theme-park territory: a section containing only finished, dated work has nothing left to keep embellishing. An abandoned experiment leaves a permanent gap in the numbering, which is honest and is the price of the sequence."
   >
@@ -82,10 +87,9 @@ const readout = [
             metaSub={owner(experiment).name}
             title={experiment.title}
             description={experiment.summary}
-            tag={
-              experiment.status === "open"
-                ? "Open"
-                : `Settled ${experiment.date}`
+            tag={experiment.status === "open" ? "Open" : "Settled"}
+            tagSub={
+              experiment.status === "settled" ? experiment.date : undefined
             }
             tagTone={experiment.status === "open" ? "warm" : "dim"}
           />
@@ -95,28 +99,8 @@ const readout = [
   </Section>
 
   <Section
-    id="readout"
-    title="Instrument readout"
-    note="The lab concept, kept honest: these are real build values, not decorative chrome. The reference site this borrows from is dense because it has live numbers — density without data is fake."
-  >
-    <dl
-      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
-    >
-      {
-        readout.map((item) => (
-          <div class="bg-surface px-4 py-4">
-            <dt class="label">{item.label}</dt>
-            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
-              {item.value}
-            </dd>
-          </div>
-        ))
-      }
-    </dl>
-  </Section>
-
-  <Section
     id="reference"
+    rule={false}
     title="Reference"
     note="The opposite contract to an experiment: these are maintained, and always show the site as it is now. They are noindex — a wall of swatches with no narrative makes a poor search landing page — but reachable from here, because the contrast matrix is worth verifying rather than taking on trust."
   >
@@ -139,23 +123,24 @@ const readout = [
   </Section>
 
   <Section
-    id="open"
-    title="Still open"
-    note="What this playground exists to settle. Decided by looking, not by arguing. Palette, type and the site structure are no longer on this list."
+    id="readout"
+    rule={false}
+    title="Instrument readout"
+    note="The lab concept, kept honest: these are real build values, not decorative chrome. The reference site this borrows from is dense because it has live numbers — density without data is fake."
   >
-    <ul class="max-w-measure space-y-3 text-muted">
+    <dl
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3"
+    >
       {
-        [
-          "Whether the gradient signature on the hero name earns its place.",
-          "Whether the soft fills read as a hover at all — 8% to 12% moves ΔL* 2.4, against 7.0 everywhere else.",
-          "The vocabulary table — the fixed noun for each thing, decided once.",
-        ].map((item) => (
-          <li class="flex gap-3">
-            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-warm" />
-            <span class="leading-relaxed">{item}</span>
-          </li>
+        readout.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
         ))
       }
-    </ul>
+    </dl>
   </Section>
 </LabLayout>

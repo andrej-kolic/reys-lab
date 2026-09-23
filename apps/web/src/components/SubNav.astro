@@ -1,0 +1,30 @@
+---
+/**
+ * The strip under the site nav: where this page sits, and nothing else.
+ *
+ * On a detail page it holds the breadcrumb, so "where am I" sits in the same
+ * spot on every project, post, experiment and reference page. On /lab it holds
+ * jump links to the page's own lists. Pages with neither leave it out.
+ *
+ * The line runs full width like the nav's; the content follows the page's
+ * column. On a centred reading page that puts the breadcrumb right above the
+ * title instead of ~100px to its left.
+ */
+
+interface Props {
+  width?: "wide" | "measure";
+}
+
+const { width = "wide" } = Astro.props;
+---
+
+<div class="border-b border-border/70">
+  <div
+    class:list={[
+      "mx-auto flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3",
+      width === "measure" ? "max-w-2xl" : "max-w-5xl",
+    ]}
+  >
+    <slot />
+  </div>
+</div>

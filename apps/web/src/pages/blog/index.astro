@@ -12,14 +12,19 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 );
 
 const years = [...new Set(posts.map((post) => year(post.data.date)))];
+
+// The eyebrow carries a fact the h1 does not, rather than restating it.
+const count = `${posts.length} ${posts.length === 1 ? "post" : "posts"}${
+  years.length ? ` since ${years.at(-1)}` : ""
+}`;
 ---
 
 <SiteLayout
   title="Blog"
   description="Notes on building things, and what the decisions cost."
 >
-  <header class="border-b border-border pb-10">
-    <p class="label !text-accent">Writing</p>
+  <header>
+    <p class="label !text-accent">{count}</p>
     <h1
       class="mt-3 font-display text-5xl leading-[1.05] font-bold tracking-tight sm:text-6xl"
     >
@@ -40,7 +45,12 @@ const years = [...new Set(posts.map((post) => year(post.data.date)))];
     {
       years.map((groupYear) => (
         <section class="mb-12 last:mb-0">
-          <h2 class="label mb-4 !text-warm">{groupYear}</h2>
+          {/*
+            Only once posts span more than one year: every row already shows
+            its full date, so a lone year heading says nothing. Dim, not warm —
+            a year is not a state.
+          */}
+          {years.length > 1 && <h2 class="label mb-4">{groupYear}</h2>}
           <div class="overflow-hidden rounded-xl border border-border bg-surface">
             {posts
               .filter((post) => year(post.data.date) === groupYear)

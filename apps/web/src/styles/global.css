@@ -61,14 +61,10 @@
   --lab-accent-2: #ffd23f; /* gold — state: current, highlight, shipped */
   --lab-decor: #ff4fb8; /* glow and edges only, never a text colour */
   --lab-warn: #ff5470;
-  --lab-accent-1-name: "cyan";
-  --lab-accent-2-name: "gold";
   --lab-accent: var(--lab-accent-1);
   --lab-warm: var(--lab-accent-2);
   --lab-glow-a: var(--lab-accent-1);
   --lab-glow-b: var(--lab-decor);
-
-  --lab-theme-name: "violet c";
 }
 
 /* ── Interaction ladder ──────────────────────────────────────────────────
@@ -405,6 +401,21 @@
      0.22em; this reads slightly tighter and holds better at 11px. */
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: var(--lab-dim);
+}
+
+/* ── The tag: a stack item or topic, never a link ────────────────────────
+   Square corners and a tight box, settled 2026-09-23 against a rounded
+   outline, dots, and two faint-background variants. Rounded outlines are
+   the secondary button's shape, and a tag in that shape reads as clickable. */
+
+@utility tag {
+  border: 1px solid var(--lab-border);
+  border-radius: 0.125rem;
+  padding: 0.125rem 0.375rem;
+  font-family: var(--ff-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
   color: var(--lab-dim);
 }
 

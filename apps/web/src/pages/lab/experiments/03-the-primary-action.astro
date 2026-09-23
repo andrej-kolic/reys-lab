@@ -233,13 +233,13 @@ const notes = [
 
 <LabLayout
   title="The primary action"
-  eyebrow="Experiment 03 · settled"
   intro="The home page shipped a solid gold call to action and it reads as too loud. Underneath that is a contradiction in the accent policy itself, which lists the primary button under the warm accent while also reserving warm for state and barring either accent from large fills. Regenerated on the interaction ladder: three treatments the system defines, across the two hues the policy is arguing about, with every value a step on a scale rather than a percentage somebody picked. Settled on J, which is not in the grid: the question turned out to be about the pair rather than about the primary alone."
   kind="experiment"
   slug="03-the-primary-action"
 >
   <Section
     id="record"
+    rule={false}
     title="Record"
     note="Settled 2026-09-21 on J. These values describe the comparison that produced it; the page is a record from here and is not updated again."
   >
@@ -268,7 +268,7 @@ const notes = [
       {
         hypothesis.map((item, index) => (
           <li class="flex gap-4">
-            <span class="label !text-warm shrink-0 pt-1.5">
+            <span class="label shrink-0 pt-1.5">
               {String(index + 1).padStart(2, "0")}
             </span>
             <p class="leading-relaxed text-muted">{item}</p>
@@ -280,6 +280,7 @@ const notes = [
 
   <Section
     id="candidates"
+    rule={false}
     title="Candidates"
     note="Each band is the hero as it would ship. Look at them at full width on a phone before reading a single number below them."
   >
@@ -361,6 +362,7 @@ const notes = [
 
   <Section
     id="coverage"
+    rule={false}
     title="Coverage"
     note="Two axes, four treatments by two hues, plus I and J off the grid. Letters read across the grid now rather than following the order candidates were added — see the last note for why that renumbering was worth its cost."
   >
@@ -413,7 +415,7 @@ const notes = [
       {
         method.map((step, index) => (
           <li class="flex gap-4">
-            <span class="label !text-warm shrink-0 pt-1.5">
+            <span class="label shrink-0 pt-1.5">
               {String(index + 1).padStart(2, "0")}
             </span>
             <p class="leading-relaxed text-muted">{step}</p>
@@ -425,6 +427,7 @@ const notes = [
 
   <Section
     id="constraints"
+    rule={false}
     title="What the winner has to accept"
     note="These hold whichever candidate wins, and they are why the question is narrow enough to answer by looking."
   >
@@ -448,6 +451,7 @@ const notes = [
 
   <Section
     id="notes"
+    rule={false}
     title="Notes from building it"
     note="Not the result. What the comparison turned up about itself while it was being assembled."
   >

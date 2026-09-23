@@ -136,7 +136,7 @@ const y = (value: number, min: number, max: number) =>
 
   {
     plots.map((plot) => (
-      <Section id={plot.id} title={plot.title} note={plot.note}>
+      <Section id={plot.id} title={plot.title} note={plot.note} rule={false}>
         <figure class="chart">
           <svg
             viewBox={`0 0 ${W} ${H}`}

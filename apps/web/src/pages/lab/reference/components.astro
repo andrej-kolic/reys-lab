@@ -2,10 +2,14 @@
 import { Code } from "astro-expressive-code/components";
 import LabLayout from "../../../layouts/LabLayout.astro";
 import Section from "../../../components/lab/Section.astro";
+import ProjectCard from "../../../components/ProjectCard.astro";
+import ListRow from "../../../components/ListRow.astro";
 
+// Samples render through the real components, not copies of their markup —
+// this page is maintained, and a copy stops matching the site the moment the
+// component changes.
 const projects = [
   {
-    label: "Experiment 01 · Shipped",
     title: "Grounder",
     summary:
       "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time.",
@@ -13,7 +17,6 @@ const projects = [
     result: "In daily use",
   },
   {
-    label: "Experiment 02 · Running",
     title: "Rookie Trader",
     summary:
       "A paper-trading harness for testing strategies against historical data without risking a cent or a convincing backtest.",
@@ -40,6 +43,27 @@ const posts = [
     title: "A monorepo with one app in it",
     description:
       "Boundaries are cheap to draw early and expensive to draw late. Abstractions are the opposite.",
+  },
+];
+
+const experiments = [
+  {
+    number: "02",
+    title: "The hero signature",
+    project: "Rey’s Lab",
+    status: "Open",
+    date: undefined,
+    summary:
+      "Whether the name carries a multi-hue gradient, and drawn from what.",
+  },
+  {
+    number: "01",
+    title: "Choosing a palette",
+    project: "Rey’s Lab",
+    status: "Settled",
+    date: "2026-09-20",
+    summary:
+      "Four palettes built, three judged at full-screen scale, violet c won.",
   },
 ];
 
@@ -81,6 +105,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 >
   <Section
     id="labels"
+    rule={false}
     title="Micro-labels"
     note="The single strongest through-line in all four reference sites, without exception: mono, uppercase, wide tracking, small, quiet. Defined once as a utility so it cannot drift."
   >
@@ -102,32 +127,20 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 
   <Section
     id="project-card"
+    rule={false}
     title="Project card"
-    note="Where an employer decides whether to click. Label, name, what it is in one sentence, stack, outcome — no adjectives."
+    note="Where an employer decides whether to click. Outcome, name, what it is in one sentence, stack — no adjectives."
   >
     <div class="grid gap-4 sm:grid-cols-2">
       {
         projects.map((project) => (
-          <a
+          <ProjectCard
             href="#project-card"
-            class="group flex flex-col rounded-xl border border-border bg-surface p-6 transition-colors duration-150 hover:border-accent"
-          >
-            <p class="label">{project.label}</p>
-            <h3 class="mt-3 font-display text-2xl font-bold tracking-tight transition-colors duration-150 group-hover:text-accent">
-              {project.title}
-            </h3>
-            <p class="mt-2.5 grow text-sm leading-relaxed text-muted">
-              {project.summary}
-            </p>
-            <div class="mt-5 flex flex-wrap items-center gap-2 border-t border-border/60 pt-4">
-              {project.stack.map((item) => (
-                <span class="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] tracking-wider text-dim">
-                  {item}
-                </span>
-              ))}
-              <span class="label ml-auto !text-warm">{project.result}</span>
-            </div>
-          </a>
+            title={project.title}
+            description={project.summary}
+            stack={project.stack}
+            status={project.result}
+          />
         ))
       }
     </div>
@@ -135,31 +148,44 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 
   <Section
     id="post-item"
+    rule={false}
     title="Post list item"
     note="Chronological, scannable, quiet. The blog index is not a place for display type."
   >
     <div class="overflow-hidden rounded-xl border border-border bg-surface">
       {
         posts.map((post) => (
-          <a
+          <ListRow
             href="#post-item"
-            class="group flex flex-col gap-1 border-b border-border/60 px-6 py-5 transition-colors duration-150 last:border-b-0 hover:bg-raised/40 sm:flex-row sm:items-baseline sm:gap-6"
-          >
-            <time
-              datetime={post.date}
-              class="label w-24 shrink-0 tabular-nums"
-            >
-              {post.date}
-            </time>
-            <div class="min-w-0">
-              <h3 class="font-display text-lg font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent">
-                {post.title}
-              </h3>
-              <p class="mt-1 text-sm leading-relaxed text-muted">
-                {post.description}
-              </p>
-            </div>
-          </a>
+            meta={post.date}
+            datetime={post.date}
+            title={post.title}
+            description={post.description}
+          />
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="experiment-row"
+    rule={false}
+    title="Experiment row"
+    note="The same row on the lab index. Number over project, set apart; status in a fixed-width column so every description wraps at the same point."
+  >
+    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+      {
+        experiments.map((experiment) => (
+          <ListRow
+            href="#experiment-row"
+            meta={`Experiment ${experiment.number}`}
+            metaSub={experiment.project}
+            title={experiment.title}
+            description={experiment.summary}
+            tag={experiment.status}
+            tagSub={experiment.date}
+            tagTone={experiment.status === "Open" ? "warm" : "dim"}
+          />
         ))
       }
     </div>
@@ -167,6 +193,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 
   <Section
     id="code"
+    rule={false}
     title="Code block"
     note="A primary visual element on a dev blog, not an afterthought. Expressive Code, with its frame, border and background bound to the palette tokens — so it re-skins with the rest of the site instead of sitting in it like a foreign object."
   >
@@ -178,6 +205,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 
   <Section
     id="prose"
+    rule={false}
     title="Prose"
     note="The other half of the job. Marketing energy on the home page, a good reading environment here — measure held to roughly 68 characters, calmer type, less chrome."
   >
@@ -208,6 +236,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
 
   <Section
     id="links"
+    rule={false}
     title="Link states"
     note="Rest, hover and focus shown together, because the focus ring is the state most often left undesigned and it is the one that carries the accessibility claim. Tab through the live link to check the real thing."
   >

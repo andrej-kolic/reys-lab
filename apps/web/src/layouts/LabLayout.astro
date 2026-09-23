@@ -90,8 +90,9 @@ const label = experiment
       <header
         class:list={[
           "pt-12",
-          // /lab's first section draws its own line right below.
-          kind !== "index" && "border-b border-border/70 pb-12",
+          // On /lab and reference pages the first section draws its own line
+          // right below, so only an experiment's header keeps one.
+          kind === "experiment" && "border-b border-border/70 pb-12",
         ]}
       >
         {label && <p class="label !text-accent">{label}</p>}

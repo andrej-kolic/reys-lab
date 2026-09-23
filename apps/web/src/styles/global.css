@@ -404,6 +404,21 @@
   color: var(--lab-dim);
 }
 
+/* ── The ruled grid: cells separated by 1px lines ────────────────────────
+   Each cell draws its own lines with a 1px ring into the 1px gap. The grid
+   used to paint its whole background in the border colour and let the gap
+   show through, so a last row with fewer cells than columns showed an empty
+   slot as one bright block (#14). Now an empty slot is plain surface. */
+
+@utility grid-ruled {
+  gap: 1px;
+  background-color: var(--lab-surface);
+
+  & > * {
+    box-shadow: 0 0 0 1px var(--lab-border);
+  }
+}
+
 /* ── The tag: a stack item or topic, never a link ────────────────────────
    Near-square corners and a tight box, settled 2026-09-23 against a rounded
    outline, dots, and two faint-background variants. Rounded outlines are

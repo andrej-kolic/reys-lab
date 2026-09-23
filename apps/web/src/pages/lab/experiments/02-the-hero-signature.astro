@@ -516,9 +516,11 @@ const constraints = [
           : "fails at any size";
 
     node.textContent = `${worst.toFixed(2)}:1 · ${label} · ${grade}`;
+    // Loudness follows the problem: a pass is dim, a failure is the only
+    // grade in colour. Gold marks state, and a grade is not one.
     node.style.color =
       worst >= 4.5
-        ? "var(--lab-accent-2)"
+        ? "var(--lab-dim)"
         : worst >= 3
           ? "var(--lab-muted)"
           : "var(--lab-warn)";

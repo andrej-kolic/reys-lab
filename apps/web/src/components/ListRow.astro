@@ -43,8 +43,16 @@ const Meta = datetime ? "time" : "span";
   class="group flex flex-col gap-1 border-b border-border/60 px-6 py-5 transition-colors duration-150 last:border-b-0 hover:bg-raised/40 sm:flex-row sm:items-baseline sm:gap-6"
 >
   <div class="w-32 shrink-0">
-    <Meta datetime={datetime} class="label tabular-nums">{meta}</Meta>
-    {metaSub && <p class="label mt-1">{metaSub}</p>}
+    {/*
+      With a second line, the two must not read as one: the first is brighter
+      and keeps the capitals, the second drops them and goes smaller.
+    */}
+    <Meta
+      datetime={datetime}
+      class:list={["label tabular-nums", metaSub && "!text-muted"]}
+      >{meta}</Meta
+    >
+    {metaSub && <p class="mt-1 text-xs text-dim">{metaSub}</p>}
   </div>
   <div class="min-w-0 grow">
     <h3

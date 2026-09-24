@@ -581,7 +581,9 @@
 
    Two utilities, same paint, different anchor. The paint is declared once so
    the two cannot drift; the vars inside it resolve on whichever element uses
-   it, which is what keeps the per-card --glow-strength ramp working. */
+   it, which is what keeps the per-card --glow-strength ramp working.
+   --glow-a-x and --glow-b-x place the two blooms across the box; the site
+   header sets them to its wordmark and nav (#21). */
 
 @utility glow-paint {
   content: "";
@@ -591,12 +593,12 @@
   height: 26rem;
   background:
     radial-gradient(
-      42rem 20rem at 22% 0%,
+      42rem 20rem at var(--glow-a-x, 22%) 0%,
       color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * 100%), transparent),
       transparent 70%
     ),
     radial-gradient(
-      34rem 18rem at 78% 12%,
+      34rem 18rem at var(--glow-b-x, 78%) 12%,
       color-mix(in oklab, var(--lab-glow-b) calc(var(--glow-strength, 0.28) * 62%), transparent),
       transparent 72%
     );
@@ -656,10 +658,19 @@
   /* uncomment to use solid page colour */
   background-color: var(--lab-bg);
 
+  /* One bloom behind the wordmark, one behind the nav, at every width (#21).
+     At 22% and 78% of the window they sat under both only near 1440px; at
+     1920 the first missed the wordmark by 190px, at 2560 by 400. The box is
+     centred on the window, so each centre is the content column's edge
+     (half of 64rem, or of the window when it is narrower) moved in to the
+     measured middle of the wordmark (3.75rem) and of the nav (7.8rem). Rename a
+     nav item and the second number moves with it. */
   &::before {
     @apply glow-paint;
     position: fixed;
     inset: -2rem -10% auto;
+    --glow-a-x: calc(50% - min(50vw, 32rem) + 3.75rem);
+    --glow-b-x: calc(50% + min(50vw, 32rem) - 7.8rem);
     transition: opacity 200ms ease-out;
   }
 

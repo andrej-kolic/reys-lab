@@ -604,8 +604,9 @@
    Two utilities, same paint, different anchor. The paint is declared once so
    the two cannot drift; the vars inside it resolve on whichever element uses
    it, which is what keeps the per-card --glow-strength ramp working.
-   --glow-a-x and --glow-b-x place the two blooms across the box; the site
-   header sets them to its wordmark and nav (#21). */
+   --glow-a-x and --glow-b-x place the two blooms across the box, and
+   --glow-a-share sets the first one's share of the strength (the second's
+   is 62%); the site header sets all three (#21). */
 
 @utility glow-paint {
   content: "";
@@ -616,7 +617,7 @@
   background:
     radial-gradient(
       42rem 20rem at var(--glow-a-x, 22%) 0%,
-      color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * 100%), transparent),
+      color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * var(--glow-a-share, 100%)), transparent),
       transparent 70%
     ),
     radial-gradient(
@@ -686,13 +687,20 @@
      centred on the window, so each centre is the content column's edge
      (half of 64rem, or of the window when it is narrower) moved in to the
      measured middle of the wordmark (3.75rem) and of the nav (7.8rem). Rename a
-     nav item and the second number moves with it. */
+     nav item and the second number moves with it.
+
+     The cyan bloom takes 80% of the strength here, not 100% (#21). Cyan is
+     far lighter than the magenta beside it: at full share its peak lifted
+     the page to 1.72:1 against the magenta's 1.27, and centred behind the
+     wordmark it read too bright. At 80% it is 1.51, still the cooler side.
+     Header only, so the settled .28 and the demo cards keep their values. */
   &::before {
     @apply glow-paint;
     position: fixed;
     inset: -2rem -10% auto;
     --glow-a-x: calc(50% - min(50vw, 32rem) + 3.75rem);
     --glow-b-x: calc(50% + min(50vw, 32rem) - 7.8rem);
+    --glow-a-share: 80%;
     transition: opacity 200ms ease-out;
   }
 

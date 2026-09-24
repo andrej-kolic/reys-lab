@@ -7,6 +7,10 @@
  * breadcrumb can wrap too. The script publishes the measured height as
  * `--site-header-height`, which `scroll-padding-top` on `html` reads, so an
  * in-page link lands below the header at every width.
+ *
+ * On a phone it also hides while you scroll down and returns when you scroll
+ * up. The script only flags the direction; the CSS decides the width and does
+ * the moving.
  */
 import SiteNav from "./SiteNav.astro";
 ---
@@ -17,7 +21,7 @@ import SiteNav from "./SiteNav.astro";
 </div>
 
 <script>
-  const header = document.querySelector("[data-site-header]");
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
   if (header) {
     new ResizeObserver(([entry]) => {
       document.documentElement.style.setProperty(
@@ -25,5 +29,53 @@ import SiteNav from "./SiteNav.astro";
         `${entry.borderBoxSize[0].blockSize}px`,
       );
     }).observe(header);
+
+    // Smaller moves than this are a thumb resting on the glass, not a
+    // decision to read on or go back.
+    const jitter = 8;
+    let last = scrollY;
+    let queued = false;
+    // An in-page link keeps the header shown until its jump ends, so the
+    // target lands below the header as scroll-padding-top expects.
+    let holding = false;
+
+    const update = () => {
+      queued = false;
+      const y = scrollY;
+      if (holding || y < header.offsetHeight) {
+        header.removeAttribute("data-hidden");
+      } else if (Math.abs(y - last) < jitter) {
+        return;
+      } else {
+        header.toggleAttribute("data-hidden", y > last);
+      }
+      last = y;
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      },
+      { passive: true },
+    );
+
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest('a[href^="#"]')) return;
+      holding = true;
+      header.removeAttribute("data-hidden");
+      const release = () => {
+        holding = false;
+        last = scrollY;
+      };
+      if ("onscrollend" in window) {
+        addEventListener("scrollend", release, { once: true });
+      } else {
+        setTimeout(release, 1000);
+      }
+    });
   }
 </script>

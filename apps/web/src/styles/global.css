@@ -640,6 +640,20 @@
     inset: -2rem -10% auto;
   }
 
+  /* On a phone the header slides away while you read down and comes back as
+     soon as you scroll up (#14): at 360px it is 128px, near a fifth of the
+     screen. SiteHeader's script sets `data-hidden`; the width lives here, so
+     a wide window never hides it. It moves by its sticky offset, not by a
+     transform: a transform would carry the fixed glow up with it. The offset
+     includes the fade below, so that goes too. Focus inside brings it back. */
+  transition: top 200ms ease-out;
+
+  @media (width < 40rem) {
+    &[data-hidden]:not(:focus-within) {
+      top: calc(-1 * var(--site-header-height, 8rem) - 1.5rem);
+    }
+  }
+
   /* Below the glow (-1), so the glow colours the fade as it does the rest. */
   &::after {
     content: "";

@@ -93,7 +93,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
         All posts
       </a>
     </div>
-    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+    <div class="rounded-xl border border-border bg-surface">
       {
         posts.map((post) => (
           <ListRow

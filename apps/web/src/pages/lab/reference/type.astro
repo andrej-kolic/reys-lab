@@ -93,7 +93,7 @@ const ramp = [
         </p>
 
         <div
-          class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border/60 pt-5"
+          class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-divider pt-5"
         >
           <span class="label">{copy.mono}</span>
           <span class="font-mono text-sm tabular-nums text-muted">
@@ -122,7 +122,7 @@ const ramp = [
           { em: "0.22em", note: "disko.media" },
           { em: "0.28em", note: "too loose — reads as spaced-out, not labelled" },
         ].map((step) => (
-          <div class="flex flex-col gap-2 border-b border-border/60 px-6 py-5 last:border-b-0 sm:flex-row sm:items-baseline sm:gap-8">
+          <div class="flex flex-col gap-2 border-b border-divider px-6 py-5 last:border-b-0 sm:flex-row sm:items-baseline sm:gap-8">
             <span class="label w-20 shrink-0 !tracking-wider">{step.em}</span>
             <span
               class="font-mono text-[11px] font-medium text-dim uppercase"
@@ -146,7 +146,7 @@ const ramp = [
     <div class="overflow-hidden rounded-xl border border-border bg-surface">
       {
         ramp.map((step) => (
-          <div class="flex flex-col gap-2 border-b border-border/60 px-6 py-5 last:border-b-0 sm:flex-row sm:items-baseline sm:gap-8">
+          <div class="flex flex-col gap-2 border-b border-divider px-6 py-5 last:border-b-0 sm:flex-row sm:items-baseline sm:gap-8">
             <span class="label w-40 shrink-0">{step.token}</span>
             <span class={`font-display ${step.cls}`}>{step.sample}</span>
           </div>

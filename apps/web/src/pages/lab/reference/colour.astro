@@ -16,7 +16,8 @@ const surfaceTokens = [
   { token: "--lab-raised", role: "Panel headers, hover fills" },
   { token: "--lab-border", role: "Hairlines, card edges" },
   { token: "--lab-line", role: "Emphatic rules, dividers" },
-  { token: "--lab-frame", role: "The frame: header and footer lines" },
+  { token: "--lab-frame", role: "The frame: header, footer and page-title lines" },
+  { token: "--lab-divider", role: "Every other line inside the page" },
 ];
 
 const inkTokens = [
@@ -133,7 +134,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
         <tbody>
           {
             foregrounds.map((fg) => (
-              <tr class="border-b border-border/60 last:border-b-0">
+              <tr class="border-b border-divider last:border-b-0">
                 <th class="px-4 py-3 text-left font-mono text-[13px] font-normal whitespace-nowrap text-ink">
                   {fg.replace("--lab-", "")}
                 </th>

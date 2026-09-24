@@ -58,15 +58,28 @@
   --lab-bg: #191233;
   --lab-surface: #241e47;
   --lab-raised: #33286c;
-  --lab-border: #3f3179;
+  /* Box edges — cards, tags, the ruled grid, inline code — in the lines'
+     light violet, mixed opaque into the card at the frame's 18% (#21).
+     #3e3668: the same strength as the #3f3179 it replaced (1.64:1 on the
+     page), a third less colourful, which always read too violet. Opaque, not
+     see-through like the lines: the ruled grid overlaps two cells' edges in
+     each gap, and a see-through edge would double there. */
+  --lab-border: color-mix(in srgb, var(--violet-11) 18%, var(--lab-surface));
   --lab-line: #6b449b;
-  /* The page's frame: the two lines under the header and the one over the
-     footer (#21). A see-through light line, not a violet one: it lightens
-     whatever is under it, so it holds about 1.37:1 on the page and under both
-     glows alike. The border at 70% measured 1.38 on the page but 1.04 under
-     the cyan glow, which is lighter than any violet line; opaque violet 7
-     survived the glow at 1.31 and read too strong and too coloured. */
-  --lab-frame: color-mix(in srgb, var(--lab-ink) 12%, transparent);
+  /* Lines (#21). One colour, the scale's light violet, and opacity sets the
+     strength. See-through and light, so it lightens whatever is under it and
+     the glow cannot hide it: the border at 70% measured 1.38:1 on the page
+     but 1.04 under the cyan glow, which is lighter than any violet line.
+     Tinted, not white: white over violet is always less colourful than what
+     it sits on, and read grey and dirty. Opaque violet 7 was tried first and
+     read too strong and too coloured.
+
+     Frame — under the nav and the strip, over the footer, under a page
+     title: 1.42 on the page. Divider — every other line inside the page:
+     1.26 on a card. Edges of boxes (cards, tags, the ruled grid, inline
+     code) stay the border. */
+  --lab-frame: color-mix(in srgb, var(--violet-11) 18%, transparent);
+  --lab-divider: color-mix(in srgb, var(--violet-11) 12%, transparent);
   --lab-ink: #edebfb;
   --lab-muted: #ada8d1;
   --lab-dim: #9d98be;
@@ -333,6 +346,7 @@
   --color-border: var(--lab-border);
   --color-line: var(--lab-line);
   --color-frame: var(--lab-frame);
+  --color-divider: var(--lab-divider);
 
   --color-ink: var(--lab-ink);
   --color-muted: var(--lab-muted);
@@ -809,7 +823,7 @@
   }
 
   & hr {
-    border-color: var(--lab-border);
+    border-color: var(--lab-divider);
     margin-block: 2.5em;
   }
 

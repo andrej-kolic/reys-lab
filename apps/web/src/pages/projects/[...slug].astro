@@ -37,7 +37,7 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
     current={project.data.title}
   />
 
-  <header class="border-b border-border/70 pb-8">
+  <header class="border-b border-frame pb-8">
     <p class="label !text-accent">{project.data.status}</p>
     <h1
       class="mt-3 font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
@@ -64,7 +64,7 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
 
   {
     experiments.length > 0 && (
-      <section class="mt-14 border-t border-border/60 pt-8">
+      <section class="mt-14 border-t border-divider pt-8">
         <h2 class="font-display text-xl font-semibold tracking-tight">
           Experiments run for this
         </h2>
@@ -89,7 +89,7 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
 
   {
     links.length > 0 && (
-      <section class="mt-14 border-t border-border/60 pt-8">
+      <section class="mt-14 border-t border-divider pt-8">
         <div class="flex flex-wrap gap-x-5 gap-y-3">
           {links.map((link) => (
             <a

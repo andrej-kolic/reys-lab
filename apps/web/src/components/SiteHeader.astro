@@ -62,20 +62,42 @@ import SiteNav from "./SiteNav.astro";
       { passive: true },
     );
 
+    // Each in-page jump's own listeners and timers, so a release — or the
+    // next jump — removes all of them and none fires on a later scroll.
+    let jump: AbortController | undefined;
+
     document.addEventListener("click", (event) => {
       if (!(event.target instanceof Element)) return;
       if (!event.target.closest('a[href^="#"]')) return;
+      jump?.abort();
+      const current = new AbortController();
+      jump = current;
       holding = true;
       header.removeAttribute("data-hidden");
+
       const release = () => {
+        current.abort();
         holding = false;
         last = scrollY;
       };
-      if ("onscrollend" in window) {
-        addEventListener("scrollend", release, { once: true });
-      } else {
-        setTimeout(release, 1000);
-      }
+      // A link to where the page already is, or one opened in a new tab,
+      // never scrolls and so never ends a scroll: let go if none starts.
+      const idle = setTimeout(release, 150);
+      const fallback =
+        "onscrollend" in window ? undefined : setTimeout(release, 1000);
+      current.signal.addEventListener("abort", () => {
+        clearTimeout(idle);
+        clearTimeout(fallback);
+      });
+      addEventListener("scroll", () => clearTimeout(idle), {
+        once: true,
+        passive: true,
+        signal: current.signal,
+      });
+      addEventListener("scrollend", release, {
+        once: true,
+        signal: current.signal,
+      });
     });
   }
 </script>

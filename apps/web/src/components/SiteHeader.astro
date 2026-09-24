@@ -1,0 +1,29 @@
+---
+/**
+ * The site nav and, below it, whatever strip the page passes in — pinned to
+ * the top as one block, so "where am I" stays on screen on a long page (#14).
+ *
+ * Its height is not fixed: at 360px the nav wraps to two rows, and a long
+ * breadcrumb can wrap too. The script publishes the measured height as
+ * `--site-header-height`, which `scroll-padding-top` on `html` reads, so an
+ * in-page link lands below the header at every width.
+ */
+import SiteNav from "./SiteNav.astro";
+---
+
+<div class="site-header" data-site-header>
+  <SiteNav />
+  <slot />
+</div>
+
+<script>
+  const header = document.querySelector("[data-site-header]");
+  if (header) {
+    new ResizeObserver(([entry]) => {
+      document.documentElement.style.setProperty(
+        "--site-header-height",
+        `${entry.borderBoxSize[0].blockSize}px`,
+      );
+    }).observe(header);
+  }
+</script>

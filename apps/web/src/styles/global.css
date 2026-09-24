@@ -347,10 +347,15 @@
     color-scheme: dark;
     scroll-behavior: smooth;
 
+    /* An in-page link lands 1rem below the sticky header, not under it.
+       SiteHeader measures its own height, which wraps on a phone; 6rem is
+       about its desktop height with the strip, used until the script runs. */
+    scroll-padding-top: calc(var(--site-header-height, 6rem) + 1rem);
+
     /* The ambient glow bleeds past its container by design, which on a phone
        showed up as a real horizontal scroll. `clip` rather than `hidden`:
-       `hidden` would make this a scroll container and break the sticky lab
-       controls. */
+       `hidden` would make this a scroll container and break the sticky site
+       header. */
     overflow-x: clip;
   }
 
@@ -590,20 +595,42 @@
   }
 }
 
-/* Page-level: one per page, applied by the layout, never by a page.
-   
+/* Page-level: one per page, applied by the layout, never by a page. The glow
+   itself is painted by the site header below; this is the stacking context it
+   and the page content share. */
+@utility page-glow {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The nav and the strip under it, pinned to the top as one block (#14), so
+   "where am I" stays on screen on a long page.
+
+   Four layers, bottom to top: the page content; the header's own background,
+   tinted glass — the page colour at 60% over a 16px blur, so text scrolling
+   beneath shows only as a soft smear; the glow; the nav and strip. The glow is one layer for the whole page, fixed to the
+   window and larger than the header, so it colours whatever sits under it —
+   the header's background, and the content in the top 26rem of the window. It
+   stays put at every scroll position.
+
    A fixed offset rather than a percentage, and this is the whole point. When
    each page put `glow` on its own header, the upward bleed was 20% of that
    header's height — so it varied from 42px on /blog to 83px on /cv, and the
    nav sat inside the glow on some pages and outside it on others. Measured:
    /cv overlapped the nav by 35px, /blog missed it by 6. Anchoring it in the
    layout at a constant offset makes every page identical by construction. */
-@utility page-glow {
-  position: relative;
+@utility site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   isolation: isolate;
+  /* background-color: color-mix(in oklab, var(--lab-bg) 60%, transparent);
+  backdrop-filter: blur(16px); */
+  background-color: var(--lab-bg);
 
   &::before {
     @apply glow-paint;
+    position: fixed;
     inset: -2rem -10% auto;
   }
 }
@@ -635,9 +662,6 @@
     letter-spacing: -0.01em;
     line-height: 1.25;
     margin-top: 2.5em;
-    /* Clears the sticky-free header without hiding the heading under it when
-       a table-of-contents link jumps here. */
-    scroll-margin-top: 2rem;
   }
 
   & h3 {
@@ -646,7 +670,6 @@
     font-weight: 600;
     letter-spacing: -0.005em;
     margin-top: 2em;
-    scroll-margin-top: 2rem;
   }
 
   & h2 + *,

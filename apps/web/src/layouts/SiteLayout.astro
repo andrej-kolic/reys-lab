@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import SiteNav from "../components/SiteNav.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SubNav from "../components/SubNav.astro";
 import { site } from "../lib/site";
@@ -31,14 +31,15 @@ const {
   noindex={noindex}
 >
   <div class="page-glow flex min-h-screen flex-col">
-    <SiteNav />
-    {
-      Astro.slots.has("subnav") && (
-        <SubNav width={width}>
-          <slot name="subnav" />
-        </SubNav>
-      )
-    }
+    <SiteHeader>
+      {
+        Astro.slots.has("subnav") && (
+          <SubNav width={width}>
+            <slot name="subnav" />
+          </SubNav>
+        )
+      }
+    </SiteHeader>
 
     <main
       class:list={[

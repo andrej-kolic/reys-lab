@@ -26,6 +26,7 @@ See `services/README.md`.
 
 ```
 apps/web/          Astro. Static. Knows nothing about hosting.
+deploy/aws/        S3 + CloudFront + Route 53, live host for andrejkolic.com
 deploy/cloudflare/ wrangler config + a one-line deploy script
 packages/          shared eslint config
 services/          future independent backends (empty)
@@ -36,8 +37,17 @@ services/          future independent backends (empty)
 Every package under `deploy/*` exposes a `deploy` script and publishes `apps/web/dist`.
 Adding a host means adding a folder and a CI job — zero application changes.
 
+- **`deploy/aws`** — S3 + CloudFront, DNS in Route 53. The live host for
+  `andrejkolic.com`; see `deploy/aws/README.md`.
+- **`deploy/cloudflare`** — Cloudflare Workers Static Assets, kept as the portability
+  proof that the static-only architecture isn't tied to one host.
+
+Not `pnpm --filter <package> deploy`: pnpm 11 reserves `deploy` as a built-in command, so
+that form never reaches the package's script. Go through turbo instead, which also picks
+up the `deploy → ^build` edge so `apps/web` is rebuilt first:
+
 ```
-pnpm --filter @reys-lab/deploy-cloudflare deploy
+pnpm exec turbo run deploy --filter=@reys-lab/deploy-aws
 ```
 
 ## Licensing

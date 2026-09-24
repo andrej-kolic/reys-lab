@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import SiteNav from "../components/SiteNav.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import SubNav from "../components/SubNav.astro";
@@ -59,28 +59,29 @@ const label = experiment
   noindex={kind === "reference"}
 >
   <div class="page-glow flex min-h-screen flex-col">
-    <SiteNav />
-    <SubNav>
-      {
-        // Left is where you are, right is where you can go on this page. /lab
-        // has no parent to show, so its left side stays empty.
-        kind === "index" ? (
-          <nav class="label ml-auto flex flex-wrap gap-x-6 gap-y-2" aria-label="On this page">
-            <a href="#experiments" class="transition-colors duration-150 hover:!text-accent">
-              Experiments
-            </a>
-            <a href="#reference" class="transition-colors duration-150 hover:!text-accent">
-              Reference
-            </a>
-          </nav>
-        ) : (
-          <Breadcrumb
-            trail={[{ href: "/lab", label: "Lab" }]}
-            current={current}
-          />
-        )
-      }
-    </SubNav>
+    <SiteHeader>
+      <SubNav>
+        {
+          // Left is where you are, right is where you can go on this page. /lab
+          // has no parent to show, so its left side stays empty.
+          kind === "index" ? (
+            <nav class="label ml-auto flex flex-wrap gap-x-6 gap-y-2" aria-label="On this page">
+              <a href="#experiments" class="transition-colors duration-150 hover:!text-accent">
+                Experiments
+              </a>
+              <a href="#reference" class="transition-colors duration-150 hover:!text-accent">
+                Reference
+              </a>
+            </nav>
+          ) : (
+            <Breadcrumb
+              trail={[{ href: "/lab", label: "Lab" }]}
+              current={current}
+            />
+          )
+        }
+      </SubNav>
+    </SiteHeader>
 
     <div class="mx-auto w-full max-w-5xl grow px-5 pb-20">
       {/*

@@ -1,0 +1,112 @@
+---
+/**
+ * The site nav and, below it, whatever strip the page passes in — pinned to
+ * the top as one block, so "where am I" stays on screen on a long page (#14).
+ *
+ * Its height is not fixed: at 360px the nav wraps to two rows, and a long
+ * breadcrumb can wrap too. The script publishes the measured height as
+ * `--site-header-height`, which `scroll-padding-top` on `html` reads, so an
+ * in-page link lands below the header at every width.
+ *
+ * On a phone, either way up, it also hides while you scroll down and returns
+ * when you scroll up. The script only flags the direction; the CSS decides
+ * which windows hide it and does the moving.
+ */
+import SiteNav from "./SiteNav.astro";
+---
+
+<div class="site-header" data-site-header>
+  <SiteNav />
+  <slot />
+</div>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  if (header) {
+    new ResizeObserver(([entry]) => {
+      document.documentElement.style.setProperty(
+        "--site-header-height",
+        `${entry.borderBoxSize[0].blockSize}px`,
+      );
+    }).observe(header);
+
+    // Smaller moves than this are a thumb resting on the glass, not a
+    // decision to read on or go back.
+    const jitter = 8;
+    let last = scrollY;
+    let queued = false;
+    // An in-page link keeps the header shown until its jump ends, so the
+    // target lands below the header as scroll-padding-top expects.
+    let holding = false;
+
+    const update = () => {
+      queued = false;
+      const y = scrollY;
+      if (holding || y < header.offsetHeight) {
+        header.removeAttribute("data-hidden");
+      } else if (Math.abs(y - last) < jitter) {
+        return;
+      } else {
+        header.toggleAttribute("data-hidden", y > last);
+      }
+      last = y;
+    };
+
+    // The CSS hides the header only in a narrow or short window — the same
+    // condition as here. Crossing it starts over, so a header hidden on one
+    // side of the line does not arrive hidden on the other.
+    const phone = matchMedia("(width < 40rem) or (height < 30rem)");
+    phone.addEventListener("change", () => {
+      header.removeAttribute("data-hidden");
+      last = scrollY;
+    });
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(update);
+      },
+      { passive: true },
+    );
+
+    // Each in-page jump's own listeners and timers, so a release — or the
+    // next jump — removes all of them and none fires on a later scroll.
+    let jump: AbortController | undefined;
+
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest('a[href^="#"]')) return;
+      jump?.abort();
+      const current = new AbortController();
+      jump = current;
+      holding = true;
+      header.removeAttribute("data-hidden");
+
+      const release = () => {
+        current.abort();
+        holding = false;
+        last = scrollY;
+      };
+      // A link to where the page already is, or one opened in a new tab,
+      // never scrolls and so never ends a scroll: let go if none starts.
+      const idle = setTimeout(release, 150);
+      const fallback =
+        "onscrollend" in window ? undefined : setTimeout(release, 1000);
+      current.signal.addEventListener("abort", () => {
+        clearTimeout(idle);
+        clearTimeout(fallback);
+      });
+      addEventListener("scroll", () => clearTimeout(idle), {
+        once: true,
+        passive: true,
+        signal: current.signal,
+      });
+      addEventListener("scrollend", release, {
+        once: true,
+        signal: current.signal,
+      });
+    });
+  }
+</script>

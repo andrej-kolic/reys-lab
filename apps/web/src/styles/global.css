@@ -75,7 +75,7 @@
      read too strong and too coloured.
 
      Frame — under the nav and the strip, over the footer, under a page
-     title: 1.42 on the page. Divider — every other line inside the page:
+     title, the CV timeline's spine: 1.42 on the page. Divider — every other line inside the page:
      1.26 on a card. Edges of boxes (cards, tags, the ruled grid, inline
      code) stay the border. */
   --lab-frame: color-mix(in srgb, var(--violet-11) 18%, transparent);

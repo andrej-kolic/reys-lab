@@ -6,8 +6,12 @@ import { site } from "../lib/site";
   <div
     class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-8"
   >
+    {/*
+      The slogan goes below 40rem, the header's own phone line: there it
+      pushed the links onto a second row (#21).
+    */}
     <p class="label">
-      {site.author} · built in the open
+      {site.author}<span class="max-sm:hidden"> · built in the open</span>
     </p>
     <div class="ml-auto flex flex-wrap gap-x-5 gap-y-2">
       <a

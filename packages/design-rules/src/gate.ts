@@ -85,6 +85,14 @@ export const pairs: Pair[] = [
     declared:
       "A decorative edge, not a control. WCAG 1.4.11 applies to the boundaries of user interface components, which a card is not.",
   },
+  {
+    what: "frame line against the page",
+    fg: mix(palette.ink, palette.bg, 0.12),
+    bg: palette.bg,
+    floor: 3,
+    declared:
+      "Decorative, like the card edge: it frames the page and is no control's boundary. Ink at 12% rather than the border at 70%, so the glow cannot wash it out (#21).",
+  },
   // The primary is FILLED at rest now, and the secondary is an unfilled ring
   // that never gains a fill in any state. The old rows measured the reverse —
   // an outlined primary that filled on hover, and a secondary on the gray

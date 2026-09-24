@@ -60,6 +60,13 @@
   --lab-raised: #33286c;
   --lab-border: #3f3179;
   --lab-line: #6b449b;
+  /* The page's frame: the two lines under the header and the one over the
+     footer (#21). A see-through light line, not a violet one: it lightens
+     whatever is under it, so it holds about 1.37:1 on the page and under both
+     glows alike. The border at 70% measured 1.38 on the page but 1.04 under
+     the cyan glow, which is lighter than any violet line; opaque violet 7
+     survived the glow at 1.31 and read too strong and too coloured. */
+  --lab-frame: color-mix(in srgb, var(--lab-ink) 12%, transparent);
   --lab-ink: #edebfb;
   --lab-muted: #ada8d1;
   --lab-dim: #9d98be;
@@ -325,6 +332,7 @@
   --color-raised: var(--lab-raised);
   --color-border: var(--lab-border);
   --color-line: var(--lab-line);
+  --color-frame: var(--lab-frame);
 
   --color-ink: var(--lab-ink);
   --color-muted: var(--lab-muted);

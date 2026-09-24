@@ -52,6 +52,14 @@ import SiteNav from "./SiteNav.astro";
       last = y;
     };
 
+    // The CSS hides the header only below 40rem. Crossing that width starts
+    // over, so a header hidden in landscape does not come back hidden when
+    // the phone turns to portrait.
+    matchMedia("(width < 40rem)").addEventListener("change", () => {
+      header.removeAttribute("data-hidden");
+      last = scrollY;
+    });
+
     addEventListener(
       "scroll",
       () => {

@@ -643,6 +643,7 @@
     @apply glow-paint;
     position: fixed;
     inset: -2rem -10% auto;
+    transition: opacity 200ms ease-out;
   }
 
   /* On a phone the header slides away while you read down and comes back as
@@ -655,9 +656,15 @@
      includes the fade below, so that goes too. Focus inside brings it back. */
   transition: top 200ms ease-out;
 
+  /* The glow fades out with it: it sits over the content, and with the
+     header gone it would only be tinting the text being read. */
   @media (width < 40rem) or (height < 30rem) {
     &[data-hidden]:not(:focus-within) {
       top: calc(-1 * var(--site-header-height) - 1.5rem);
+    }
+
+    &[data-hidden]:not(:focus-within)::before {
+      opacity: 0;
     }
   }
 

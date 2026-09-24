@@ -46,5 +46,12 @@ const { title, description, noindex = false } = Astro.props;
   </head>
   <body>
     <slot />
+    {/*
+      iOS Safari applies `:active` only on a page that listens for touches, and
+      the pressed state is what a tap shows (#21). The listener does nothing.
+    */}
+    <script>
+      document.addEventListener("touchstart", () => {}, { passive: true });
+    </script>
   </body>
 </html>

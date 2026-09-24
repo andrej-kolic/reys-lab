@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "./scales.css";
 
+/* A tap shows the hover, and it stays through a scroll, as it does on the
+   buttons (#21). Tailwind's own `hover:` applies only where a pointer can
+   hover, so a tap on a phone got `:active` alone, which the browser drops the
+   moment a scroll starts. A phone keeps a tapped element's `:hover` until the
+   next tap elsewhere; the buttons' plain `:hover` always had that. Redefining
+   the variant here carries every `hover:` and `group-hover:` with it. */
+@custom-variant hover (&:hover, &:active);
+
 /* ============================================================================
    Design tokens.
 
@@ -731,7 +739,8 @@
     transition: text-decoration-color 150ms;
   }
 
-  & a:hover {
+  & a:hover,
+  & a:active {
     text-decoration-color: var(--lab-accent);
   }
 

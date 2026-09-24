@@ -348,9 +348,12 @@
     scroll-behavior: smooth;
 
     /* An in-page link lands 1rem below the sticky header, not under it.
-       SiteHeader measures its own height, which wraps on a phone; 6rem is
-       about its desktop height with the strip, used until the script runs. */
-    scroll-padding-top: calc(var(--site-header-height, 6rem) + 1rem);
+       SiteHeader measures its own height, which wraps on a phone, and writes
+       it over this value; 8rem is its tallest, the wrapped 128px at 360px,
+       for the moment before the script runs. One value, so the hidden
+       header's offset below reads the same number. */
+    --site-header-height: 8rem;
+    scroll-padding-top: calc(var(--site-header-height) + 1rem);
 
     /* The ambient glow bleeds past its container by design, which on a phone
        showed up as a real horizontal scroll. `clip` rather than `hidden`:
@@ -650,7 +653,7 @@
 
   @media (width < 40rem) {
     &[data-hidden]:not(:focus-within) {
-      top: calc(-1 * var(--site-header-height, 8rem) - 1.5rem);
+      top: calc(-1 * var(--site-header-height) - 1.5rem);
     }
   }
 

@@ -228,7 +228,7 @@
   /* focus — see note 1 above */
   --lab-focus: var(--cool-9);
   --lab-focus-width: 2px;
-  --lab-focus-offset: 2px;
+  --lab-focus-offset: 3px;
 
   /* disabled. gray-8 measures 2.29:1 on a card and that is correct: disabled
      controls are explicitly exempt from WCAG contrast minimums, and looking
@@ -375,9 +375,11 @@
     color: var(--lab-ink);
   }
 
+  /* Read from the focus tokens, so the ring the gate measures (cool 9) is
+     the ring that is painted. */
   :focus-visible {
-    outline: 2px solid var(--lab-accent);
-    outline-offset: 3px;
+    outline: var(--lab-focus-width) solid var(--lab-focus);
+    outline-offset: var(--lab-focus-offset);
     border-radius: 2px;
   }
 

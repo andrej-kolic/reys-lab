@@ -607,9 +607,11 @@
    "where am I" stays on screen on a long page.
 
    Four layers, bottom to top: the page content; the header's own background,
-   tinted glass — the page colour at 60% over a 16px blur, so text scrolling
-   beneath shows only as a soft smear; the glow; the nav and strip. The glow is one layer for the whole page, fixed to the
-   window and larger than the header, so it colours whatever sits under it —
+   solid page colour, so text scrolling beneath never shows through; the glow;
+   the nav and strip. The background runs on 1.5rem past the header's bottom
+   line as a fade to transparent, so content dims as it nears the line instead
+   of being cut off flat at it. The glow is one layer for the whole page, fixed
+   to the window and larger than the header, so it colours whatever sits under it —
    the header's background, and the content in the top 26rem of the window. It
    stays put at every scroll position.
 
@@ -624,14 +626,30 @@
   top: 0;
   z-index: 10;
   isolation: isolate;
+
+  /* uncomment to use tinted glass */
   /* background-color: color-mix(in oklab, var(--lab-bg) 60%, transparent);
   backdrop-filter: blur(16px); */
+
+  /* uncomment to use solid page colour */
   background-color: var(--lab-bg);
 
   &::before {
     @apply glow-paint;
     position: fixed;
     inset: -2rem -10% auto;
+  }
+
+  /* Below the glow (-1), so the glow colours the fade as it does the rest. */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    z-index: -2;
+    height: 1.5rem;
+    pointer-events: none;
+    background: linear-gradient(var(--lab-bg), transparent);
   }
 }
 

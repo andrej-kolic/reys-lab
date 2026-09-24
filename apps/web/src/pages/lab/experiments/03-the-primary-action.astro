@@ -903,9 +903,10 @@ const notes = [
    *                floor, not the 3:1 large-text one.
    *
    * Everything is read off the rendered buttons rather than from the tokens
-   * declared in the style block above. C and E paint a translucent fill, so
-   * the declared colour is not what reaches the eye — the page shows through
-   * it — and only the composited value describes the screen.
+   * declared in the style block above. The outline candidates, E and F, paint
+   * no fill at rest, so the declared colour is not what reaches the eye — the
+   * page shows through — and only the composited value describes the screen.
+   * The soft fills of C and D are opaque, so for them the two agree.
    */
 
   type Rgb = [number, number, number];

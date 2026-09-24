@@ -661,10 +661,10 @@
   @media (width < 40rem) or (height < 30rem) {
     &[data-hidden]:not(:focus-within) {
       top: calc(-1 * var(--site-header-height) - 1.5rem);
-    }
 
-    &[data-hidden]:not(:focus-within)::before {
-      opacity: 0;
+      &::before {
+        opacity: 0;
+      }
     }
   }
 

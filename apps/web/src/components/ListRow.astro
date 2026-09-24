@@ -44,9 +44,15 @@ const {
 const Meta = datetime ? "time" : "span";
 ---
 
+{/*
+  The box around the rows does not clip them: clipping cut the focus ring down
+  to its bottom edge (#21). The end rows round their own outer corners
+  instead, to the box's radius less its 1px border, so a hover fill still
+  stays inside the curve and the ring follows it.
+*/}
 <a
   href={href}
-  class="group flex flex-col gap-1 border-b border-border/60 px-6 py-5 transition-colors duration-150 last:border-b-0 hover:bg-raised/40 sm:flex-row sm:items-baseline sm:gap-6"
+  class="group flex flex-col gap-1 border-b border-divider px-6 py-5 transition-colors duration-150 first:rounded-t-[calc(var(--radius-xl)-1px)] last:rounded-b-[calc(var(--radius-xl)-1px)] last:border-b-0 hover:bg-raised/40 sm:flex-row sm:items-baseline sm:gap-6"
 >
   <div class="w-32 shrink-0">
     {/*

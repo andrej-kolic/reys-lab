@@ -4,7 +4,7 @@ import { nav, isCurrent, isHome, site } from "../lib/site";
 const path = Astro.url.pathname;
 ---
 
-<header class="border-b border-border/70">
+<header class="border-b border-frame">
   <div
     class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-4"
   >
@@ -51,13 +51,15 @@ const path = Astro.url.pathname;
                 Current state is the warm accent — but never only the warm
                 accent. Roughly 8% of men cannot reliably separate these two
                 hues, so the weight and the underline carry the same signal
-                on their own. On hover the underline follows the text to ink, or
-                the two split into white text over a gold line (#14).
+                on their own. On hover the underline follows the text to the
+                label hover colour, or the two split across two colours over
+                one word (#14). Hover is the pale button cyan, like every
+                small label link, not white (#21).
               */
               class:list={[
-                "label px-2.5 py-3.5 transition-colors duration-150 hover:!text-ink",
+                "label px-2.5 py-3.5 transition-colors duration-150 hover:!text-label-hover",
                 current
-                  ? "!font-semibold !text-warm underline decoration-warm/60 underline-offset-[6px] hover:decoration-ink/60"
+                  ? "!font-semibold !text-warm underline decoration-warm/60 underline-offset-[6px] hover:decoration-label-hover/60"
                   : "",
               ]}
             >

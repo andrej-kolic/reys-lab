@@ -85,6 +85,28 @@ export const pairs: Pair[] = [
     declared:
       "A decorative edge, not a control. WCAG 1.4.11 applies to the boundaries of user interface components, which a card is not.",
   },
+  {
+    what: "frame line against the page",
+    fg: mix(steps["violet-11"], palette.bg, 0.18),
+    bg: palette.bg,
+    floor: 3,
+    declared:
+      "Decorative, like the card edge: it frames the page and is no control's boundary. Light violet at 18% rather than the border at 70%, so the glow cannot wash it out (#21).",
+  },
+  {
+    what: "divider on the page",
+    fg: mix(steps["violet-11"], palette.bg, 0.12),
+    bg: palette.bg,
+    floor: 3,
+    declared: "Decorative, and fainter than the frame on purpose: it separates, it is no control's boundary (#21).",
+  },
+  {
+    what: "divider on a card",
+    fg: mix(steps["violet-11"], palette.surface, 0.12),
+    bg: palette.surface,
+    floor: 3,
+    declared: "Decorative, as on the page (#21).",
+  },
   // The primary is FILLED at rest now, and the secondary is an unfilled ring
   // that never gains a fill in any state. The old rows measured the reverse —
   // an outlined primary that filled on hover, and a secondary on the gray
@@ -99,6 +121,7 @@ export const pairs: Pair[] = [
   { what: "secondary button edge, pressed", fg: steps["cool-11"], bg: palette.bg, floor: 3 },
   { what: "secondary button label at rest", fg: steps["cool-11"], bg: palette.bg, floor: 4.5 },
   { what: "secondary button label, hovered", fg: steps["cool-12"], bg: palette.bg, floor: 4.5 },
+  { what: "small label link, hovered", fg: steps["cool-12"], bg: palette.bg, floor: 4.5 },
   { what: "focus ring against the page", fg: steps["cool-9"], bg: palette.bg, floor: 3 },
   { what: "cool label on its soft fill", fg: steps["cool-11"], bg: soft.cool, floor: 4.5 },
   { what: "cool label on its hovered soft fill", fg: steps["cool-11"], bg: soft.coolHover, floor: 4.5 },

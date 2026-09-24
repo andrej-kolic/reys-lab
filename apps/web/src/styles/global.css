@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "./scales.css";
 
+/* A tap shows the hover, and it stays through a scroll, as it does on the
+   buttons (#21). Tailwind's own `hover:` applies only where a pointer can
+   hover, so a tap on a phone got `:active` alone, which the browser drops the
+   moment a scroll starts. A phone keeps a tapped element's `:hover` until the
+   next tap elsewhere; the buttons' plain `:hover` always had that. Redefining
+   the variant here carries every `hover:` and `group-hover:` with it. */
+@custom-variant hover (&:hover, &:active);
+
 /* ============================================================================
    Design tokens.
 
@@ -50,8 +58,28 @@
   --lab-bg: #191233;
   --lab-surface: #241e47;
   --lab-raised: #33286c;
-  --lab-border: #3f3179;
+  /* Box edges — cards, tags, the ruled grid, inline code — in the lines'
+     light violet, mixed opaque into the card at the frame's 18% (#21).
+     #3e3668: the same strength as the #3f3179 it replaced (1.64:1 on the
+     page), a third less colourful, which always read too violet. Opaque, not
+     see-through like the lines: the ruled grid overlaps two cells' edges in
+     each gap, and a see-through edge would double there. */
+  --lab-border: color-mix(in srgb, var(--violet-11) 18%, var(--lab-surface));
   --lab-line: #6b449b;
+  /* Lines (#21). One colour, the scale's light violet, and opacity sets the
+     strength. See-through and light, so it lightens whatever is under it and
+     the glow cannot hide it: the border at 70% measured 1.38:1 on the page
+     but 1.04 under the cyan glow, which is lighter than any violet line.
+     Tinted, not white: white over violet is always less colourful than what
+     it sits on, and read grey and dirty. Opaque violet 7 was tried first and
+     read too strong and too coloured.
+
+     Frame — under the nav and the strip, over the footer, under a page
+     title, the CV timeline's spine: 1.42 on the page. Divider — every other line inside the page:
+     1.26 on a card. Edges of boxes (cards, tags, the ruled grid, inline
+     code) stay the border. */
+  --lab-frame: color-mix(in srgb, var(--violet-11) 18%, transparent);
+  --lab-divider: color-mix(in srgb, var(--violet-11) 12%, transparent);
   --lab-ink: #edebfb;
   --lab-muted: #ada8d1;
   --lab-dim: #9d98be;
@@ -204,6 +232,14 @@
   --lab-btn-edge-ink-hover: var(--cool-12);
   --lab-btn-edge-pressed: var(--cool-11);
 
+  /* A small label link — the nav, the strip, the footer, "All projects" —
+     hovers to the buttons' hover step rather than to the brand cyan (#21).
+     A dim 11px label brightens one step on hover, as the nav always did in
+     white, and staying cool keeps hover inside the accent's one job. Content
+     links — the wordmark, cards, links in prose — still hover to the brand
+     cyan. */
+  --lab-label-hover: var(--cool-12);
+
   /* solid — the primary button, filled at rest.
 
      NOT step 10 on hover, which is what Radix assigns and what this file used
@@ -309,12 +345,15 @@
   --color-raised: var(--lab-raised);
   --color-border: var(--lab-border);
   --color-line: var(--lab-line);
+  --color-frame: var(--lab-frame);
+  --color-divider: var(--lab-divider);
 
   --color-ink: var(--lab-ink);
   --color-muted: var(--lab-muted);
   --color-dim: var(--lab-dim);
 
   --color-accent: var(--lab-accent);
+  --color-label-hover: var(--lab-label-hover);
   --color-warm: var(--lab-warm);
   --color-accent-1: var(--lab-accent-1);
   --color-accent-2: var(--lab-accent-2);
@@ -564,7 +603,10 @@
 
    Two utilities, same paint, different anchor. The paint is declared once so
    the two cannot drift; the vars inside it resolve on whichever element uses
-   it, which is what keeps the per-card --glow-strength ramp working. */
+   it, which is what keeps the per-card --glow-strength ramp working.
+   --glow-a-x and --glow-b-x place the two blooms across the box, and
+   --glow-a-share sets the first one's share of the strength (the second's
+   is 62%); the site header sets all three (#21). */
 
 @utility glow-paint {
   content: "";
@@ -574,12 +616,12 @@
   height: 26rem;
   background:
     radial-gradient(
-      42rem 20rem at 22% 0%,
-      color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * 100%), transparent),
+      42rem 20rem at var(--glow-a-x, 22%) 0%,
+      color-mix(in oklab, var(--lab-glow-a) calc(var(--glow-strength, 0.28) * var(--glow-a-share, 100%)), transparent),
       transparent 70%
     ),
     radial-gradient(
-      34rem 18rem at 78% 12%,
+      34rem 18rem at var(--glow-b-x, 78%) 12%,
       color-mix(in oklab, var(--lab-glow-b) calc(var(--glow-strength, 0.28) * 62%), transparent),
       transparent 72%
     );
@@ -639,10 +681,26 @@
   /* uncomment to use solid page colour */
   background-color: var(--lab-bg);
 
+  /* One bloom behind the wordmark, one behind the nav, at every width (#21).
+     At 22% and 78% of the window they sat under both only near 1440px; at
+     1920 the first missed the wordmark by 190px, at 2560 by 400. The box is
+     centred on the window, so each centre is the content column's edge
+     (half of 64rem, or of the window when it is narrower) moved in to the
+     measured middle of the wordmark (3.75rem) and of the nav (7.8rem). Rename a
+     nav item and the second number moves with it.
+
+     The cyan bloom takes 80% of the strength here, not 100% (#21). Cyan is
+     far lighter than the magenta beside it: at full share its peak lifted
+     the page to 1.72:1 against the magenta's 1.27, and centred behind the
+     wordmark it read too bright. At 80% it is 1.51, still the cooler side.
+     Header only, so the settled .28 and the demo cards keep their values. */
   &::before {
     @apply glow-paint;
     position: fixed;
     inset: -2rem -10% auto;
+    --glow-a-x: calc(50% - min(50vw, 32rem) + 3.75rem);
+    --glow-b-x: calc(50% + min(50vw, 32rem) - 7.8rem);
+    --glow-a-share: 80%;
     transition: opacity 200ms ease-out;
   }
 
@@ -731,7 +789,8 @@
     transition: text-decoration-color 150ms;
   }
 
-  & a:hover {
+  & a:hover,
+  & a:active {
     text-decoration-color: var(--lab-accent);
   }
 
@@ -772,7 +831,7 @@
   }
 
   & hr {
-    border-color: var(--lab-border);
+    border-color: var(--lab-divider);
     margin-block: 2.5em;
   }
 

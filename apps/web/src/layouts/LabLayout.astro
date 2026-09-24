@@ -66,10 +66,10 @@ const label = experiment
           // has no parent to show, so its left side stays empty.
           kind === "index" ? (
             <nav class="label ml-auto flex flex-wrap gap-x-6 gap-y-2" aria-label="On this page">
-              <a href="#experiments" class="transition-colors duration-150 hover:!text-accent">
+              <a href="#experiments" class="transition-colors duration-150 hover:!text-label-hover">
                 Experiments
               </a>
-              <a href="#reference" class="transition-colors duration-150 hover:!text-accent">
+              <a href="#reference" class="transition-colors duration-150 hover:!text-label-hover">
                 Reference
               </a>
             </nav>
@@ -115,7 +115,7 @@ const label = experiment
               {project.href && (
                 <a
                   href={project.href}
-                  class="label transition-colors duration-150 hover:!text-accent"
+                  class="label transition-colors duration-150 hover:!text-label-hover"
                 >
                   Project →
                 </a>

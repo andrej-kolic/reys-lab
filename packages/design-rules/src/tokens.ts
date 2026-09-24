@@ -20,7 +20,7 @@ export const palette = {
   bg: "#191233",
   surface: "#241e47",
   raised: "#33286c",
-  border: "#3f3179",
+  border: "#3e3668", // violet-11 at 18% into the surface, as global.css mixes it
   line: "#6b449b",
   ink: "#edebfb",
   muted: "#ada8d1",
@@ -38,6 +38,7 @@ export const palette = {
 export const steps = {
   "violet-a3": "#332c5d", // --lab-hover, composited over the surface
   "violet-a4": "#3b2e72", // --lab-pressed, likewise
+  "violet-11": "#b5a6ff", // --lab-frame at 18%, --lab-divider at 12%
   "cool-8": "#007bb3", // no longer bound to anything the site renders
   "cool-9": "#3bb8f5", // --lab-solid, --lab-btn-edge, --lab-focus
   "cool-10": "#2aade9", // unbound: step 10 is DARKER than 9 in the accent

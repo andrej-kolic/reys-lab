@@ -159,7 +159,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
     title="Post list item"
     note="Chronological, scannable, quiet. The blog index is not a place for display type."
   >
-    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+    <div class="rounded-xl border border-border bg-surface">
       {
         posts.map((post) => (
           <ListRow
@@ -180,7 +180,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
     title="Experiment row"
     note="The same row on the lab index. Number over project, set apart; status in a fixed-width column so every description wraps at the same point."
   >
-    <div class="overflow-hidden rounded-xl border border-border bg-surface">
+    <div class="rounded-xl border border-border bg-surface">
       {
         experiments.map((experiment) => (
           <ListRow

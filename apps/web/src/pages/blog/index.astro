@@ -51,7 +51,7 @@ const count = `${posts.length} ${posts.length === 1 ? "post" : "posts"}${
             a year is not a state.
           */}
           {years.length > 1 && <h2 class="label mb-4">{groupYear}</h2>}
-          <div class="overflow-hidden rounded-xl border border-border bg-surface">
+          <div class="rounded-xl border border-border bg-surface">
             {posts
               .filter((post) => year(post.data.date) === groupYear)
               .map((post) => (

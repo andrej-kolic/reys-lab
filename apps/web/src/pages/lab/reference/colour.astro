@@ -14,8 +14,10 @@ const surfaceTokens = [
   { token: "--lab-bg", role: "Page background" },
   { token: "--lab-surface", role: "Cards, raised panels" },
   { token: "--lab-raised", role: "Panel headers, hover fills" },
-  { token: "--lab-border", role: "Hairlines, card edges" },
-  { token: "--lab-line", role: "Emphatic rules, dividers" },
+  { token: "--lab-border", role: "Box edges · cards, tags, inline code" },
+  { token: "--lab-line", role: "List markers, the quote bar" },
+  { token: "--lab-frame", role: "Header, footer, page-title lines, the CV spine" },
+  { token: "--lab-divider", role: "Every other line inside the page" },
 ];
 
 const inkTokens = [
@@ -132,7 +134,7 @@ const glows = [0.12, 0.28, 0.5, 0.8];
         <tbody>
           {
             foregrounds.map((fg) => (
-              <tr class="border-b border-border/60 last:border-b-0">
+              <tr class="border-b border-divider last:border-b-0">
                 <th class="px-4 py-3 text-left font-mono text-[13px] font-normal whitespace-nowrap text-ink">
                   {fg.replace("--lab-", "")}
                 </th>
@@ -284,7 +286,15 @@ const glows = [0.12, 0.28, 0.5, 0.8];
     const value = getComputedStyle(probe).color;
     const parts = value.match(/[\d.]+/g);
     if (!parts || parts.length < 3) return [0, 0, 0];
-    return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+    // A color-mix() token computes to `color(srgb r g b / a)`, in 0–1, not
+    // rgb() in 0–255. A see-through one — the frame, the divider — is shown
+    // over the card its swatch sits on, so the hex names what the chip shows.
+    const scale = value.startsWith("color(") ? 255 : 1;
+    const rgb = parts.slice(0, 3).map((part) => Number(part) * scale) as [number, number, number];
+    const alpha = parts.length > 3 ? Number(parts[3]) : 1;
+    if (alpha >= 1 || token === "--lab-surface") return rgb;
+    const under = resolve(scope, "--lab-surface");
+    return rgb.map((channel, i) => channel * alpha + under[i] * (1 - alpha)) as [number, number, number];
   }
 
   function luminance([r, g, b]: [number, number, number]): number {

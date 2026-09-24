@@ -73,6 +73,12 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
+  deploy/aws:
+    devDependencies:
+      '@reys-lab/web':
+        specifier: workspace:*
+        version: link:../../apps/web
+
   deploy/cloudflare:
     devDependencies:
       '@reys-lab/web':

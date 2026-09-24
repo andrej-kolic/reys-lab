@@ -1,0 +1,27 @@
+# EditorConfig is awesome: https://editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.sh]
+# like -i=4
+indent_style = space
+indent_size = 4
+
+# --language-dialect
+# shell_variant      = bash
+simplify           = true
+binary_next_line   = true
+
+# --case-indent
+switch_case_indent = true
+space_redirects    = true
+
+# --func-next-line
+# function_next_line = false
+# minify             = false

@@ -11,7 +11,7 @@ const mono = ["ui-monospace", "monospace"];
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://reys-lab-web.andrejkolic.workers.dev",
+  site: "https://andrejkolic.com",
   output: "static",
 
   /**

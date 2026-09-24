@@ -71,7 +71,9 @@ export default defineConfig({
           shadowColor: "transparent",
           editorTabBarBackground: "var(--lab-surface)",
           editorActiveTabBackground: "var(--lab-code-bg)",
-          editorActiveTabIndicatorTopColor: "var(--lab-accent)",
+          // No accent line over the one tab (#21): cyan marks what can be
+          // clicked, and a code block's single tab cannot be.
+          editorActiveTabIndicatorTopColor: "transparent",
           terminalTitlebarBackground: "var(--lab-surface)",
           terminalBackground: "var(--lab-code-bg)",
         },

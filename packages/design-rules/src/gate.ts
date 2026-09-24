@@ -99,6 +99,7 @@ export const pairs: Pair[] = [
   { what: "secondary button edge, pressed", fg: steps["cool-11"], bg: palette.bg, floor: 3 },
   { what: "secondary button label at rest", fg: steps["cool-11"], bg: palette.bg, floor: 4.5 },
   { what: "secondary button label, hovered", fg: steps["cool-12"], bg: palette.bg, floor: 4.5 },
+  { what: "small label link, hovered", fg: steps["cool-12"], bg: palette.bg, floor: 4.5 },
   { what: "focus ring against the page", fg: steps["cool-9"], bg: palette.bg, floor: 3 },
   { what: "cool label on its soft fill", fg: steps["cool-11"], bg: soft.cool, floor: 4.5 },
   { what: "cool label on its hovered soft fill", fg: steps["cool-11"], bg: soft.coolHover, floor: 4.5 },

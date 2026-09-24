@@ -212,6 +212,14 @@
   --lab-btn-edge-ink-hover: var(--cool-12);
   --lab-btn-edge-pressed: var(--cool-11);
 
+  /* A small label link — the nav, the strip, the footer, "All projects" —
+     hovers to the buttons' hover step rather than to the brand cyan (#21).
+     A dim 11px label brightens one step on hover, as the nav always did in
+     white, and staying cool keeps hover inside the accent's one job. Content
+     links — the wordmark, cards, links in prose — still hover to the brand
+     cyan. */
+  --lab-label-hover: var(--cool-12);
+
   /* solid — the primary button, filled at rest.
 
      NOT step 10 on hover, which is what Radix assigns and what this file used
@@ -323,6 +331,7 @@
   --color-dim: var(--lab-dim);
 
   --color-accent: var(--lab-accent);
+  --color-label-hover: var(--lab-label-hover);
   --color-warm: var(--lab-warm);
   --color-accent-1: var(--lab-accent-1);
   --color-accent-2: var(--lab-accent-2);

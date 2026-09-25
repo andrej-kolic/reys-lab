@@ -1,17 +1,28 @@
 ---
 import { site } from "../lib/site";
+import { formatBuildTimestamp, getVersion, shortSha } from "../lib/version";
+
+const version = getVersion();
+// The single value that answers "is this the same code as that other
+// target" is the SHA; branch, commit time and dirty are detail for a hover
+// (or a tap-and-hold), not the headline. Clicking through to GitHub already
+// gives the full commit anyway. See "Versioning" in the monorepo plan.
+const versionDetail = `${version.branch} · ${formatBuildTimestamp(version.date)}${version.dirty ? " · dirty" : ""}`;
 ---
 
 <footer class="mt-28 border-t border-frame">
   <div
     class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-8"
   >
-    {/*
-      The slogan goes below 40rem, the header's own phone line: there it
-      pushed the links onto a second row (#21).
-    */}
     <p class="label">
-      {site.author}<span class="max-sm:hidden"> · built in the open</span>
+      {site.author} ·{" "}
+      <a
+        href={`${version.source}/commit/${version.commit}`}
+        title={versionDetail}
+        class="normal-case transition-colors duration-150 hover:!text-label-hover"
+      >
+        {shortSha(version.commit)}
+      </a>
     </p>
     <div class="ml-auto flex flex-wrap gap-x-5 gap-y-2">
       <a

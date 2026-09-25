@@ -46,6 +46,9 @@ jobs:
       - name: Build (includes the design-rules gate)
         run: pnpm run build
 
+      # Production safety checks (non-main ref, dirty build, staging commit
+      # match) live in deploy/aws/scripts/version-checks.sh, sourced by
+      # deploy.sh — not here, so they apply the same way to a local deploy.
       - name: Deploy content to ${{ github.event.inputs.environment }}
         uses: ./deploy/aws/.github/actions/deploy
         with:

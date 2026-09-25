@@ -14,6 +14,7 @@
     "check": "turbo run check",
     "lint": "turbo run lint",
     "deploy": "turbo run deploy",
+    "versions": "node scripts/versions.js",
     "rules:fetch": "rulesync fetch andrej-kolic/playbook -f rules -t rulesync -p .rulesync",
     "rules:generate": "rulesync generate -f rules -t claudecode,cursor",
     "rules:install": "pnpm run rules:fetch && pnpm run rules:generate"

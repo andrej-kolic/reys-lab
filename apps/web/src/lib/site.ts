@@ -20,6 +20,7 @@ export const site = {
   positioning: "Full-stack engineer. React and AWS, currently learning the edge.",
   email: "andrej.kolic@gmail.com",
   github: "https://github.com/andrej-kolic",
+  repo: "https://github.com/andrej-kolic/reys-lab",
 } as const;
 
 export interface NavItem {

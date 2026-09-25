@@ -8,6 +8,7 @@
  * output.
  */
 import { execFileSync } from "node:child_process";
+import { site } from "./site";
 
 export interface VersionInfo {
   /** Full SHA. Footer and `versions` script display the first 7 chars. */
@@ -18,8 +19,6 @@ export interface VersionInfo {
   dirty: boolean;
   source: string;
 }
-
-const REPO_URL = "https://github.com/andrej-kolic/reys-lab";
 
 const git = (...args: string[]) =>
   execFileSync("git", args, { encoding: "utf8" }).trim();
@@ -36,7 +35,7 @@ export function getVersion(): VersionInfo {
       branch: process.env.GITHUB_REF_NAME || git("branch", "--show-current"),
       date: new Date(commitEpochSeconds * 1000).toISOString(),
       dirty: git("status", "--porcelain").length > 0,
-      source: REPO_URL,
+      source: site.repo,
     };
   }
   return cached;

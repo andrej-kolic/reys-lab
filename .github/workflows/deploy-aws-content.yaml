@@ -1,5 +1,5 @@
-# Manual for now. Once the apex switch (plan step 12) lands, add a
-# `push: branches: [main]` trigger targeting the production environment.
+# Manual only, by decision (2026-09-25): a push-to-main trigger was tried
+# and reverted the same day — no automatic deployments.
 name: Deploy AWS content
 
 on:

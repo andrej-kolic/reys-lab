@@ -1,10 +1,27 @@
+import { writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import type { AstroIntegration } from "astro";
 import { defineConfig, fontProviders } from "astro/config";
 
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
 import mdx from "@astrojs/mdx";
+import { getVersion } from "./src/lib/version";
 
 const google = fontProviders.google();
+
+/** Writes dist/version.json — see "Versioning" in the monorepo plan. */
+const versionManifest = (): AstroIntegration => ({
+  name: "version-manifest",
+  hooks: {
+    "astro:build:done": ({ dir }) => {
+      writeFileSync(
+        fileURLToPath(new URL("version.json", dir)),
+        `${JSON.stringify(getVersion(), null, 2)}\n`,
+      );
+    },
+  },
+});
 
 const sans = ["system-ui", "sans-serif"];
 const mono = ["ui-monospace", "monospace"];
@@ -80,5 +97,6 @@ export default defineConfig({
       },
     }),
     mdx(),
+    versionManifest(),
   ],
 });

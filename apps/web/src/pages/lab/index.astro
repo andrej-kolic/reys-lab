@@ -5,6 +5,7 @@ import ListRow from "../../components/ListRow.astro";
 import pkg from "../../../package.json";
 import { countRoutes } from "../../lib/routes";
 import { reference } from "../../lib/reference";
+import { formatBuildTimestamp, getVersion, shortSha } from "../../lib/version";
 import {
   byStatus,
   href as experimentHref,
@@ -25,8 +26,18 @@ const settled = byStatus("settled");
 const total = open.length + settled.length;
 const count = `${total} ${total === 1 ? "experiment" : "experiments"} · ${open.length} open`;
 
+const version = getVersion();
+
+// Commit time, not build time: rebuilding the same commit reads the same
+// here. See "Versioning" in the monorepo plan — same source this page's own
+// claim to being real build values now draws on.
 const readout = [
-  { label: "Build", value: new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC" },
+  {
+    label: "Commit",
+    value: shortSha(version.commit) + (version.dirty ? " · dirty" : ""),
+  },
+  { label: "Branch", value: version.branch },
+  { label: "Committed", value: `${formatBuildTimestamp(version.date)} UTC` },
   { label: "Astro", value: pkg.dependencies.astro.replace("catalog:", "7.3.3") },
   { label: "Tailwind", value: pkg.dependencies.tailwindcss.replace(/^[\^~]/, "") },
   { label: "Typeface", value: "Outfit + Plex Mono" },

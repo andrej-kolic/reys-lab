@@ -75,6 +75,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
             description={project.data.description}
             stack={project.data.stack}
             status={project.data.status}
+            thumbnail={project.data.thumbnail}
           />
         ))
       }

@@ -4,6 +4,7 @@ import LabLayout from "../../../layouts/LabLayout.astro";
 import { labelFor } from "../../../lib/reference";
 import Section from "../../../components/lab/Section.astro";
 import ProjectCard from "../../../components/ProjectCard.astro";
+import grounderLogo from "../../../content/projects/grounder/logo.svg";
 import ListRow from "../../../components/ListRow.astro";
 import Timeline from "../../../components/Timeline.astro";
 
@@ -15,8 +16,9 @@ const projects = [
     title: "Grounder",
     summary:
       "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time.",
-    stack: ["TypeScript", "Node", "Markdown"],
-    result: "In daily use",
+    stack: ["TypeScript", "Node", "VS Code API"],
+    result: "On npm · VS Code Marketplace",
+    thumbnail: grounderLogo,
   },
   {
     title: "Rookie Trader",
@@ -147,6 +149,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
             description={project.summary}
             stack={project.stack}
             status={project.result}
+            thumbnail={project.thumbnail}
           />
         ))
       }

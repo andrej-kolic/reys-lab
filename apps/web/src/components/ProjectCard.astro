@@ -1,4 +1,6 @@
 ---
+import type { ImageMetadata } from "astro";
+
 /**
  * Cards are for projects only. They have a stack line and an outcome to
  * carry, and the list stays around ten. Posts and experiments get one-line
@@ -11,6 +13,16 @@
  * The outcome is the label above the title. It used to sit under the stack in
  * warm, but warm marks state and an outcome is a fact; and the top slot only
  * repeated the first stack pill.
+ *
+ * The image sits in a 2:1 band across the top — wide enough for a screenshot
+ * later, chosen over a small top-left mark (#24). Today's only image is a
+ * logo, so it is centred at two-fifths of the band's height; revisit when
+ * the first screenshot lands. A card without an image shows a dot grid
+ * rather than an empty band, so a missing image reads as deliberate.
+ *
+ * A plain <img>, not astro:assets' <Image>: that needs sharp, which this
+ * project does not install, and an SVG has nothing to optimise. A raster
+ * screenshot will want both.
  */
 
 interface Props {
@@ -19,31 +31,62 @@ interface Props {
   description: string;
   stack: string[];
   status: string;
+  thumbnail?: ImageMetadata;
 }
 
-const { href, title, description, stack, status } = Astro.props;
+const { href, title, description, stack, status, thumbnail } = Astro.props;
 ---
 
 <a
   href={href}
-  class="group flex flex-col rounded-xl border border-border bg-surface p-6 transition-colors duration-150 hover:border-accent"
+  class="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-150 hover:border-accent"
 >
-  <p class="label">{status}</p>
-  <h3
-    class="mt-3 font-display text-2xl font-bold tracking-tight transition-colors duration-150 group-hover:text-accent"
-  >
-    {title}
-  </h3>
-  <p class="mt-2.5 grow text-sm leading-relaxed text-muted">{description}</p>
   <div
-    class="mt-5 flex flex-wrap items-center gap-2 border-t border-divider pt-6"
+    class:list={["relative aspect-[2/1] shrink-0 bg-bg", !thumbnail && "dot-grid"]}
   >
     {
-      stack.map((item) => (
-        <span class="tag">
-          {item}
-        </span>
-      ))
+      thumbnail && (
+        // Empty alt: the title below names the project, so a description of
+        // the logo would only repeat it to a screen reader.
+        <img
+          src={thumbnail.src}
+          width={thumbnail.width}
+          height={thumbnail.height}
+          alt=""
+          class="absolute inset-0 m-auto h-2/5 w-auto"
+        />
+      )
     }
   </div>
+
+  <div class="flex grow flex-col p-6">
+    <p class="label">{status}</p>
+    <h3
+      class="mt-3 font-display text-2xl font-bold tracking-tight transition-colors duration-150 group-hover:text-accent"
+    >
+      {title}
+    </h3>
+    <p class="mt-2.5 grow text-sm leading-relaxed text-muted">{description}</p>
+    <div
+      class="mt-5 flex flex-wrap items-center gap-2 border-t border-divider pt-6"
+    >
+      {
+        stack.map((item) => (
+          <span class="tag">
+            {item}
+          </span>
+        ))
+      }
+    </div>
+  </div>
 </a>
+
+<style>
+  /* 1px dots in the border colour every 16px. Picked on a temporary page
+     over an empty band, a faint initial, the name in small capitals and
+     diagonal stripes (#24). */
+  .dot-grid {
+    background-image: radial-gradient(var(--lab-border) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+</style>

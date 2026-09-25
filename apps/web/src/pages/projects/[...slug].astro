@@ -21,9 +21,7 @@ const { Content } = await render(project);
 // duplicate each page at two addresses or break the global sequence.
 const experiments = forProject(project.id);
 
-const links: { href: string; label: string }[] = [];
-if (project.data.repo) links.push({ href: project.data.repo, label: "Repository" });
-if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
+const { links } = project.data;
 ---
 
 <SiteLayout
@@ -93,7 +91,7 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
         <div class="flex flex-wrap gap-x-5 gap-y-3">
           {links.map((link) => (
             <a
-              href={link.href}
+              href={link.url}
               rel="noopener"
               class="btn-secondary"
             >

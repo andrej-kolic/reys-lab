@@ -29,20 +29,26 @@ import demo from "./grounder/demo.gif";
   alt="Cursor, Claude Code and more agents connect through skills and the CLI to one markdown vault: a folder per project, holding plans, notes and saved session summaries."
 />
 
-*Draft: the points are real, the prose is still to be written.*
-
 ## The problem
 
-- Every session with a coding agent starts from nothing. Close the window and the next
-  session has no idea what was just decided.
-- It is not only mine: in [claude-code#39961](https://github.com/anthropics/claude-code/issues/39961)
-  a user reports losing 50–75% of session time to redoing work.
+A coding agent starts every session from nothing. Close the window and the next session has
+no idea what was decided an hour ago, what was tried, or why an approach was dropped. That
+context lived in chat transcripts I would never open again.
+
+I wasn't the only one losing it. In
+[claude-code#39961](https://github.com/anthropics/claude-code/issues/39961) a user reports
+spending 50–75% of their session time redoing work across sessions.
 
 ## The approach
 
-- The project keeps a one-line pointer; the memory lives in a markdown vault the owner
-  already has, in files that open, diff and delete without the tool.
-- No MCP server, nothing hosted, no vector database, no background process.
+The project gets a two-line `.grounder.json` pointing at a folder in a markdown vault I
+already keep. Plans, notes and session summaries are plain files in that folder, so they
+open, diff and delete without Grounder installed. A handful of agent commands read and write
+them — only when asked.
+
+There is no MCP server, nothing hosted, no vector database and no background process. Those
+were cut on purpose: reading and writing vault files is a solved problem with plenty of
+tools already; the missing part was an opinionated workflow on top of it.
 
 <img
   src={demo.src}
@@ -53,14 +59,23 @@ import demo from "./grounder/demo.gif";
 
 ## The tradeoffs
 
-- **Simple over automatic.** Injecting context automatically at every session start was
-  rejected for a one-line reminder that never guesses what is relevant.
-- **Repositioned by built-in memory.** Claude Code and Cursor now ship their own memory, which
-  made "give your agent memory" worthless as a pitch. What they can't do is follow you to
-  another agent or another machine — that became the pitch.
-- **Files over a database.** Readable and portable without the tool, at the cost of queries.
+**Simple over automatic.** The obvious feature is loading the last session into every new
+one automatically. I rejected it: any rule for what's relevant guesses wrong often enough to
+be confusing, and silent context injection is a complaint people already had about other
+tools. What shipped is one line at session start — the newest summary's title and date —
+which never blocks and is easy to ignore.
+
+**Repositioned by built-in memory.** A month in, a check of the competition found Claude Code
+and Cursor both ship their own memory, on by default. "Give your agent memory" stopped being worth saying. What
+built-in memory can't do is follow you to a different agent or a different machine, and a
+folder of markdown can — so that became the pitch.
+
+**Files over a database.** Plain files are readable, portable and survive the tool going
+away. The cost is search: it walks the files and matches keywords every time, with no index
+and no semantic matching.
 
 ## What I would do differently
 
-- The first six weeks went unrecorded: the tool couldn't record its own build until it could
-  write session summaries.
+Record from day one. The session summaries only start six weeks after the first commit,
+because the tool couldn't record its own build until it could write them — so the earliest
+decisions are the least documented ones.

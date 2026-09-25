@@ -29,7 +29,7 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Deploy infrastructure to ${{ github.event.inputs.environment }}
         uses: ./deploy/aws/.github/actions/deploy

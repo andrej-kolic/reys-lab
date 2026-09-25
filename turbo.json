@@ -8,7 +8,13 @@
       ],
       "outputs": [
         "dist/**"
-      ]
+      ],
+      // dist/version.json is generated from git HEAD and `git status`
+      // (apps/web/src/lib/version.ts), neither of which turbo hashes — a
+      // commit with no file content change looks identical to turbo, so a
+      // cache hit would silently ship a stale commit/dirty flag. The site
+      // builds in ~1.3s, so caching this task isn't worth that risk.
+      "cache": false
     },
     "gate": {
       "outputs": [],

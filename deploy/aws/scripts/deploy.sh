@@ -8,6 +8,7 @@ ROOT_DIR=$(dirname "$0")/..
 MONOREPO_ROOT_DIR=$(dirname "$0")/../../..
 
 source "$SCRIPTS_DIR/helpers.sh"
+source "$SCRIPTS_DIR/version-checks.sh"
 
 # Disable automatic pagination for AWS CLI commands
 export AWS_PAGER=""
@@ -257,6 +258,9 @@ main() {
             check_dependencies
             get_aws_account_id
             get_config
+            if [ "$ENVIRONMENT" = "production" ]; then
+                check_production_safety
+            fi
             sync_site_content
             invalidate_cloudfront_cache
             print_success "Content deployment completed!"

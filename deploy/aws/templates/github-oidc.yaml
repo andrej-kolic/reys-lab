@@ -62,7 +62,10 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          # CloudFormation actions require stack-specific ARNs for least privilege
+          # Stack-scoped actions: nested stacks (CustomResourceStack,
+          # AcmCertificateStack, CloudFrontStack) are physically named
+          # ${ParentStackName}-${LogicalId}-${suffix}, so they still match
+          # this project's stack-name prefix.
           - Effect: Allow
             Action:
               - cloudformation:CreateStack
@@ -74,6 +77,12 @@ Resources:
               - cloudformation:DeleteChangeSet
               - cloudformation:DescribeChangeSet
               - cloudformation:GetTemplate
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${ProjectName}-*/*'
+          # Not stack-scoped: these act on a template body/S3 URL directly,
+          # not an existing stack ARN, so they don't support resource-level
+          # permissions.
+          - Effect: Allow
+            Action:
               - cloudformation:GetTemplateSummary
               - cloudformation:ValidateTemplate
               - cloudformation:Package
@@ -109,12 +118,18 @@ Resources:
             Resource:
               - !Sub 'arn:aws:s3:::${ProjectName}-*'
               - !Sub 'arn:aws:s3:::${ProjectName}-*/*'
+          # Scoped to this project's hosted zone. ListHostedZones and
+          # GetChange don't support resource-level permissions (the former
+          # is account-wide, the latter references a change id, not a zone).
           - Effect: Allow
             Action:
               - route53:GetHostedZone
-              - route53:ListHostedZones
               - route53:ChangeResourceRecordSets
               - route53:ListResourceRecordSets
+            Resource: 'arn:aws:route53:::hostedzone/Z00295123IDZ7CVMX671W'
+          - Effect: Allow
+            Action:
+              - route53:ListHostedZones
               - route53:GetChange
             Resource: '*'
           - Effect: Allow
@@ -157,6 +172,27 @@ Resources:
               - cloudfront:GetResponseHeadersPolicy
               - cloudfront:ListResponseHeadersPolicies
             Resource: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:response-headers-policy/*'
+          # For ViewerRequestFunction in cloudfront-site.yaml (the www-apex
+          # redirect and directory-index rewrite).
+          - Effect: Allow
+            Action:
+              - cloudfront:CreateFunction
+              - cloudfront:UpdateFunction
+              - cloudfront:DeleteFunction
+              - cloudfront:DescribeFunction
+              - cloudfront:GetFunction
+              - cloudfront:PublishFunction
+              - cloudfront:ListFunctions
+            Resource: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:function/*'
+          # For HtmlCachePolicy and AssetsCachePolicy in cloudfront-site.yaml.
+          - Effect: Allow
+            Action:
+              - cloudfront:CreateCachePolicy
+              - cloudfront:UpdateCachePolicy
+              - cloudfront:DeleteCachePolicy
+              - cloudfront:GetCachePolicy
+              - cloudfront:ListCachePolicies
+            Resource: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:cache-policy/*'
           - Effect: Allow
             Action:
               - sts:GetCallerIdentity

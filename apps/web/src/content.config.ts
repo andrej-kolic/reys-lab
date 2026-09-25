@@ -45,6 +45,12 @@ const projects = defineCollection({
      */
     thumbnail: image().optional(),
     /**
+     * Shown above the title on the detail page. Separate from `thumbnail`
+     * because the card's image will become a screenshot and the page header
+     * should still carry the mark.
+     */
+    logo: image().optional(),
+    /**
      * Outbound links, one button each, in this order. Rendered on the detail
      * page only — a card that links straight to GitHub means the write-up
      * never gets opened, and the section degrades into a link list. A list

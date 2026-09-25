@@ -2,36 +2,65 @@
 title: "Grounder"
 description: "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time."
 order: 1
-stack: ["TypeScript", "Node", "Markdown"]
-status: "In daily use"
+stack: ["TypeScript", "Node", "VS Code API"]
+status: "On npm · VS Code Marketplace"
 thumbnail: "./grounder/logo.svg"
+logo: "./grounder/logo.svg"
 links:
   - label: "Repository"
     url: "https://github.com/andrej-kolic/grounder"
+  - label: "npm"
+    url: "https://www.npmjs.com/package/grounder"
+  - label: "VS Code Marketplace"
+    url: "https://marketplace.visualstudio.com/items?itemName=andrej-kolic.grounder-vscode"
+  - label: "Open VSX"
+    url: "https://open-vsx.org/extension/andrej-kolic/grounder-vscode"
 ---
 
-*Placeholder copy. The structure is real; the words are not.*
+import diagram from "./grounder/diagram.svg";
+import demo from "./grounder/demo.gif";
+
+{/* Plain <img>, not <Image>: sharp is not installed. See ProjectCard. */}
+
+<img
+  src={diagram.src}
+  width={diagram.width}
+  height={diagram.height}
+  alt="Cursor, Claude Code and more agents connect through skills and the CLI to one markdown vault: a folder per project, holding plans, notes and saved session summaries."
+/>
+
+*Draft: the points are real, the prose is still to be written.*
 
 ## The problem
 
-Every session with a coding agent started from nothing. The context that mattered —
-why a decision was made, what had already been tried, which approach had been
-rejected and for what reason — lived in chat transcripts that were gone the next
-morning.
+- Every session with a coding agent starts from nothing. Close the window and the next
+  session has no idea what was just decided.
+- It is not only mine: in [claude-code#39961](https://github.com/anthropics/claude-code/issues/39961)
+  a user reports losing 50–75% of session time to redoing work.
 
 ## The approach
 
-A CLI that links a repository to a plain markdown vault outside it. Plans, handoffs
-and single-fact memories are files, not database rows, so they stay readable and
-diffable without the tool that wrote them.
+- The project keeps a one-line pointer; the memory lives in a markdown vault the owner
+  already has, in files that open, diff and delete without the tool.
+- No MCP server, nothing hosted, no vector database, no background process.
 
-## The tradeoff
+<img
+  src={demo.src}
+  width={demo.width}
+  height={demo.height}
+  alt="A typical agent session: the session-start reminder, then loading the last saved session, saving a plan, searching the vault, writing a note and saving a session summary."
+/>
 
-Markdown files have no schema, which makes them trivially portable and impossible
-to query. Structured storage would have been faster to search and would have tied
-the memory to one program. Portability won, and search is a `grep` away.
+## The tradeoffs
+
+- **Simple over automatic.** Injecting context automatically at every session start was
+  rejected for a one-line reminder that never guesses what is relevant.
+- **Repositioned by built-in memory.** Claude Code and Cursor now ship their own memory, which
+  made "give your agent memory" worthless as a pitch. What they can't do is follow you to
+  another agent or another machine — that became the pitch.
+- **Files over a database.** Readable and portable without the tool, at the cost of queries.
 
 ## What I would do differently
 
-Write the retrieval path before the write path. It was built the other way round,
-and the file format carries a couple of fields that nothing ever reads.
+- The first six weeks went unrecorded: the tool couldn't record its own build until it could
+  write session summaries.

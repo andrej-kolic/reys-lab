@@ -1,0 +1,27 @@
+{
+  "project_name": "reys-lab",
+  "region": "us-east-1",
+  "oidc": {
+    "oidc_arn": "arn:aws:iam::629994690329:oidc-provider/token.actions.githubusercontent.com",
+    "github_org": "andrej-kolic",
+    "github_repo": "reys-lab"
+  },
+  "environments": {
+    "staging": {
+      "parameters": {
+        "DomainName": "andrejkolic.com",
+        "SubDomain": "lab-staging",
+        "HostedZoneId": "Z00295123IDZ7CVMX671W",
+        "CreateApex": "no"
+      }
+    },
+    "production": {
+      "parameters": {
+        "DomainName": "andrejkolic.com",
+        "SubDomain": "www",
+        "HostedZoneId": "Z00295123IDZ7CVMX671W",
+        "CreateApex": "yes"
+      }
+    }
+  }
+}

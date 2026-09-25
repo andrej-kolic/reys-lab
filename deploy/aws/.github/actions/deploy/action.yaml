@@ -1,0 +1,197 @@
+name: 'Deploy CloudFront Site'
+description: 'Deploy static website to AWS CloudFront with S3 backend'
+inputs:
+  environment:
+    description: 'Deployment environment (staging, production)'
+    required: true
+  action:
+    description: 'Deployment action (infra, content)'
+    required: true
+  aws-role-arn:
+    description: 'AWS IAM Role ARN for OIDC authentication'
+    required: true
+  aws-region:
+    description: 'AWS region for deployment'
+    required: false
+    default: 'us-east-1'
+  create-release:
+    description: 'Whether to create a GitHub release (production only)'
+    required: false
+    default: 'false'
+  comment-pr:
+    description: 'Whether to comment on PR with deployment info'
+    required: false
+    default: 'false'
+  github-token:
+    description: 'GitHub token for release creation and PR comments'
+    required: false
+
+outputs:
+  website-url:
+    description: 'The deployed website URL'
+    value: ${{ steps.get-outputs.outputs.website-url }}
+  distribution-id:
+    description: 'CloudFront distribution ID'
+    value: ${{ steps.get-outputs.outputs.distribution-id }}
+
+runs:
+  using: 'composite'
+  steps:
+    # Log input
+
+    - shell: bash
+      run: |
+        echo " "
+        echo " "
+        echo "Log input"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Log input
+      shell: bash
+      run: |
+        echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+        echo "GITHUB_REF: $GITHUB_REF"
+        echo "github.head_ref: ${{ github.head_ref }}"
+        echo " "
+        echo "inputs.environment: ${{ inputs.environment }}"
+        echo "inputs.action: ${{ inputs.action }}"
+        echo " "
+
+    # Configure AWS credentials using OIDC
+
+    - shell: bash
+      run: |
+        echo " "
+        echo " "
+        echo "Configure AWS credentials using OIDC"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Configure AWS credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v6
+      with:
+        role-to-assume: ${{ inputs.aws-role-arn }}
+        role-session-name: github-actions-${{ inputs.environment }}
+        aws-region: ${{ inputs.aws-region }}
+
+    # Deploy to environment
+
+    - shell: bash
+      run: |
+        echo " "
+        echo " "
+        echo "Deploy to ${{ inputs.environment }}"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Deploy to ${{ inputs.environment }}
+      shell: bash
+      run: ./deploy/aws/scripts/deploy.sh ${{ inputs.action }} ${{ inputs.environment }}
+
+    # Get deployment outputs
+
+    - shell: bash
+      run: |
+        echo " "
+        echo " "
+        echo "Get deployment outputs"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Get deployment outputs
+      id: get-outputs
+      shell: bash
+      run: |
+        output=$(./deploy/aws/scripts/deploy.sh outputs ${{ inputs.environment }})
+        echo "Raw output: $output"
+
+        # Extract website URL
+        website_url=$(echo "$output" | grep -o 'Website URL: https://[^[:space:]]*' | cut -d' ' -f3)
+        if [ -n "$website_url" ]; then
+          echo "website-url=$website_url" >> $GITHUB_OUTPUT
+          echo "Website URL found: $website_url"
+        fi
+
+        # Extract distribution ID
+        distribution_id=$(echo "$output" | grep -o 'Distribution ID: [^[:space:]]*' | cut -d' ' -f3)
+        if [ -n "$distribution_id" ]; then
+          echo "distribution-id=$distribution_id" >> $GITHUB_OUTPUT
+          echo "Distribution ID found: $distribution_id"
+        fi
+
+    # Calculate variables
+
+    - shell: bash
+      run: |
+        echo " "
+        echo " "
+        echo "Calculate variables"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Calculate variables
+      id: calculate-vars
+      shell: bash
+      run: |
+        COMMENT_PR=false
+        if [[ "${{ inputs.comment-pr }}" == "true" && "${{ steps.get-outputs.outputs.website-url }}" != "" && "${{ inputs.action }}" == "content" ]]; then
+          COMMENT_PR=true
+        fi
+        echo "COMMENT_PR=$COMMENT_PR"
+        echo "COMMENT_PR=$COMMENT_PR" >> $GITHUB_ENV
+
+        CREATE_RELEASE=false
+        if [[ "${{ inputs.create-release }}" == "true" && "${{ inputs.environment }}" == "production" && "${{ inputs.action }}" == "content" ]]; then
+          CREATE_RELEASE=true
+        fi
+        echo "CREATE_RELEASE=$CREATE_RELEASE"
+        echo "CREATE_RELEASE=$CREATE_RELEASE" >> $GITHUB_ENV
+
+    # Comment PR with deployment info
+
+    - shell: bash
+      if: env.COMMENT_PR == 'true'
+      run: |
+        echo " "
+        echo " "
+        echo "Comment PR with deployment info"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Comment PR with deployment info
+      if: env.COMMENT_PR == 'true'
+      uses: actions/github-script@v9
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const websiteUrl = '${{ steps.get-outputs.outputs.website-url }}';
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `🚀 **Development Environment Deployed**\n\n**Website URL:** ${websiteUrl}\n\n*This deployment is automatically updated with each push to this PR.*`
+          });
+
+    # Create GitHub release
+
+    - shell: bash
+      if: env.CREATE_RELEASE == 'true'
+      run: |
+        echo " "
+        echo " "
+        echo "Create GitHub release"
+        echo "──────────────────────────────────────"
+        echo " "
+    - name: Create GitHub release
+      if: env.CREATE_RELEASE == 'true'
+      uses: softprops/action-gh-release@v3
+      with:
+        tag_name: release-${{ github.run_number }}
+        name: Production Release ${{ github.run_number }}
+        body: |
+          🚀 **Production Deployment**
+
+          **Commit:** ${{ github.sha }}
+          **Deployed by:** ${{ github.actor }}
+          **Workflow:** ${{ github.workflow }}
+          **Website URL:** ${{ steps.get-outputs.outputs.website-url }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}

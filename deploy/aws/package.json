@@ -1,0 +1,15 @@
+{
+  "name": "@reys-lab/deploy-aws",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AWS deployment infra scripts",
+  "scripts": {
+    "deploy": "./scripts/deploy.sh content staging"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@reys-lab/web": "workspace:*"
+  }
+}

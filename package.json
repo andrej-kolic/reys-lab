@@ -10,6 +10,7 @@
     "build": "turbo run build",
     "gate": "turbo run gate",
     "dev": "turbo run dev",
+    "preview": "turbo run preview --filter=@reys-lab/web",
     "check": "turbo run check",
     "lint": "turbo run lint",
     "deploy": "turbo run deploy",

@@ -54,7 +54,6 @@ Parameters:
     Type: String
     Description: 'Environment name'
     AllowedValues:
-      - development
       - staging
       - production
 

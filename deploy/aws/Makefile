@@ -9,12 +9,6 @@ test-cfn:
 validate:
 	./scripts/deploy.sh validate
 
-deploy-dev:
-	./scripts/deploy.sh infra development
-
-deploy-dev-content:
-	./scripts/deploy.sh content development
-
 deploy-staging:
 	./scripts/deploy.sh infra staging
 

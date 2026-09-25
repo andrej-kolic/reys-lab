@@ -2,7 +2,7 @@ name: 'Deploy CloudFront Site'
 description: 'Deploy static website to AWS CloudFront with S3 backend'
 inputs:
   environment:
-    description: 'Deployment environment (development, staging, production)'
+    description: 'Deployment environment (staging, production)'
     required: true
   action:
     description: 'Deployment action (infra, content)'

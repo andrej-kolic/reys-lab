@@ -1,12 +1,8 @@
-# Push to main deploys straight to production content — staging is reserved
-# for testing infra changes (the redirect function, CSP, cache rules), not
-# every ordinary content push. workflow_dispatch still covers ad-hoc staging
-# or production deploys.
+# Manual for now. Once the apex switch (plan step 12) lands, add a
+# `push: branches: [main]` trigger targeting the production environment.
 name: Deploy AWS content
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -19,7 +15,7 @@ on:
           - production
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.environment || 'production' }}
+  group: ${{ github.workflow }}-${{ github.event.inputs.environment }}
   cancel-in-progress: false
 
 env:
@@ -32,7 +28,7 @@ permissions:
 jobs:
   deploy-content:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'production' }}
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -50,10 +46,10 @@ jobs:
       - name: Build (includes the design-rules gate)
         run: pnpm run build
 
-      - name: Deploy content to ${{ github.event.inputs.environment || 'production' }}
+      - name: Deploy content to ${{ github.event.inputs.environment }}
         uses: ./deploy/aws/.github/actions/deploy
         with:
-          environment: ${{ github.event.inputs.environment || 'production' }}
+          environment: ${{ github.event.inputs.environment }}
           action: content
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_DEFAULT_REGION }}

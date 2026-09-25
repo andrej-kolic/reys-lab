@@ -256,6 +256,7 @@ main() {
             ;;
         "content")
             check_dependencies
+            refuse_stale_dist
             get_aws_account_id
             get_config
             if [ "$ENVIRONMENT" = "production" ]; then

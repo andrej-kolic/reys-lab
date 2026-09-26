@@ -8,6 +8,9 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+After a content schema change or a branch switch, start it with `--force`: the dev server
+otherwise reloads its saved copy of the content and pages can crash on missing fields.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

@@ -2,33 +2,84 @@
 title: "Grounder"
 description: "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time."
 order: 1
-stack: ["TypeScript", "Node", "Markdown"]
-status: "In daily use"
-repo: "https://github.com/andrej-kolic/grounder"
+stack: ["TypeScript", "Node", "VS Code API"]
+status: "On npm · VS Code Marketplace"
+thumbnail: "./grounder/logo.svg"
+logo: "./grounder/logo.svg"
+# Matches the capital G in Outfit Bold: 0.728em tall, its curve dipping
+# 0.011em below the baseline.
+logoFit: { height: 0.728, drop: 0.011 }
+shareImage: "./grounder/share.jpg"
+links:
+  - label: "Repository"
+    url: "https://github.com/andrej-kolic/grounder"
+  - label: "npm"
+    url: "https://www.npmjs.com/package/grounder"
+  - label: "VS Code Marketplace"
+    url: "https://marketplace.visualstudio.com/items?itemName=andrej-kolic.grounder-vscode"
+  - label: "Open VSX"
+    url: "https://open-vsx.org/extension/andrej-kolic/grounder-vscode"
 ---
 
-*Placeholder copy. The structure is real; the words are not.*
+import diagram from "./grounder/diagram.svg";
+import demo from "./grounder/demo.gif";
+
+{/* Plain <img>, not <Image>: sharp is not installed. See ProjectCard. */}
+
+<img
+  src={diagram.src}
+  width={diagram.width}
+  height={diagram.height}
+  alt="Cursor, Claude Code and more agents connect through skills and the CLI to one markdown vault: a folder per project, holding plans, notes and saved session summaries."
+/>
 
 ## The problem
 
-Every session with a coding agent started from nothing. The context that mattered —
-why a decision was made, what had already been tried, which approach had been
-rejected and for what reason — lived in chat transcripts that were gone the next
-morning.
+A coding agent starts every session from nothing. Close the window and the next session has
+no idea what was decided an hour ago, what was tried, or why an approach was dropped. That
+context lived in chat transcripts I would never open again.
+
+I wasn't the only one losing it. In
+[claude-code#39961](https://github.com/anthropics/claude-code/issues/39961) a user reports
+spending 50–75% of their session time redoing work across sessions.
 
 ## The approach
 
-A CLI that links a repository to a plain markdown vault outside it. Plans, handoffs
-and single-fact memories are files, not database rows, so they stay readable and
-diffable without the tool that wrote them.
+The project gets a two-line `.grounder.json` pointing at a folder in a markdown vault I
+already keep. Plans, notes and session summaries are plain files in that folder, so they
+open, diff and delete without Grounder installed. A handful of agent commands read and write
+them — only when asked.
 
-## The tradeoff
+There is no MCP server, nothing hosted, no vector database and no background process. Those
+were cut on purpose: reading and writing vault files is a solved problem with plenty of
+tools already; the missing part was an opinionated workflow on top of it.
 
-Markdown files have no schema, which makes them trivially portable and impossible
-to query. Structured storage would have been faster to search and would have tied
-the memory to one program. Portability won, and search is a `grep` away.
+<img
+  src={demo.src}
+  width={demo.width}
+  height={demo.height}
+  alt="A typical agent session: the session-start reminder, then loading the last saved session, saving a plan, searching the vault, writing a note and saving a session summary."
+/>
+
+## The tradeoffs
+
+**Simple over automatic.** The obvious feature is loading the last session into every new
+one automatically. I rejected it: any rule for what's relevant guesses wrong often enough to
+be confusing, and silent context injection is a complaint people already had about other
+tools. What shipped is one line at session start — the newest summary's title and date —
+which never blocks and is easy to ignore.
+
+**Repositioned by built-in memory.** A month in, a check of the competition found Claude Code
+and Cursor both ship their own memory, on by default. "Give your agent memory" stopped being worth saying. What
+built-in memory can't do is follow you to a different agent or a different machine, and a
+folder of markdown can — so that became the pitch.
+
+**Files over a database.** Plain files are readable, portable and survive the tool going
+away. The cost is search: it walks the files and matches keywords every time, with no index
+and no semantic matching.
 
 ## What I would do differently
 
-Write the retrieval path before the write path. It was built the other way round,
-and the file format carries a couple of fields that nothing ever reads.
+Record from day one. The session summaries only start six weeks after the first commit,
+because the tool couldn't record its own build until it could write them — so the earliest
+decisions are the least documented ones.

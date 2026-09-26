@@ -21,15 +21,14 @@ const { Content } = await render(project);
 // duplicate each page at two addresses or break the global sequence.
 const experiments = forProject(project.id);
 
-const links: { href: string; label: string }[] = [];
-if (project.data.repo) links.push({ href: project.data.repo, label: "Repository" });
-if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
+const { links, logoFit } = project.data;
 ---
 
 <SiteLayout
   title={project.data.title}
   description={project.data.description}
   width="measure"
+  shareImage={project.data.shareImage}
 >
   <Breadcrumb
     slot="subnav"
@@ -42,6 +41,25 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
     <h1
       class="mt-3 font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
     >
+      {
+        project.data.logo && (
+          // Plain <img>: an SVG has nothing to optimise, and <Image> needs
+          // sharp. Empty alt, since the heading names the project.
+          <img
+            src={project.data.logo.src}
+            width={project.data.logo.width}
+            height={project.data.logo.height}
+            alt=""
+            class="title-logo"
+            style={
+              logoFit && {
+                "--logo-height": `${logoFit.height}em`,
+                "--logo-drop": `${logoFit.drop}em`,
+              }
+            }
+          />
+        )
+      }
       {project.data.title}
     </h1>
     <p class="mt-4 text-lg leading-relaxed text-muted text-pretty">
@@ -93,8 +111,7 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
         <div class="flex flex-wrap gap-x-5 gap-y-3">
           {links.map((link) => (
             <a
-              href={link.href}
-              rel="noopener"
+              href={link.url}
               class="btn-secondary"
             >
               {link.label}
@@ -105,3 +122,16 @@ if (project.data.demo) links.push({ href: project.data.demo, label: "Live" });
     )
   }
 </SiteLayout>
+
+<style>
+  /* Beside the title, as tall as a flat capital in Outfit Bold (0.706em) and
+     sitting on the baseline. A project whose first letter is round sets
+     `logoFit` to match it instead. Placement: design plan, Project pages. */
+  .title-logo {
+    display: inline-block;
+    height: var(--logo-height, 0.706em);
+    width: auto;
+    vertical-align: calc(-1 * var(--logo-drop, 0em));
+    margin-right: 0.3em;
+  }
+</style>

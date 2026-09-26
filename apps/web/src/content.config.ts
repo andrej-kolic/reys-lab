@@ -27,7 +27,7 @@ const blog = defineCollection({
 
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.mdx" }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     /** One sentence, no adjectives. Carries the whole card. */
     description: z.string(),
@@ -39,12 +39,39 @@ const projects = defineCollection({
     stack: z.array(z.string()).default([]),
     status: z.string(),
     /**
-     * Outbound links. Rendered on the detail page only — a card that links
-     * straight to GitHub means the write-up never gets opened, and the
-     * section degrades into a link list.
+     * The card's image, a path relative to the .mdx file. Optional until
+     * every project has one; a card without it shows the dot-grid
+     * placeholder. See the content plan (#24).
      */
-    repo: z.url().optional(),
-    demo: z.url().optional(),
+    thumbnail: image().optional(),
+    /**
+     * Shown above the title on the detail page. Separate from `thumbnail`
+     * because the card's image will become a screenshot and the page header
+     * should still carry the mark.
+     */
+    logo: image().optional(),
+    /**
+     * Sizes the logo to the title's first letter, in em: its full height and
+     * how far it dips below the baseline. Without it the logo takes a flat
+     * capital's height, which is right for letters like R or H.
+     */
+    logoFit: z.object({ height: z.number(), drop: z.number() }).optional(),
+    /**
+     * The link-preview image (Open Graph `og:image`) for the project page —
+     * what Slack, Discord, WhatsApp and LinkedIn show when the link is
+     * pasted. JPG under ~300 KB: WhatsApp drops larger previews.
+     */
+    shareImage: image().optional(),
+    /**
+     * Outbound links, one button each, in this order. Rendered on the detail
+     * page only — a card that links straight to GitHub means the write-up
+     * never gets opened, and the section degrades into a link list. A list
+     * rather than fixed fields because projects differ in kind: a web app
+     * has a live demo, a CLI has a package registry.
+     */
+    links: z
+      .array(z.object({ label: z.string(), url: z.url() }))
+      .default([]),
     draft: z.boolean().default(false),
   }),
 });

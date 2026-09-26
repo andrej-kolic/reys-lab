@@ -21,7 +21,7 @@ const { Content } = await render(project);
 // duplicate each page at two addresses or break the global sequence.
 const experiments = forProject(project.id);
 
-const { links } = project.data;
+const { links, logoFit } = project.data;
 ---
 
 <SiteLayout
@@ -51,6 +51,12 @@ const { links } = project.data;
             height={project.data.logo.height}
             alt=""
             class="title-logo"
+            style={
+              logoFit && {
+                "--logo-height": `${logoFit.height}em`,
+                "--logo-drop": `${logoFit.drop}em`,
+              }
+            }
           />
         )
       }
@@ -119,15 +125,14 @@ const { links } = project.data;
 </SiteLayout>
 
 <style>
-  /* The logo matches the heading's capital G, measured in Outfit Bold:
-     0.728em tall, its bottom 0.011em below the baseline where the G's curve
-     dips. Beside the title rather than above it — chosen on a temporary page
-     over above, top right, in the label line and a card-style band (#24). */
+  /* Beside the title, as tall as a flat capital in Outfit Bold (0.706em) and
+     sitting on the baseline. A project whose first letter is round sets
+     `logoFit` to match it instead. Placement: design plan, Project pages. */
   .title-logo {
     display: inline-block;
-    height: 0.728em;
+    height: var(--logo-height, 0.706em);
     width: auto;
-    vertical-align: -0.011em;
+    vertical-align: calc(-1 * var(--logo-drop, 0em));
     margin-right: 0.3em;
   }
 </style>

@@ -51,6 +51,12 @@ const projects = defineCollection({
      */
     logo: image().optional(),
     /**
+     * Sizes the logo to the title's first letter, in em: its full height and
+     * how far it dips below the baseline. Without it the logo takes a flat
+     * capital's height, which is right for letters like R or H.
+     */
+    logoFit: z.object({ height: z.number(), drop: z.number() }).optional(),
+    /**
      * The link-preview image (Open Graph `og:image`) for the project page —
      * what Slack, Discord, WhatsApp and LinkedIn show when the link is
      * pasted. JPG under ~300 KB: WhatsApp drops larger previews.

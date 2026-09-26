@@ -37,23 +37,23 @@ const { links } = project.data;
   />
 
   <header class="border-b border-frame pb-8">
-    {
-      project.data.logo && (
-        // Plain <img>: an SVG has nothing to optimise, and <Image> needs
-        // sharp. Empty alt, since the h1 below names the project.
-        <img
-          src={project.data.logo.src}
-          width={project.data.logo.width}
-          height={project.data.logo.height}
-          alt=""
-          class="mb-6 h-12 w-auto"
-        />
-      )
-    }
     <p class="label !text-accent">{project.data.status}</p>
     <h1
       class="mt-3 font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
     >
+      {
+        project.data.logo && (
+          // Plain <img>: an SVG has nothing to optimise, and <Image> needs
+          // sharp. Empty alt, since the heading names the project.
+          <img
+            src={project.data.logo.src}
+            width={project.data.logo.width}
+            height={project.data.logo.height}
+            alt=""
+            class="title-logo"
+          />
+        )
+      }
       {project.data.title}
     </h1>
     <p class="mt-4 text-lg leading-relaxed text-muted text-pretty">
@@ -117,3 +117,17 @@ const { links } = project.data;
     )
   }
 </SiteLayout>
+
+<style>
+  /* The logo matches the heading's capital G, measured in Outfit Bold:
+     0.728em tall, its bottom 0.011em below the baseline where the G's curve
+     dips. Beside the title rather than above it — chosen on a temporary page
+     over above, top right, in the label line and a card-style band (#24). */
+  .title-logo {
+    display: inline-block;
+    height: 0.728em;
+    width: auto;
+    vertical-align: -0.011em;
+    margin-right: 0.3em;
+  }
+</style>

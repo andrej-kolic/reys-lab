@@ -67,17 +67,15 @@ const { href, title, description, stack, status, thumbnail } = Astro.props;
       {title}
     </h3>
     <p class="mt-2.5 grow text-sm leading-relaxed text-muted">{description}</p>
-    <div
-      class="mt-5 flex flex-wrap items-center gap-2 border-t border-divider pt-6"
-    >
-      {
-        stack.map((item) => (
-          <span class="tag">
-            {item}
-          </span>
-        ))
-      }
-    </div>
+    {
+      stack.length > 0 && (
+        <div class="mt-5 flex flex-wrap items-center gap-2 border-t border-divider pt-6">
+          {stack.map((item) => (
+            <span class="tag">{item}</span>
+          ))}
+        </div>
+      )
+    }
   </div>
 </a>
 

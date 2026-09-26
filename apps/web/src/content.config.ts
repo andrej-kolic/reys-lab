@@ -51,6 +51,12 @@ const projects = defineCollection({
      */
     logo: image().optional(),
     /**
+     * The link-preview image (Open Graph `og:image`) for the project page —
+     * what Slack, Discord, WhatsApp and LinkedIn show when the link is
+     * pasted. JPG under ~300 KB: WhatsApp drops larger previews.
+     */
+    shareImage: image().optional(),
+    /**
      * Outbound links, one button each, in this order. Rendered on the detail
      * page only — a card that links straight to GitHub means the write-up
      * never gets opened, and the section degrades into a link list. A list

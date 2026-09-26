@@ -239,6 +239,14 @@ Resources:
     Properties:
       ResponseHeadersPolicyConfig:
         Name: !Sub '${ProjectName}-${Environment}-static-site-security-headers'
+        CustomHeadersConfig:
+          Items:
+            # HTML names don't change between deploys, so the browser must ask
+            # before reusing its copy (a 304 when unchanged). Without a header it
+            # guesses a lifetime from Last-Modified and serves the old page.
+            - Header: 'Cache-Control'
+              Value: 'no-cache'
+              Override: true
         SecurityHeadersConfig:
           StrictTransportSecurity:
             # No IncludeSubdomains/Preload: those would force HTTPS on every

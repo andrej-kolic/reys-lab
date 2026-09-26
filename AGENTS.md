@@ -17,24 +17,15 @@ apps/web/              Astro. Static. Knows nothing about hosting.
 packages/design-rules/ the gate — contrast matrix and the fill rule
 packages/eslint-config/ shared eslint config
 deploy/cloudflare/     wrangler config and a one-line deploy script
+deploy/aws/            S3 + CloudFront + Route 53 (CloudFormation)
 services/              future independent backends (empty)
 ```
 
 ## Plans live outside the repo
 
-Every architecture and design decision is recorded in three plan files in the Obsidian
-vault, not in this repository:
-
-```text
-~/Documents/obsidian/dev/10-Projects/reys-lab/plans/
-  reys-lab-design-plan.md         how it looks, and why
-  reys-lab-design-system-plan.md  tokens, states, the gate
-  reys-lab-monorepo-plan.md       architecture
-```
-
-They are the source of truth and they cite commit SHAs. Read the relevant one before
-proposing a change, and update it when a decision changes — a decision that exists only in
-a commit message is a decision that will be re-argued in a month.
+Design and architecture decisions live in plan files in the Grounder vault this repo is
+linked to, not here. When a task needs one, `grounder search <words>` finds the section and
+`grounder plan list` lists the files.
 
 ## The gate
 
@@ -82,7 +73,7 @@ required check on `main`.
 - Comments in `global.css` carry the reasoning for the values above them. If you change a
   value, change the comment in the same edit; a comment that argues with the code below it
   is worse than no comment.
-- Colour work is gated by the design-system plan. Do not invent a state value — every
+- Colour work is gated by the plans. Do not invent a state value — every
   hover, pressed, focus and disabled value is a step on a generated scale in `scales.css`.
 - Experiment pages are records. A settled experiment keeps its losing candidates on the
   page; nothing is rewritten to match the verdict.

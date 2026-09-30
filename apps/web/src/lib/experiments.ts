@@ -54,6 +54,16 @@ export interface Experiment {
 
 export const experiments: Experiment[] = [
   {
+    number: "04",
+    slug: "04-the-screenshot-thumbnail",
+    title: "The screenshot thumbnail",
+    status: "settled",
+    date: "2026-09-30",
+    project: "rookie-trader",
+    summary:
+      "How a screenshot sits in the card's image band without looking cut off. Five treatments; the winner changed the band itself, from 2:1 to a screenshot's 16:10, with the image whole inside a gap.",
+  },
+  {
     number: "01",
     slug: "01-choosing-a-palette",
     title: "Choosing a palette",

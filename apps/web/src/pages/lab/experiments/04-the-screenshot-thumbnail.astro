@@ -1,0 +1,306 @@
+---
+import type { ImageMetadata } from "astro";
+import { getCollection } from "astro:content";
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+import screenshot from "../../../content/projects/rookie-trader/screenshot.webp";
+import diagram from "../../../content/projects/grounder/diagram.svg";
+
+/**
+ * How a screenshot sits in the card's image band. Rookie Trader is the first
+ * project with one; filled edge to edge, it reads as cut off at the bottom.
+ *
+ * One thing moves: how a wide image sits in the band. Each candidate renders
+ * the real projects row, with Grounder showing its diagram instead of its
+ * logo, so both wide images get the same treatment side by side; the
+ * placeholder's dot grid is held as it ships. D is the
+ * exception by necessity: it asks whether the band's shape should change, and
+ * the band is shared, so all three cards change with it.
+ *
+ * The cards are copied from ProjectCard rather than imported, because the
+ * component draws one band and this page needs five. The copy is a record, not
+ * a second source of truth.
+ */
+
+const opened = "2026-09-30";
+const settled = "2026-09-30";
+
+/** The wide image each project shows here; a project without one gets the dot grid. */
+const images: Record<string, ImageMetadata> = {
+  grounder: diagram,
+  "rookie-trader": screenshot,
+};
+
+const projects = (await getCollection("projects", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const record = [
+  { label: "Opened", value: opened },
+  { label: "Settled", value: settled },
+  { label: "Result", value: "D, without the border" },
+  { label: "Variable", value: "screenshot in the band" },
+  { label: "Candidates", value: "5, incl. control" },
+  { label: "Band", value: "2:1, except D" },
+];
+
+type Treatment = "fill" | "inset" | "contain" | "tall" | "frame";
+
+const candidates: { id: Treatment; name: string; claim: string; note: string }[] = [
+  {
+    id: "fill",
+    name: "A · Fill the band",
+    claim: "The control. What ships today.",
+    note: "Edge to edge, top-aligned, the bottom fifth cut. Nothing separates the screenshot from the card, so the cut reads as a mistake.",
+  },
+  {
+    id: "inset",
+    name: "B · Inset, off the bottom",
+    claim: "Gap at the top and sides, runs off the bottom.",
+    note: "The common product-site treatment. The bottom is still cut, but the gap and the rounded top corners make it read as a window into the app rather than a crop.",
+  },
+  {
+    id: "contain",
+    name: "C · Whole, gap all round",
+    claim: "Nothing cut, 2:1 band.",
+    note: "The screenshot is 16:10 and the band is 2:1, so fitting it whole leaves empty strips at the sides and shrinks the numbers past reading.",
+  },
+  {
+    id: "tall",
+    name: "D · Whole, 16:10 band",
+    claim: "Nothing cut, band matches the screenshot.",
+    note: "Changes the shape of every card, Grounder's included: its diagram gets a taller band, and the whole row gets taller.",
+  },
+  {
+    id: "frame",
+    name: "E · Browser window",
+    claim: "B inside a title bar with three dots.",
+    note: "Says “web app” before anything is read. The bar costs height the screenshot would otherwise have.",
+  },
+];
+---
+
+<LabLayout
+  title="The screenshot thumbnail"
+  intro="Rookie Trader is the first project card with a screenshot instead of a logo, and filled edge to edge it looks cut off. Five treatments, one of them the card as it is, each shown in the real projects row."
+  kind="experiment"
+  slug="04-the-screenshot-thumbnail"
+>
+  <Section
+    id="record"
+    rule={false}
+    title="Record"
+    note="Settled. The page is frozen; the losing treatments stay as they were."
+  >
+    <dl
+      class="grid grid-cols-2 grid-ruled overflow-hidden rounded-xl border border-border sm:grid-cols-3"
+    >
+      {
+        record.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="hypothesis"
+    title="Hypothesis"
+    note="Written before looking, so that it can be wrong in public."
+  >
+    <p class="max-w-measure text-lg leading-relaxed text-muted">
+      B wins. The cut is not the problem; a cut with nothing around it is. B
+      keeps the 2:1 band every card already has, so Grounder's card does not
+      move, and it keeps the screenshot large enough to read.
+    </p>
+  </Section>
+
+  <Section
+    id="candidates"
+    rule={false}
+    title="Candidates"
+    note="Each row is the projects page as it would ship. Judge at full width, then on a phone."
+  >
+    <div class="space-y-6">
+      {
+        candidates.map((candidate) => (
+          <article class="overflow-hidden rounded-xl border border-border bg-surface">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border px-5 py-3">
+              <h3 class="label !text-ink">{candidate.name}</h3>
+              <p class="font-mono text-xs tracking-tight text-dim">
+                {candidate.claim}
+              </p>
+            </div>
+
+            <div class="grid gap-4 bg-bg p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
+              {projects.map(({ id, data }) => {
+                const image = images[id];
+                return (
+                  <div class="flex flex-col overflow-hidden rounded-xl border border-border bg-surface">
+                    <div
+                      class:list={[
+                        "band relative shrink-0 overflow-hidden bg-bg",
+                        candidate.id === "tall" ? "aspect-[16/10]" : "aspect-[2/1]",
+                        !image && "dot-grid",
+                      ]}
+                      data-treatment={image ? candidate.id : undefined}
+                    >
+                      {image && (
+                        <div class="shot">
+                          {candidate.id === "frame" && (
+                            <div class="titlebar" aria-hidden="true">
+                              <span />
+                              <span />
+                              <span />
+                            </div>
+                          )}
+                          <img
+                            src={image.src}
+                            width={image.width}
+                            height={image.height}
+                            alt=""
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div class="flex grow flex-col p-6" data-project={id}>
+                      <p class="label">{data.status}</p>
+                      <p class="mt-3 font-display text-2xl font-bold tracking-tight">
+                        {data.title}
+                      </p>
+                      <p class="mt-2.5 grow text-sm leading-relaxed text-muted">
+                        {data.description}
+                      </p>
+                      {data.stack.length > 0 && (
+                        <div class="mt-5 flex flex-wrap items-center gap-2 border-t border-divider pt-6">
+                          {data.stack.map((item) => (
+                            <span class="tag">{item}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div class="border-t border-border px-5 py-4">
+              <p class="max-w-measure text-sm leading-relaxed text-muted">
+                {candidate.note}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="result"
+    title="Result"
+    note="Filled in by looking."
+  >
+    <p class="max-w-measure leading-relaxed text-muted">
+      <strong class="font-semibold text-ink">D, without the border</strong>,
+      settled {settled}. The hypothesis picked B and was wrong: a cut still
+      reads as a cut, gap or no gap. The card's band is now 16:10 on every
+      card, and a screenshot sits whole inside a 6% gap with rounded corners
+      and no border; D above is shown as it shipped. Grounder's card takes
+      its diagram in place of its logo, as tried here.
+    </p>
+  </Section>
+</LabLayout>
+
+<style>
+  /* The placeholder, as ProjectCard draws it. */
+  .dot-grid {
+    background-image: radial-gradient(var(--lab-border) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* Padding in percent resolves against the band's width, so the gap scales
+     with the card instead of eating a fixed share of a narrow one. */
+
+  [data-treatment="fill"] .shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  [data-treatment="inset"],
+  [data-treatment="frame"] {
+    padding: 7% 7% 0;
+  }
+
+  [data-treatment="inset"] .shot,
+  [data-treatment="frame"] .shot {
+    overflow: hidden;
+    border: 1px solid var(--lab-border);
+    border-bottom: 0;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+
+  [data-treatment="contain"],
+  [data-treatment="tall"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6%;
+  }
+
+  /* The wrapper steps aside so the image itself is the flex item: fitted by
+     max sizes, it keeps its own shape whether it is wider than the band (the
+     diagram) or taller (the screenshot), and C's border hugs it. */
+  [data-treatment="contain"] .shot,
+  [data-treatment="tall"] .shot {
+    display: contents;
+  }
+
+  [data-treatment="contain"] .shot img,
+  [data-treatment="tall"] .shot img {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0.375rem;
+  }
+
+  /* D is shown as it shipped: the border was dropped when it was chosen. */
+  [data-treatment="contain"] .shot img {
+    border: 1px solid var(--lab-border);
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .titlebar {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    height: 16px;
+    padding: 0 8px;
+    background: var(--lab-surface);
+    border-bottom: 1px solid var(--lab-border);
+  }
+
+  .titlebar span {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--lab-border);
+  }
+</style>

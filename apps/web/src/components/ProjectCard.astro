@@ -14,15 +14,17 @@ import type { ImageMetadata } from "astro";
  * warm, but warm marks state and an outcome is a fact; and the top slot only
  * repeated the first stack pill.
  *
- * The image sits in a 2:1 band across the top — wide enough for a screenshot
- * later, chosen over a small top-left mark (#24). Today's only image is a
- * logo, so it is centred at two-fifths of the band's height; revisit when
- * the first screenshot lands. A card without an image shows a dot grid
- * rather than an empty band, so a missing image reads as deliberate.
+ * The image sits in a 16:10 band across the top, chosen over a small top-left
+ * mark (#24). It is a screenshot or a diagram, never a logo — the logo stays
+ * on the detail page — shown whole with a gap all round and no border. 16:10
+ * is a screenshot's shape: at 2:1 it was either cut off or shrunk between
+ * empty strips (experiment 04). A card without an image shows
+ * a dot grid rather than an empty band, so a missing image reads as
+ * deliberate.
  *
  * A plain <img>, not astro:assets' <Image>: that needs sharp, which this
- * project does not install, and an SVG has nothing to optimise. A raster
- * screenshot will want both.
+ * project does not install. A screenshot is therefore sized for the card
+ * before it is committed, not resized at build time.
  */
 
 interface Props {
@@ -42,19 +44,25 @@ const { href, title, description, stack, status, thumbnail } = Astro.props;
   class="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-150 hover:border-accent"
 >
   <div
-    class:list={["relative aspect-[2/1] shrink-0 bg-bg", !thumbnail && "dot-grid"]}
+    class:list={["relative aspect-[16/10] shrink-0 bg-bg", !thumbnail && "dot-grid"]}
   >
     {
       thumbnail && (
-        // Empty alt: the title below names the project, so a description of
-        // the logo would only repeat it to a screen reader.
-        <img
-          src={thumbnail.src}
-          width={thumbnail.width}
-          height={thumbnail.height}
-          alt=""
-          class="absolute inset-0 m-auto h-2/5 w-auto"
-        />
+        // Absolute, so the image can never push the band past 16:10 and the
+        // cards in a row keep one band height.
+        <div class="absolute inset-0 flex items-center justify-center p-[6%]">
+          {/* Empty alt: the title below names the project, so a description
+              of the image would only repeat it to a screen reader. */}
+          <img
+            src={thumbnail.src}
+            width={thumbnail.width}
+            height={thumbnail.height}
+            alt=""
+            // Max sizes rather than a fixed one, so the whole image fits
+            // the gap whatever its shape.
+            class="max-h-full w-auto max-w-full rounded-md"
+          />
+        </div>
       )
     }
   </div>

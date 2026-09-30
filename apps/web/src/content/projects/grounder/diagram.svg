@@ -4,37 +4,38 @@
 
   <defs>
     <radialGradient id="glow" cx="340" cy="213.3" r="400" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#102C38"/>
-      <stop offset="0.35" stop-color="#0C1F27"/>
-      <stop offset="0.62" stop-color="#0B1C23"/>
-      <stop offset="1" stop-color="#080A14"/>
+      <stop offset="0" stop-color="#1D2150"/>
+      <stop offset="0.5" stop-color="#181B3E"/>
+      <stop offset="1" stop-color="#141631"/>
     </radialGradient>
     <symbol id="folder" viewBox="0 0 16 13">
       <path class="folder" d="M1.2 2.6q0-1.4 1.4-1.4h3.4l1.5 1.9h5.9q1.4 0 1.4 1.4v5.9q0 1.4-1.4 1.4H2.2q-1 0-1-1.4z"/>
     </symbol>
   </defs>
 
-  <!-- 680 wide, the card band's 16:10: three columns of 196 / 216 / 196
+  <!-- Navy, in Rookie Trader's theme colours (its packages/ui), so the
+       project cards read as one set. Overrides experiment 05's teal.
+       680 wide, the card band's 16:10: three columns of 196 / 216 / 196
        between 36 margins. Mono text is 15px so your-project/ fits the vault. -->
   <style>
-    .bg { fill: #080A14; }
+    .bg { fill: #141631; }
     .glow { fill: url(#glow); }
-    .frame { fill: none; stroke: #25353C; stroke-width: 1.35; }
-    .card { fill: #0A0E17; stroke: #293E47; stroke-width: 1.35; }
-    .card-dash { fill: none; stroke: #293E47; stroke-width: 1.35; stroke-dasharray: 5.4 6.3; }
-    .panel { fill: #080C14; stroke: #293E47; stroke-width: 1.35; }
+    .frame { fill: none; stroke: #B5A6FF; stroke-opacity: 0.18; stroke-width: 1.35; } /* the site's --lab-frame */
+    .card { fill: #202445; stroke: #363A66; stroke-width: 1.35; }
+    .card-dash { fill: none; stroke: #363A66; stroke-width: 1.35; stroke-dasharray: 5.4 6.3; }
+    .panel { fill: #202445; stroke: #363A66; stroke-width: 1.35; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
-    .kicker { fill: #45C3DA; font-size: 19px; font-weight: 600; letter-spacing: 2.58px; }
-    .name { fill: #F6F6F6; font-size: 15px; font-weight: 600; }
-    .more { fill: #FFFFFF; fill-opacity: 0.55; font-size: 15px; font-weight: 500; }
-    .caption { fill: #C4C4C4; font-size: 16px; font-weight: 500; }
-    .file { fill: #F6F6F6; font-size: 15px; }
+    .kicker { fill: #4CC9F0; font-size: 19px; font-weight: 600; letter-spacing: 2.58px; }
+    .name { fill: #ECEEFA; font-size: 15px; font-weight: 600; }
+    .more { fill: #9CA1BD; font-size: 15px; font-weight: 500; }
+    .caption { fill: #AAAFCF; font-size: 16px; font-weight: 500; }
+    .file { fill: #ECEEFA; font-size: 15px; }
 
-    .arrow { fill: none; stroke: #C4C4C4; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .tree { fill: none; stroke: #293E47; stroke-width: 1.26; }
-    .folder { fill: none; stroke: #45C3DA; stroke-width: 1.08; }
-    .rule { fill: none; stroke: #25353C; stroke-width: 0.9; }
+    .arrow { fill: none; stroke: #AAAFCF; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .tree { fill: none; stroke: #373B68; stroke-width: 1.26; }
+    .folder { fill: none; stroke: #4CC9F0; stroke-width: 1.08; }
+    .rule { fill: none; stroke: #363A66; stroke-width: 0.9; }
   </style>
 
   <rect class="bg" width="680" height="426.6" rx="18"/>

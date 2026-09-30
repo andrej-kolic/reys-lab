@@ -24,7 +24,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
 >
   {/*
     The hero signature, experiment 02's candidate E: cyan, then mint, one
-    colour per word. The `signature` utility in global.css, on this one
+    colour per word. The `hero-name` utility in global.css, on this one
     element only.
   */}
   <section class="pb-20">
@@ -32,7 +32,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
     <h1
       class="mt-4 font-display text-6xl leading-[1.02] font-bold tracking-tight text-balance sm:text-7xl"
     >
-      <span class="signature"><span>Rey&rsquo;s</span> <span>Lab</span></span>
+      <span class="hero-name"><span>Rey&rsquo;s</span> <span>Lab</span></span>
     </h1>
     <p class="mt-6 max-w-measure text-lg leading-relaxed text-muted text-pretty">
       I build things and write down what they cost. Projects here come with the

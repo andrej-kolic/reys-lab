@@ -650,8 +650,9 @@
    2026-09-30: two words, two flat colours, split at the space the name
    already has. Cyan, then mint at cyan's exact lightness, so neither word
    is louder than the other. No gradient, so nothing to fall back from; each
-   word is a row in the contrast gate. */
-@utility signature {
+   word is a row in the contrast gate. Not named `signature`: experiment 02
+   uses that class on every candidate, and this rule would paint them all. */
+@utility hero-name {
   & > :first-child {
     color: var(--lab-accent-1);
   }

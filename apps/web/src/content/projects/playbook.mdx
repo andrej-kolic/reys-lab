@@ -1,0 +1,59 @@
+---
+title: "Playbook"
+description: "One repo of agent rules and skills, generated into Claude Code, Cursor and other coding agents, so every project gets the same instructions from a single source."
+order: 3
+stack: ["Markdown", "rulesync", "pnpm"]
+status: "Open source"
+thumbnail: "./playbook/thumbnail.webp"
+links:
+  - label: "Repository"
+    url: "https://github.com/andrej-kolic/playbook"
+---
+
+<div class="code-shot">
+
+```md title=".rulesync/rules/git.md"
+---
+root: false
+targets: ["claudecode", "cursor"]
+description: "Git commit conventions…"
+globs: []
+cursor:
+  alwaysApply: true
+---
+
+<!-- playbook:git v4 (2026-09-23) -->
+<!-- source: andrej-kolic/playbook .rulesync/rules/git.md -->
+
+# Git Commit Conventions
+Governs commit message content, commit granularity…
+```
+
+</div>
+
+## The problem
+
+Each coding agent reads its instructions from its own place: Claude Code from
+`.claude/rules/`, Cursor from `.cursor/rules/`, others from their own folders. Keeping
+commit, testing and writing rules by hand in every project and every agent means the copies
+drift, and a stale one keeps applying without anyone noticing.
+
+## The approach
+
+Rules and skills are written once, under `.rulesync/`, and
+[rulesync](https://github.com/dyoshikawa/rulesync) generates each agent's copy from them.
+A project fetches the rules it wants from the repo; `pnpm generate:user` installs them
+user-level too, so they apply even in repos that never fetched them.
+
+Every generated file starts with a `playbook:<name> vN (date)` line, so a stale copy is
+visible to anyone who opens it, and a source line that says where to edit instead.
+
+## The tradeoffs
+
+**Snapshots, not links.** A generated copy doesn't update itself. After changing a rule it
+has to be fetched or generated again, or the old text keeps applying; the version line only
+makes that visible, it doesn't prevent it.
+
+**Only hosts a skill runs in.** A skill lists the agents it is actually used in, not every
+agent rulesync can target. A skill that calls Cursor's CLI from Claude Code is not a Cursor
+skill.

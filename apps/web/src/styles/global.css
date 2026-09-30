@@ -869,3 +869,22 @@
     margin-block: 1.75em;
   }
 }
+
+/* A code block standing in for a project's screenshot takes the
+   screenshots' 16:10, so every project page opens on the same shape.
+   Unlayered, and through .expressive-code: its own reset (all: revert on
+   every descendant) is unlayered and would beat anything in a layer.
+   No margin of its own, so it sits where a screenshot would. */
+.code-shot .expressive-code {
+  margin-block: 0;
+}
+
+.code-shot .expressive-code figure {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 16 / 10;
+}
+
+.code-shot .expressive-code figure > pre {
+  flex-grow: 1;
+}

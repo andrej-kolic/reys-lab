@@ -3,7 +3,10 @@ import LabLayout from "../../../layouts/LabLayout.astro";
 import Section from "../../../components/lab/Section.astro";
 
 /**
- * An open experiment. The design plan left exactly two questions open, to be
+ * Settled on E, 2026-09-30, and frozen: the losing fills stay here, scoped to
+ * this page. The winner is the `signature` utility in global.css.
+ *
+ * The design plan left exactly two questions open, to be
  * answered by looking rather than arguing, and this is the first of them: does
  * the hero name carry a multi-hue gradient, and if so, drawn from what.
  *
@@ -18,12 +21,13 @@ import Section from "../../../components/lab/Section.astro";
  */
 
 const opened = "2026-09-20";
+const settled = "2026-09-30";
 
 const record = [
   { label: "Opened", value: opened },
-  { label: "Status", value: "open · undecided" },
+  { label: "Settled", value: settled },
+  { label: "Result", value: "E · two words, two colours" },
   { label: "Variable", value: "fill on the name" },
-  { label: "Candidates", value: "6, incl. control" },
   { label: "Floor", value: "3:1 · large text" },
   { label: "Measured", value: "worst stop, not mean" },
 ];
@@ -155,7 +159,7 @@ const constraints = [
     id="record"
     rule={false}
     title="Record"
-    note="Open, not settled. These values describe the comparison as it stands; the result row stays empty until the looking is done."
+    note="Settled. The page is frozen; the losing fills still render here and nowhere else."
   >
     <dl
       class="grid grid-cols-2 grid-ruled overflow-hidden rounded-xl border border-border sm:grid-cols-3"
@@ -341,12 +345,18 @@ const constraints = [
   <Section
     id="result"
     title="Result"
-    note="Empty on purpose. It gets filled in by looking, and then this page freezes like experiment 01."
+    note="Filled in by looking. The page is frozen from here, like experiment 01."
   >
     <p class="max-w-measure leading-relaxed text-muted">
-      Undecided as of {opened}. When it settles, the winner moves to the home
-      page and the losing fills stay here, scoped to this page, in the same way
-      navy and jungle stayed on experiment 01.
+      <strong class="font-semibold text-ink">E, two words, two colours</strong>,
+      settled {settled}. Cyan, then mint at cyan's lightness, one flat colour
+      per word. The hypothesis picked B or C and did not cover E, so the
+      finding is the one it warned of: the question was posed one option too
+      narrow — the name never needed a ramp. B was chosen first the same day,
+      tuned twice for its pale cyan end, and replaced by E before it shipped.
+      The colours moved to the name on the home
+      page, and only there. A, B, C, D and F stay here, scoped to this page,
+      the way navy and jungle stayed on experiment 01.
     </p>
   </Section>
 </LabLayout>

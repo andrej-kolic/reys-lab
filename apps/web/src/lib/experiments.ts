@@ -87,11 +87,11 @@ export const experiments: Experiment[] = [
     number: "02",
     slug: "02-the-hero-signature",
     title: "The hero signature",
-    status: "open",
-    date: "2026-09-20",
+    status: "settled",
+    date: "2026-09-30",
     project: "reys-lab",
     summary:
-      "Whether the name carries a multi-hue gradient, and drawn from what. Six fills including no fill at all, at the size they would ship at.",
+      "Whether the name carries a multi-hue gradient, and drawn from what. Six fills including no fill at all; E won — no ramp at all, one flat colour per word, cyan then mint.",
   },
 ];
 

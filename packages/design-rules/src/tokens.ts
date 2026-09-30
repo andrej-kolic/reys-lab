@@ -27,6 +27,7 @@ export const palette = {
   dim: "#9d98be",
   accent: "#3bb8f5",
   warm: "#ffd23f",
+  signature2: "#3bc696", // --lab-signature-2, the hero's second word only
 } as const;
 
 /**

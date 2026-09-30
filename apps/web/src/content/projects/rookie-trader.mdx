@@ -1,9 +1,10 @@
 ---
 title: "Rookie Trader"
-description: "A paper-trading harness for testing strategies against historical data, without risking a cent or trusting a convincing backtest."
+description: "Live Kraken market data and your own Kraken account in one browser page: ticker, order book, candlestick chart, balances, orders and trades."
 order: 2
-stack: ["Python", "Pandas", "AWS"]
-status: "14 strategies tested"
+stack: ["TypeScript", "React", "RxJS", "Kraken API"]
+status: "Live · Open source"
+thumbnail: "./rookie-trader/thumbnail.webp"
 links:
   - label: "Repository"
     url: "https://github.com/andrej-kolic/rookie-trader"
@@ -11,26 +12,61 @@ links:
     url: "https://rookie.andrejkolic.com"
 ---
 
-*Placeholder copy. The structure is real; the words are not.*
+import screenshot from "./rookie-trader/screenshot.webp";
+
+{/* Plain <img>, not <Image>: sharp is not installed. See ProjectCard. */}
+
+<img
+  src={screenshot.src}
+  width={screenshot.width}
+  height={screenshot.height}
+  alt="The Rookie Trader page on BTC/USD: the ticker across the top, the order book on the left with asks, spread and bids, a one-hour candlestick chart with volume on the right, and the signed-in user's recent trades underneath."
+/>
 
 ## The problem
 
-A backtest that looks good is the default outcome, not the signal. Lookahead bias,
-survivorship bias and an over-fitted parameter sweep all produce the same green
-equity curve.
+A trading page is a stream of small corrections. Kraken sends the order book as one
+snapshot and then a change for every price level that moves — five to twenty messages a
+second on a busy pair. Each has to land on the right state, for the right pair, without
+the page falling behind or the tab running out of memory.
+
+Your own account is harder. Kraken's private API sends no CORS headers, so a page in the
+browser is not allowed to call it at all.
 
 ## The approach
 
-Replay the data one bar at a time through the same interface a live strategy would
-see, so a strategy physically cannot read a price it would not have had.
+Data flows inward in layers: the API layer talks to Kraken, mappers turn its responses
+into plain domain classes and merge each update into the last known state, and hooks hand
+those to React. The UI components take formatted strings and know nothing about Kraken;
+they are built in Storybook on their own.
 
-## The tradeoff
+Live data arrives over Kraken's WebSocket as RxJS streams. One wrapper resubscribes three
+seconds after a dropped connection and lets components that want the same data share one
+subscription. Switching pairs drops the old pair's data, so one pair's book never shows
+under another's name.
 
-Bar-by-bar replay is roughly two orders of magnitude slower than a vectorised
-backtest. That rules out large parameter sweeps — which, given what sweeps do to
-out-of-sample results, is arguably the point.
+The same core is bundled three ways — Vite, Webpack and ESBuild — to compare the tools on
+one real app. Placing and cancelling orders is not built yet.
+
+## The tradeoffs
+
+**A small backend, for sign-in only.** Five ways around the CORS block were weighed: a
+proxy, a browser extension, a desktop app, paper trading on public data, and a local
+development proxy. The proxy won because it keeps this a web page with a real account. It
+stores nothing: it encrypts the API key into a token that is the session, and trades that
+token for a short-lived Kraken WebSocket token. Balances, orders and trades then stream
+straight from Kraken, since WebSockets are not subject to CORS.
+
+**The exchange's list of markets, not a string fix.** Markets first came from Kraken's REST
+API, which names Bitcoin `XBT`; the WebSocket rejects `XBT/USD` and wants `BTC/USD`.
+Replacing `XBT` with `BTC` would also have turned the `AIXBT` token into `AIBTC`. The app
+now reads markets from the WebSocket's own instrument channel, which uses the right names
+and announces new and removed pairs live.
 
 ## What I would do differently
 
-Record the slippage and fee model as part of the result. Comparing two runs made
-under different assumptions was a mistake it was too easy to make.
+Watch memory from the first live feature. Tab memory grew steadily, faster on busier pairs,
+and it wasn't a leak: every order book message built a fresh book and reformatted twenty
+strings, faster than the garbage collector could clear them. The fix — merge every message,
+but re-render at most twice a second — was retrofitted once the page was built, when it could
+have been part of the first.

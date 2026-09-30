@@ -20,7 +20,7 @@
   <style>
     .bg { fill: #141631; }
     .glow { fill: url(#glow); }
-    .frame { fill: none; stroke: #B5A6FF; stroke-opacity: 0.18; stroke-width: 1.35; } /* the site's --lab-frame */
+    .frame { fill: none; stroke: #3E3668; stroke-width: 1.61; } /* the site's --lab-border at 1.5px, as on code blocks */
     .card { fill: #202445; stroke: #363A66; stroke-width: 1.35; }
     .card-dash { fill: none; stroke: #363A66; stroke-width: 1.35; stroke-dasharray: 5.4 6.3; }
     .panel { fill: #202445; stroke: #363A66; stroke-width: 1.35; }
@@ -40,7 +40,7 @@
 
   <rect class="bg" width="680" height="426.6" rx="18"/>
   <rect class="glow" width="680" height="426.6" rx="18"/>
-  <rect class="frame" x="0.675" y="0.675" width="678.65" height="425.25" rx="17.55"/>
+  <rect class="frame" x="0.805" y="0.805" width="678.39" height="424.99" rx="17.195"/>
 
   <!-- agents -->
   <text class="kicker" x="132.5" y="52.2" text-anchor="middle">AGENTS</text>

@@ -4,7 +4,8 @@ import LabLayout from "../../../layouts/LabLayout.astro";
 import { labelFor } from "../../../lib/reference";
 import Section from "../../../components/lab/Section.astro";
 import ProjectCard from "../../../components/ProjectCard.astro";
-import grounderLogo from "../../../content/projects/grounder/logo.svg";
+import grounderDiagram from "../../../content/projects/grounder/diagram.svg";
+import rookieThumbnail from "../../../content/projects/rookie-trader/thumbnail.webp";
 import ListRow from "../../../components/ListRow.astro";
 import Timeline from "../../../components/Timeline.astro";
 
@@ -18,14 +19,15 @@ const projects = [
       "A CLI that links a project to a local markdown vault, so an agent keeps its memory between sessions instead of starting cold every time.",
     stack: ["TypeScript", "Node", "VS Code API"],
     result: "On npm · VS Code Marketplace",
-    thumbnail: grounderLogo,
+    thumbnail: grounderDiagram,
   },
   {
     title: "Rookie Trader",
     summary:
-      "A paper-trading harness for testing strategies against historical data without risking a cent or a convincing backtest.",
-    stack: ["Python", "Pandas", "AWS"],
-    result: "14 strategies tested",
+      "Live Kraken market data and your own Kraken account in one browser page: ticker, order book, candlestick chart, balances, orders and trades.",
+    stack: ["TypeScript", "React", "RxJS", "Kraken API"],
+    result: "Live · Open source",
+    thumbnail: rookieThumbnail,
   },
 ];
 

@@ -37,14 +37,14 @@ const readout = [
     value: shortSha(version.commit) + (version.dirty ? " · dirty" : ""),
   },
   { label: "Branch", value: version.branch },
-  { label: "Committed", value: `${formatBuildTimestamp(version.date)} UTC` },
+  { label: "Committed", value: formatBuildTimestamp(version.date) },
   { label: "Astro", value: pkg.dependencies.astro.replace("catalog:", "7.3.3") },
   { label: "Tailwind", value: pkg.dependencies.tailwindcss.replace(/^[\^~]/, "") },
   { label: "Typeface", value: "Outfit + Plex Mono" },
   { label: "Palette", value: "violet c" },
   { label: "Output", value: "static / no adapter" },
   { label: "Experiments", value: `${settled.length} settled · ${open.length} open` },
-  { label: "Routes", value: String(await countRoutes()) },
+  { label: "Pages", value: String(await countRoutes()) },
   { label: "AA floor", value: "4.5:1 held" },
 ];
 ---

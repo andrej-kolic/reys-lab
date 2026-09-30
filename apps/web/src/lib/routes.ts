@@ -6,6 +6,9 @@
  * they are subtracted and the collections counted in their place. Counting
  * files alone reported 12 against a real 16.
  *
+ * Pages, not every URL: `/llms.txt` and the `.md` copies (src/lib/agents.ts)
+ * are left out, since counting them would count each post twice.
+ *
  * It lives here rather than inline on /lab because `import.meta.glob` silently
  * omits the module doing the globbing — done from a page, the count is always
  * one short and looks entirely plausible while being wrong. From outside

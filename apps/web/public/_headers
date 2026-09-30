@@ -11,3 +11,13 @@
 # font is allowed. See BaseLayout.astro.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Wrangler types .md and .txt as text/markdown and text/plain with no
+# charset, and a reader without one decodes ’ and ć as Latin-1. HTML is
+# unaffected: each page declares its charset itself. AWS sets the same in
+# deploy/aws/scripts/deploy.sh.
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/*.md
+  Content-Type: text/markdown; charset=utf-8

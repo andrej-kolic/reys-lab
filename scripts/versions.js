@@ -35,7 +35,7 @@ for (const result of results) {
     name,
     commit.slice(0, 7),
     branch.padEnd(branchWidth),
-    date.slice(0, 16).replace("T", " "),
+    `${date.slice(0, 16).replace("T", " ")} UTC`,
   ];
   if (dirty) line.push("dirty");
   console.log(line.join("  "));

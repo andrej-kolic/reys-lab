@@ -170,10 +170,24 @@ sync_site_content() {
 
     print_info "BUCKET_NAME: $BUCKET_NAME"
 
-    if ! aws s3 sync "$SITE_DIR" "s3://$BUCKET_NAME" --delete; then
+    # S3 guesses .md and .txt as text/markdown and text/plain with no charset,
+    # and a reader without one decodes ’ and ć as Latin-1. HTML is unaffected:
+    # each page declares its charset itself. So text files go up separately.
+    if ! aws s3 sync "$SITE_DIR" "s3://$BUCKET_NAME" --delete \
+        --exclude "*.md" --exclude "*.txt"; then
         print_error "Failed to sync site content to s3://$BUCKET_NAME"
         exit 1
     fi
+    local ext_type ext type
+    for ext_type in "md:text/markdown" "txt:text/plain"; do
+        ext="${ext_type%%:*}"
+        type="${ext_type#*:}; charset=utf-8"
+        if ! aws s3 sync "$SITE_DIR" "s3://$BUCKET_NAME" --delete \
+            --exclude "*" --include "*.$ext" --content-type "$type"; then
+            print_error "Failed to sync *.$ext files to s3://$BUCKET_NAME"
+            exit 1
+        fi
+    done
 
     print_success "Site content synced to s3://$BUCKET_NAME"
 }

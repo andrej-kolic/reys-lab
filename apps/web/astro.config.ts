@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
 import { defineConfig, fontProviders } from "astro/config";
@@ -19,6 +19,34 @@ const versionManifest = (): AstroIntegration => ({
         fileURLToPath(new URL("version.json", dir)),
         `${JSON.stringify(getVersion(), null, 2)}\n`,
       );
+    },
+  },
+});
+
+/**
+ * Fails the build when a same-site link in dist/llms.txt has no page behind
+ * it. Pages like /cv are listed there by hand (src/lib/agents.ts), so a
+ * rename would otherwise leave a dead link that nothing reports.
+ */
+const llmsLinks = (site: string): AstroIntegration => ({
+  name: "llms-links",
+  hooks: {
+    "astro:build:done": ({ dir }) => {
+      const built = (path: string) =>
+        [path, `${path}.html`, `${path}/index.html`].some((file) =>
+          existsSync(fileURLToPath(new URL(file, dir))),
+        );
+      const text = readFileSync(fileURLToPath(new URL("llms.txt", dir)), "utf8");
+      const dead = [...text.matchAll(/\]\(([^)]+)\)/g)]
+        .map(([, href]) => new URL(href))
+        .filter((url) => url.origin === site)
+        .map((url) => url.pathname.slice(1))
+        .filter((path) => !built(path));
+      if (dead.length > 0) {
+        throw new Error(
+          `llms.txt links to pages the build did not produce: /${dead.join(", /")}`,
+        );
+      }
     },
   },
 });
@@ -98,5 +126,6 @@ export default defineConfig({
     }),
     mdx(),
     versionManifest(),
+    llmsLinks("https://andrejkolic.com"),
   ],
 });

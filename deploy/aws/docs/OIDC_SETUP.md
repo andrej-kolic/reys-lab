@@ -62,7 +62,9 @@ The OIDC setup uses configuration from `deploy-config.json`:
   "oidc": {
     "oidc_arn": "",
     "github_org": "your-github-username",
-    "github_repo": "your-repo-name"
+    "github_org_id": "1234567",
+    "github_repo": "your-repo-name",
+    "github_repo_id": "123456789"
   },
   "environments": {
     "development": {
@@ -92,6 +94,13 @@ The OIDC setup uses configuration from `deploy-config.json`:
   }
 }
 ```
+
+The role trusts GitHub's immutable subject,
+`repo:<owner>@<owner_id>/<repo>@<repo_id>:*`, so it needs both numeric IDs:
+`gh api users/<owner> --jq .id` and `gh api repos/<owner>/<repo> --jq .id`. The
+repository must send that form; check with
+`gh api repos/<owner>/<repo>/actions/oidc/customization/sub`
+(`"use_immutable_subject": true`).
 
 ## Deployment Workflows
 

@@ -4,7 +4,9 @@
   "oidc": {
     "oidc_arn": "arn:aws:iam::629994690329:oidc-provider/token.actions.githubusercontent.com",
     "github_org": "andrej-kolic",
-    "github_repo": "reys-lab"
+    "github_org_id": "1579077",
+    "github_repo": "reys-lab",
+    "github_repo_id": "1377365391"
   },
   "environments": {
     "staging": {

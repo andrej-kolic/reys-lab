@@ -43,6 +43,10 @@ export function getVersion(): VersionInfo {
 
 export const shortSha = (commit: string) => commit.slice(0, 7);
 
-/** "2026-09-25 14:32" — the footer's and `versions` script's format. */
+/**
+ * "2026-09-25 14:32 UTC" — the footer's and `versions` script's format. UTC,
+ * not the visitor's zone: the page is static, so every visitor gets the same
+ * text, and the zone is named because 20:04 reads as local time otherwise.
+ */
 export const formatBuildTimestamp = (date: string) =>
-  date.slice(0, 16).replace("T", " ");
+  `${date.slice(0, 16).replace("T", " ")} UTC`;

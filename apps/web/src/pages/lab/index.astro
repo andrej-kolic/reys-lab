@@ -37,7 +37,7 @@ const readout = [
     value: shortSha(version.commit) + (version.dirty ? " · dirty" : ""),
   },
   { label: "Branch", value: version.branch },
-  { label: "Committed", value: `${formatBuildTimestamp(version.date)} UTC` },
+  { label: "Committed", value: formatBuildTimestamp(version.date) },
   { label: "Astro", value: pkg.dependencies.astro.replace("catalog:", "7.3.3") },
   { label: "Tailwind", value: pkg.dependencies.tailwindcss.replace(/^[\^~]/, "") },
   { label: "Typeface", value: "Outfit + Plex Mono" },

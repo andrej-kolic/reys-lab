@@ -68,9 +68,6 @@ export const pairs: Pair[] = [
   { what: "muted text on the page", fg: palette.muted, bg: palette.bg, floor: 4.5 },
   { what: "dim text on the page", fg: palette.dim, bg: palette.bg, floor: 4.5 },
   { what: "dim text on a card", fg: palette.dim, bg: palette.surface, floor: 4.5 },
-  // The hero name, one colour per word (experiment 02, candidate E).
-  { what: "hero name, first word", fg: palette.accent, bg: palette.bg, floor: 4.5 },
-  { what: "hero name, second word", fg: palette.signature2, bg: palette.bg, floor: 4.5 },
   { what: "dim text on a hovered card", fg: palette.dim, bg: rowHover, floor: 4.5 },
   {
     what: "dim text on a pressed card",

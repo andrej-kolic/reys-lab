@@ -88,9 +88,6 @@
   --lab-accent-1: #3bb8f5; /* cyan — interaction: links, focus, active */
   --lab-accent-2: #ffd23f; /* gold — state: current, highlight, shipped */
   --lab-decor: #ff4fb8; /* glow and edges only, never a text colour */
-  /* mint — the hero signature's second word and nothing else. Cyan's OKLCH
-     lightness and chroma with a mint hue: oklch(0.741 0.138 165.2). */
-  --lab-signature-2: #3bc696;
   --lab-warn: #ff5470;
   --lab-accent: var(--lab-accent-1);
   --lab-warm: var(--lab-accent-2);
@@ -642,23 +639,6 @@
   &::before {
     @apply glow-paint;
     inset: -20% -10% auto;
-  }
-}
-
-/* The hero signature: the name on the home page and nowhere else — once it
-   is a signature, twice it is a theme. Experiment 02, candidate E, settled
-   2026-09-30: two words, two flat colours, split at the space the name
-   already has. Cyan, then mint at cyan's exact lightness, so neither word
-   is louder than the other. No gradient, so nothing to fall back from; each
-   word is a row in the contrast gate. Not named `signature`: experiment 02
-   uses that class on every candidate, and this rule would paint them all. */
-@utility hero-name {
-  & > :first-child {
-    color: var(--lab-accent-1);
-  }
-
-  & > :last-child {
-    color: var(--lab-signature-2);
   }
 }
 

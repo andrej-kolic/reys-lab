@@ -91,7 +91,7 @@ export const experiments: Experiment[] = [
     date: "2026-09-30",
     project: "reys-lab",
     summary:
-      "Whether the name carries a multi-hue gradient, and drawn from what. Six fills including no fill at all; E won — no ramp at all, one flat colour per word, cyan then mint.",
+      "Whether the name carries a multi-hue gradient, and drawn from what. Six fills including no fill at all; A won — no fill, the name stays near-white.",
   },
 ];
 

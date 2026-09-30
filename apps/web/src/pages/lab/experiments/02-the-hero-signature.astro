@@ -3,8 +3,8 @@ import LabLayout from "../../../layouts/LabLayout.astro";
 import Section from "../../../components/lab/Section.astro";
 
 /**
- * Settled on E, 2026-09-30, and frozen: the losing fills stay here, scoped to
- * this page. The winner is the `hero-name` utility in global.css.
+ * Settled on A, the control, 2026-09-30, and frozen: the other fills stay
+ * here, scoped to this page. The home page name takes no fill at all.
  *
  * The design plan left exactly two questions open, to be
  * answered by looking rather than arguing, and this is the first of them: does
@@ -26,7 +26,7 @@ const settled = "2026-09-30";
 const record = [
   { label: "Opened", value: opened },
   { label: "Settled", value: settled },
-  { label: "Result", value: "E · two words, two colours" },
+  { label: "Result", value: "A · no fill" },
   { label: "Variable", value: "fill on the name" },
   { label: "Floor", value: "3:1 · large text" },
   { label: "Measured", value: "worst stop, not mean" },
@@ -348,15 +348,13 @@ const constraints = [
     note="Filled in by looking. The page is frozen from here, like experiment 01."
   >
     <p class="max-w-measure leading-relaxed text-muted">
-      <strong class="font-semibold text-ink">E, two words, two colours</strong>,
-      settled {settled}. Cyan, then mint at cyan's lightness, one flat colour
-      per word. The hypothesis picked B or C and did not cover E, so the
-      finding is the one it warned of: the question was posed one option too
-      narrow — the name never needed a ramp. B was chosen first the same day,
-      tuned twice for its pale cyan end, and replaced by E before it shipped.
-      The colours moved to the name on the home
-      page, and only there. A, B, C, D and F stay here, scoped to this page,
-      the way navy and jungle stayed on experiment 01.
+      <strong class="font-semibold text-ink">A, no fill</strong>, settled
+      {settled}. The control won: the name stays near-white, like every other
+      heading on the site. The hypothesis picked B or C and was wrong. B was
+      chosen first the same day, tuned twice for its pale cyan end, and
+      replaced by E before it shipped; E shipped to the home page and was
+      replaced by A the same day. B, C, D, E and F stay here, scoped to this
+      page, the way navy and jungle stayed on experiment 01.
     </p>
   </Section>
 </LabLayout>

@@ -28,6 +28,8 @@ get_oidc_config() {
     OIDC_ARN=$(jq -r ".oidc.oidc_arn" "$CONFIG_FILE")
     GITHUB_ORG=$(jq -r ".oidc.github_org" "$CONFIG_FILE")
     GITHUB_REPO=$(jq -r ".oidc.github_repo" "$CONFIG_FILE")
+    GITHUB_ORG_ID=$(jq -r ".oidc.github_org_id" "$CONFIG_FILE")
+    GITHUB_REPO_ID=$(jq -r ".oidc.github_repo_id" "$CONFIG_FILE")
 
     # Derived values
     OIDC_STACK_NAME="${PROJECT_NAME}-github-oidc"
@@ -37,6 +39,8 @@ get_oidc_config() {
     print_debug "OIDC Stack Name: $OIDC_STACK_NAME"
     print_debug "GitHub Org: $GITHUB_ORG"
     print_debug "GitHub Repo: $GITHUB_REPO"
+    print_debug "GitHub Org ID: $GITHUB_ORG_ID"
+    print_debug "GitHub Repo ID: $GITHUB_REPO_ID"
     print_debug "Region: $REGION"
     print_debug "OIDC ARN: $OIDC_ARN"
 }
@@ -56,6 +60,8 @@ deploy_oidc() {
         "ProjectName=$PROJECT_NAME"
         "GitHubOrg=$GITHUB_ORG"
         "GitHubRepo=$GITHUB_REPO"
+        "GitHubOrgId=$GITHUB_ORG_ID"
+        "GitHubRepoId=$GITHUB_REPO_ID"
         "OIDCProviderArn=$OIDC_ARN"
     )
 

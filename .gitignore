@@ -21,3 +21,6 @@ dist/
 .idea/
 *.swp
 .vscode/
+
+# rulesync's fetched copy of the playbook rules; the generated .claude/ and .cursor/ ones are committed
+.rulesync/rules/.curated/

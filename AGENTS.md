@@ -84,8 +84,9 @@ required check on `main`.
 - `apps/web/AGENTS.md` — Astro specifics and doc links for the app itself
 - `.claude/rules/` and `.cursor/rules/` — cross-project rules for commits, testing,
   security, docs and prose. **Generated, not edited here.** They come from
-  `andrej-kolic/playbook`; refresh with `pnpm rules:install`, and make changes in that
-  repo. Each file's first line carries a `<!-- playbook:<name> vN (date) -->` marker, so a
-  stale copy is visible by reading it.
+  `andrej-kolic/playbook` at the commit pinned in `rulesync.lock`; move to the latest with
+  `pnpm rules:update` and commit the result, and make changes in that repo. Each file's
+  first line carries a `<!-- playbook:<name> vN (date) -->` marker, so a stale copy is
+  visible by reading it.
 - `/lab/reference/` on the site — the palette, the scale and the components, as published
   pages that are meant to stay true

@@ -15,12 +15,12 @@
     "lint": "turbo run lint",
     "deploy": "turbo run deploy",
     "versions": "node scripts/versions.js",
-    "rules:fetch": "rulesync fetch andrej-kolic/playbook -f rules -t rulesync -p .rulesync",
-    "rules:generate": "rulesync generate -f rules -t claudecode,cursor",
-    "rules:install": "pnpm run rules:fetch && pnpm run rules:generate"
+    "rules:install": "rulesync install && rulesync generate -f rules -t claudecode,cursor",
+    "rules:outdated": "rulesync install --outdated",
+    "rules:update": "rulesync install --update && rulesync generate -f rules -t claudecode,cursor"
   },
   "devDependencies": {
-    "rulesync": "16.24.1",
+    "rulesync": "24.0.0",
     "turbo": "catalog:"
   }
 }

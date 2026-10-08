@@ -2,7 +2,7 @@
 title: "Playbook"
 description: "One repo of agent rules and skills, generated into Claude Code, Cursor and other coding agents, so every project gets the same instructions from a single source."
 order: 3
-stack: ["Markdown", "rulesync", "pnpm"]
+stack: ["Markdown", "rulesync", "Node", "pnpm"]
 status: "Open source"
 thumbnail: "./playbook/thumbnail.webp"
 links:
@@ -16,14 +16,14 @@ links:
 ---
 root: false
 targets: ["claudecode", "cursor"]
-description: "Git commit conventions…"
+description: "Git commit conventions: message format…"
 globs: []
 cursor:
   alwaysApply: true
 ---
 
-<!-- playbook:git v4 (2026-09-23) -->
-<!-- source: andrej-kolic/playbook .rulesync/rules/git.md -->
+<!-- playbook:git v5 (2026-10-08) — when to commit isn't inferred from a change instruction -->
+<!-- source: andrej-kolic/playbook .rulesync/rules/git.md; edits elsewhere are overwritten -->
 
 # Git Commit Conventions
 Governs commit message content, commit granularity…
@@ -42,17 +42,20 @@ drift, and a stale one keeps applying without anyone noticing.
 
 Rules and skills are written once, under `.rulesync/`, and
 [rulesync](https://github.com/dyoshikawa/rulesync) generates each agent's copy from them.
-A project fetches the rules it wants from the repo; `pnpm generate:user` installs them
-user-level too, so they apply even in repos that never fetched them.
+Skills install once per machine, with `pnpm dlx github:andrej-kolic/playbook skills`, and
+work in every project — `x-issue-to-pr`, for one, takes a GitHub issue through branch and
+pull request. Rules install per project, with `… playbook rules`, and the project commits
+them, so cloud sessions and review bots get them without an install step and a rule change
+shows up in review.
 
 Every generated file starts with a `playbook:<name> vN (date)` line, so a stale copy is
 visible to anyone who opens it, and a source line that says where to edit instead.
 
 ## The tradeoffs
 
-**Snapshots, not links.** A generated copy doesn't update itself. After changing a rule it
-has to be fetched or generated again, or the old text keeps applying; the version line only
-makes that visible, it doesn't prevent it.
+**Snapshots, not links.** A generated copy doesn't update itself. After a rule changes, a
+project keeps applying the old text until it runs `pnpm rules:update`; `pnpm rules:outdated`
+lists the rules that changed, but nothing updates them on its own.
 
 **Only hosts a skill runs in.** A skill lists the agents it is actually used in, not every
 agent rulesync can target. A skill that calls Cursor's CLI from Claude Code is not a Cursor

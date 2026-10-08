@@ -3,8 +3,8 @@
   "sources": {
     "andrej-kolic/playbook": {
       "requestedRef": "main",
-      "resolvedRef": "7bc76026e5f0504c10ac8866f35c51b2b2e04064",
-      "resolvedAt": "2026-10-06T15:22:01.695Z",
+      "resolvedRef": "891f9570181954fc41a6887b01b87b1e86654214",
+      "resolvedAt": "2026-10-08T01:34:26.769Z",
       "skills": {},
       "rules": {
         "concision": {
@@ -17,7 +17,7 @@
           "integrity": "sha256-a86b03dfe9f196f65c56f697c195890be310ba6b80d10fa6db26a468d9c0188a"
         },
         "git": {
-          "integrity": "sha256-563966b5c7bcbe7ae37be74b7f548963dd7c7d062f175813059fccd24ae66470"
+          "integrity": "sha256-82e8404b586db20d5fe6907c8940f221232f73b7dc3f1776f0d1c6f7ef74b935"
         },
         "jsdoc": {
           "integrity": "sha256-ea742976a8dee2b9f267e4b277a8818af14ac82e76906d9533286d7f017f5ec0"

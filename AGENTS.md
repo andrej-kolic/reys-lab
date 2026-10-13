@@ -65,6 +65,9 @@ required check on `main`.
   `catalog:` block of `pnpm-workspace.yaml`.
 - **Merge commits only.** Squash and rebase are disabled on the GitHub repo. The plans cite
   commit SHAs, and a rebase merge rewrites every one of them.
+- **Chores go straight to `main`.** Changes outside `apps/web` and `packages` (a
+  `rules:install` refresh, generated files, config) are pushed to `main` without a PR;
+  `enforce_admins` is off, and a PR for generated files buys no review.
 - **Commits follow the `git` rule** — Conventional Commits, one logical change each,
   adopted 2026-09-21. Everything before that date is prose subjects ("Settle experiment 03
   on J, and make a fill mean primary"); that history stays as it is and is never rewritten.

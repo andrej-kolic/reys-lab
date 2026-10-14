@@ -26,13 +26,26 @@ const path = Astro.url.pathname;
       like when current is a separate question, unsettled, and not answered by
       copying the nav's warm underline at a size it was not drawn for.
     */}
-    <a
-      href="/"
-      aria-current={isHome(path) ? "page" : undefined}
-      class="font-display text-xl font-medium tracking-tight transition-colors duration-150 hover:text-accent"
-    >
-      {site.name}
-    </a>
+    {/*
+      The site is unfinished, so the header says so next to the name, on
+      every page. Small and dim so it never competes with the wordmark: dim
+      is the faintest text colour the gate measures (6.52:1 on the page).
+      Outside the link, so it is not read as part of the name.
+
+      On a phone it sits under the name at 12px, where it is exactly as wide
+      as the name, so the nav keeps its row down to 375px. At 14px, or beside
+      the name, it pushed the nav onto a second row below about 450px.
+    */}
+    <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
+      <a
+        href="/"
+        aria-current={isHome(path) ? "page" : undefined}
+        class="font-display text-xl font-medium tracking-tight transition-colors duration-150 hover:text-accent"
+      >
+        {site.name}
+      </a>
+      <span class="text-xs text-dim sm:text-sm">[in development]</span>
+    </div>
 
     {/*
       Each link pads its own hit area to about 40px tall; the negative margins

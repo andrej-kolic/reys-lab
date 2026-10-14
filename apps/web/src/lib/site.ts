@@ -17,7 +17,7 @@ export const site = {
      words differently on the same page, about 200px apart. */
   name: "Rey\u2019s Lab",
   author: "Andrej Kolić",
-  positioning: "Software engineer. Full stack. Open source tools, lately for coding with AI.",
+  positioning: "Software engineer · Full stack · Open source tools, lately for coding with AI",
   email: "andrej.kolic@gmail.com",
   github: "https://github.com/andrej-kolic",
   repo: "https://github.com/andrej-kolic/reys-lab",

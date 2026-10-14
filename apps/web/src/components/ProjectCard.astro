@@ -60,7 +60,10 @@ const { href, title, description, stack, status, thumbnail } = Astro.props;
             height={thumbnail.height}
             alt=""
             // Max sizes rather than a fixed one, so the whole image fits
-            // the gap whatever its shape.
+            // the gap whatever its shape. The frame colour, not the border
+            // that screenshots in an article get: the card's own edge is
+            // already the border, and a second line that strong inside it
+            // read too heavy when compared on the page.
             class="max-h-full w-auto max-w-full rounded-md border border-frame"
           />
         </div>

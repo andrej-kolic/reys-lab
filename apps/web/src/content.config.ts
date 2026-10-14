@@ -57,6 +57,12 @@ const projects = defineCollection({
      */
     logoFit: z.object({ height: z.number(), drop: z.number() }).optional(),
     /**
+     * Draws a 1px border round a logo that is a dark tile, which otherwise
+     * melts into the page. The value is the tile's corner radius as a share
+     * of its width (an SVG's `rx` over its width), so the border follows it.
+     */
+    logoFrame: z.number().optional(),
+    /**
      * The link-preview image (Open Graph `og:image`) for the project page —
      * what Slack, Discord, WhatsApp and LinkedIn show when the link is
      * pasted. JPG under ~300 KB: WhatsApp drops larger previews.

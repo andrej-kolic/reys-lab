@@ -16,11 +16,12 @@ import type { ImageMetadata } from "astro";
  *
  * The image sits in a 16:10 band across the top, chosen over a small top-left
  * mark (#24). It is a screenshot or a diagram, never a logo — the logo stays
- * on the detail page — shown whole with a gap all round and no border. 16:10
- * is a screenshot's shape: at 2:1 it was either cut off or shrunk between
- * empty strips (experiment 04). A card without an image shows
- * a dot grid rather than an empty band, so a missing image reads as
- * deliberate.
+ * on the detail page — shown whole with a gap all round and a 1px border,
+ * drawn here rather than in the image: shrunk to the card, a frame inside
+ * the file blurs. 16:10 is a screenshot's shape: at 2:1 it was either cut
+ * off or shrunk between empty strips (experiment 04). A card without an
+ * image shows a dot grid rather than an empty band, so a missing image
+ * reads as deliberate.
  *
  * A plain <img>, not astro:assets' <Image>: that needs sharp, which this
  * project does not install. A screenshot is therefore sized for the card
@@ -60,7 +61,7 @@ const { href, title, description, stack, status, thumbnail } = Astro.props;
             alt=""
             // Max sizes rather than a fixed one, so the whole image fits
             // the gap whatever its shape.
-            class="max-h-full w-auto max-w-full rounded-md"
+            class="max-h-full w-auto max-w-full rounded-md border border-frame"
           />
         </div>
       )

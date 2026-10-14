@@ -1,0 +1,99 @@
+---
+title: "usage-bar"
+description: "A Claude Code mod that shows context fill, session cost and your plan's 5-hour and weekly limits on one line above the prompt, with an alert at 75% and 90%."
+order: 4
+stack: ["TypeScript", "Claude Code", "AI"]
+status: "Claude Code mod"
+thumbnail: "./usage-bar/thumbnail.png"
+logo: "./usage-bar/logo.svg"
+# The same size as Grounder's logo: 0.728em tall, dipping 0.011em below
+# the baseline.
+logoFit: { height: 0.728, drop: 0.011 }
+# The icon is a dark tile with rx 200 on a 1024 width.
+logoFrame: 0.195
+links:
+  - label: "Repository"
+    url: "https://github.com/andrej-kolic/claude-mods/tree/main/plugins/usage-bar"
+  - label: "Spec"
+    url: "https://github.com/andrej-kolic/claude-mods/blob/main/docs/usage-bar.md"
+  - label: "claudemods.dev"
+    url: "https://claudemods.dev/en/builds/usage-bar-ac3c7b"
+---
+
+import normal from "./usage-bar/normal.png";
+import cold from "./usage-bar/cold.png";
+import yellow from "./usage-bar/yellow.png";
+
+{/* Plain <img>, not <Image>: sharp is not installed. See ProjectCard. */}
+
+<img
+  src={normal.src}
+  width={normal.width}
+  height={normal.height}
+  alt="Claude Code with one grey line at the right edge above the prompt: context 62%, $1.84, session 41% resetting in 2h10m, week 18% resetting in 3d2h."
+  class="framed"
+/>
+
+## The problem
+
+On a Claude subscription the limit you hit is not the context window, it is the 5-hour and
+weekly usage on claude.ai. Unless something keeps them on screen, the first sign is usually
+the message that you've run out.
+
+Plenty of status line scripts already print those limits. But a status line is one slot: use
+one of them and you give up the one you had. When Claude Code opened its UI to mods on
+2026-10-01, a mod could draw a band above the prompt instead, beside whatever status line you
+already run.
+
+## The approach
+
+One line, at the right edge, away from where you read and type. It shows the context fill,
+what the session has cost, and both limits as small braille bars with the time until each
+resets. When the terminal is too narrow it drops the bars, then the countdowns, rather than
+wrapping onto a second row.
+
+It stays grey. Only a limit's percent changes colour: yellow at 75%, red at 90%. Those
+numbers aren't mine; they come from claude.ai's own usage page code, as do the alerts at 50%,
+75% and 90%. Each alert shows once per limit period, across restarts and projects.
+
+<img
+  src={yellow.src}
+  width={yellow.width}
+  height={yellow.height}
+  alt="The same line with the session limit at 78% in yellow, and an alert box at the top right reading usage-bar, session 78%."
+  class="framed"
+/>
+
+The second feature is `cache cold`. After a break the prompt cache expires, and the next
+message re-sends the whole conversation at full price. Across 26 days of my own sessions that
+happened about once per working day on a conversation over 100,000 tokens. The line now says
+so in red before you send.
+
+<img
+  src={cold.src}
+  width={cold.width}
+  height={cold.height}
+  alt="The line with cache cold in red after context 62%."
+  class="framed"
+/>
+
+## The tradeoffs
+
+**A red word over a popup.** The plan had a popup on the first keystroke after a break.
+Reading Claude Code's own code showed it already suggests `/clear` after 75 minutes idle, so
+the popup would only have helped for breaks of 60 to 75 minutes: once in 26 days. It was cut,
+along with keep-warm pings and a dialog that blocks sending.
+
+**Reading a file the host doesn't hand over.** Claude Code tells status line scripts how long
+the cache lasts, but not mods. usage-bar reads the end of the conversation file on disk
+instead, keeps only `5m` or `1h`, and the changelog lists this as a workaround to remove once
+mods get the value.
+
+**No network, no history.** It reads only figures Claude Code already has, sends nothing, and
+shows the current numbers rather than a chart over time.
+
+## What I would do differently
+
+Read the host's code before planning a feature, not after. The cache popup was designed,
+reviewed and put in the plan before a look at Claude Code showed it mostly duplicated a hint
+that was already there.

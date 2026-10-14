@@ -849,6 +849,13 @@
   & .expressive-code {
     margin-block: 1.75em;
   }
+
+  /* A screenshot whose own background matches the page's gets the code
+     blocks' frame (astro.config.ts), so its edge shows. */
+  & img.framed {
+    border: 1px solid var(--lab-border);
+    border-radius: 0.75rem;
+  }
 }
 
 /* A code block standing in for a project's screenshot takes the

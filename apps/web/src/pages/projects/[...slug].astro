@@ -21,7 +21,7 @@ const { Content } = await render(project);
 // duplicate each page at two addresses or break the global sequence.
 const experiments = forProject(project.id);
 
-const { links, logoFit } = project.data;
+const { links, logoFit, logoFrame } = project.data;
 ---
 
 <SiteLayout
@@ -50,13 +50,16 @@ const { links, logoFit } = project.data;
             width={project.data.logo.width}
             height={project.data.logo.height}
             alt=""
-            class="title-logo"
-            style={
-              logoFit && {
+            class:list={["title-logo", logoFrame !== undefined && "title-logo-framed"]}
+            style={{
+              ...(logoFit && {
                 "--logo-height": `${logoFit.height}em`,
                 "--logo-drop": `${logoFit.drop}em`,
-              }
-            }
+              }),
+              ...(logoFrame !== undefined && {
+                "--logo-radius": `${logoFrame * 100}%`,
+              }),
+            }}
           />
         )
       }
@@ -133,5 +136,12 @@ const { links, logoFit } = project.data;
     width: auto;
     vertical-align: calc(-1 * var(--logo-drop, 0em));
     margin-right: 0.3em;
+  }
+
+  /* An outline, not a border, so the logo keeps the size logoFit gives it.
+     Same colour as the frame on screenshots and code blocks. */
+  .title-logo-framed {
+    outline: 1px solid var(--lab-border);
+    border-radius: var(--logo-radius);
   }
 </style>

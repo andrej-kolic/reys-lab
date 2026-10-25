@@ -2,7 +2,7 @@
   "name": "reys-lab",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.7.0",
+  "packageManager": "pnpm@12.15.0",
   "engines": {
     "node": ">=24"
   },

@@ -54,6 +54,16 @@ export interface Experiment {
 
 export const experiments: Experiment[] = [
   {
+    number: "05",
+    slug: "05-the-contents-box",
+    title: "The contents box",
+    status: "settled",
+    date: "2026-10-27",
+    project: "reys-lab",
+    summary:
+      "Where a long post's contents go. Six placements on a full test post; F won: a sticky side column from 1280px that folds into a “Contents” button in the pinned top bar below it.",
+  },
+  {
     number: "04",
     slug: "04-the-screenshot-thumbnail",
     title: "The screenshot thumbnail",

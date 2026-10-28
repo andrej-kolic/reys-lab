@@ -4,6 +4,7 @@ import { getCollection, render } from "astro:content";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { forProject, href as experimentHref } from "../../lib/experiments";
+import { formatDate } from "../../lib/site";
 
 export const getStaticPaths = (async () => {
   const projects = await getCollection("projects", ({ data }) => !data.draft);
@@ -20,6 +21,18 @@ const { Content } = await render(project);
 // under /lab and are selected here rather than nested — nesting would either
 // duplicate each page at two addresses or break the global sequence.
 const experiments = forProject(project.id);
+
+// The post↔project relation, read from the project's side. A post names its
+// projects in its frontmatter and this page selects from that, so the link is
+// written once. Newest first, set like the experiments list: settled by
+// experiment 06 (#50).
+const posts = (
+  await getCollection(
+    "blog",
+    ({ data }) =>
+      !data.draft && data.projects.some(({ id }) => id === project.id),
+  )
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const { links, logoFit, logoFrame } = project.data;
 ---
@@ -100,6 +113,34 @@ const { links, logoFit, logoFrame } = project.data;
                   Experiment {experiment.number}
                 </span>
                 {experiment.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section class="mt-14 border-t border-divider pt-8">
+        <h2 class="font-display text-xl font-semibold tracking-tight">
+          Posts about this
+        </h2>
+        <ul class="mt-4 space-y-2">
+          {posts.map((post) => (
+            <li>
+              <a
+                href={`/blog/${post.id}`}
+                class="flex flex-wrap items-baseline gap-x-3 text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+              >
+                <time
+                  datetime={formatDate(post.data.date)}
+                  class="label tabular-nums !text-dim"
+                >
+                  {formatDate(post.data.date)}
+                </time>
+                {post.data.title}
               </a>
             </li>
           ))}

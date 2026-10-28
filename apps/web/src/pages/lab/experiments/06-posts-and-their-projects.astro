@@ -1,0 +1,416 @@
+---
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+import ListRow from "../../../components/ListRow.astro";
+
+/**
+ * How a post and the project it is about point at each other (#50). A post
+ * names its projects in its frontmatter; the project page lists the posts
+ * that name it, computed at build time. What is left is how each end looks.
+ *
+ * Two questions, so two candidate sets, and one thing moves in each: where
+ * the link sits on a post, and what form the list takes on a project page.
+ * The list's place is held: after the write-up, before the link buttons,
+ * where "Experiments run for this" already sits. Topic tags are held at
+ * none: they were dropped from posts while this was open, and every
+ * candidate was redrawn without them, so the header is date, title and
+ * description, as it ships.
+ *
+ * The project is real: its title and description are copied from
+ * playbook.mdx as they stood when this settled.
+ * The sample post is the first that will name a project, "Claude, review
+ * with Cursor" (#47), which is about Playbook; the other two on the project
+ * page are invented, so the list has more than one row to judge. All three
+ * are copied rather than read, so the page does not change when a real post
+ * does, and they link nowhere.
+ *
+ * The post header and the project page's tail are copied from
+ * blog/[...slug].astro and projects/[...slug].astro rather than imported,
+ * because those pages draw one treatment and this needs several. The copy is
+ * a record, not a second source of truth. Candidate C's rows are the one
+ * exception: they are the shared ListRow, since the candidate is the blog
+ * index's rows as they are.
+ */
+
+const opened = "2026-10-28";
+const settled = "2026-10-28";
+
+const project = {
+  title: "Playbook",
+  description:
+    "One repo of agent rules and skills, generated into Claude Code, Cursor and other coding agents, so every project gets the same instructions from a single source.",
+  href: "/projects/playbook",
+};
+
+const posts = [
+  {
+    date: "2026-11-18",
+    title: "Rules with a line budget",
+    description:
+      "Why every rule in the playbook has a hard line count, and what got cut to meet it.",
+  },
+  {
+    date: "2026-11-04",
+    title: "One source for every agent's rules",
+    description:
+      "Generating Claude Code and Cursor rules from one repo, pinned per project.",
+  },
+  {
+    date: "2026-10-28",
+    title: "Claude, review with Cursor",
+    description:
+      "Building a Claude Code skill that asks Cursor for a code review, and why most of it was measuring.",
+  },
+];
+
+const post = posts[2]!;
+
+const record = [
+  { label: "Opened", value: opened },
+  { label: "Settled", value: settled },
+  { label: "Result", value: "E · B" },
+  { label: "Variables", value: "link place · list form" },
+  { label: "Candidates", value: "6 + 3, incl. controls" },
+  { label: "Held", value: "list place · no topic tags" },
+];
+
+type PostTreatment =
+  | "none"
+  | "eyebrow"
+  | "byline"
+  | "end"
+  | "eyebrow-end"
+  | "run-for";
+
+const postCandidates: {
+  id: PostTreatment;
+  name: string;
+  claim: string;
+  note: string;
+}[] = [
+  {
+    id: "none",
+    name: "A · No link",
+    claim: "The control. What ships today.",
+    note: "The project is named only if the prose names it. A reader who wants the project has to find it from the nav.",
+  },
+  {
+    id: "eyebrow",
+    name: "B · In the date line",
+    claim: "The project's name after the date, as a link.",
+    note: "Costs no line. The date line is a label, so the name reads as a fact about the post rather than an invitation.",
+  },
+  {
+    id: "byline",
+    name: "C · Under the description",
+    claim: "“About Playbook →” under the description.",
+    note: "Read before the first sentence, so a reader who came for the project knows at once. One line of the header.",
+  },
+  {
+    id: "end",
+    name: "D · At the end",
+    claim: "A row after the last paragraph, with the project's description.",
+    note: "Offered once the post is read, when a reader is deciding where to go next. Nothing in the header changes.",
+  },
+  {
+    id: "eyebrow-end",
+    name: "E · Date line and end",
+    claim: "B and D together.",
+    note: "Named at the top for the reader who scans, offered at the bottom for the one who finished.",
+  },
+  {
+    id: "run-for",
+    name: "F · As on an experiment",
+    claim: "“About”, the project as a tag, then “Project →”.",
+    note: "The line an experiment page carries under its intro, with “About” for “Run for”. The tag is not a link, as everywhere on the site; the link beside it is.",
+  },
+];
+
+type ListTreatment = "none" | "links" | "rows";
+
+const listCandidates: {
+  id: ListTreatment;
+  name: string;
+  claim: string;
+  note: string;
+}[] = [
+  {
+    id: "none",
+    name: "A · No list",
+    claim: "The control. What ships today.",
+    note: "The write-up ends and the link buttons follow. Posts about the project are found from the blog.",
+  },
+  {
+    id: "links",
+    name: "B · A link list",
+    claim: "Date and title, set like “Experiments run for this”.",
+    note: "The two lists under a write-up look alike, so neither outranks the other. Titles only: the post's description is a click away.",
+  },
+  {
+    id: "rows",
+    name: "C · Blog rows",
+    claim: "The blog index's rows, in a box: date, title, description.",
+    note: "A post looks the same here as on /blog. The description says what each post adds before it is opened, at three lines a post.",
+  },
+];
+
+const showsEyebrow = (id: PostTreatment) =>
+  id === "eyebrow" || id === "eyebrow-end";
+const showsEnd = (id: PostTreatment) => id === "end" || id === "eyebrow-end";
+
+const textLink =
+  "text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent";
+---
+
+<LabLayout
+  title="Posts and their projects"
+  intro="A post names the project it is about, and the project page lists the posts that name it. How each end shows the link, on a sample post about Playbook and on the end of Playbook's page with three posts about it."
+  kind="experiment"
+  slug="06-posts-and-their-projects"
+>
+  <Section
+    id="record"
+    rule={false}
+    title="Record"
+    note="Settled. The page is frozen; the losing candidates stay as they were."
+  >
+    <dl
+      class="grid grid-cols-2 grid-ruled overflow-hidden rounded-xl border border-border sm:grid-cols-3"
+    >
+      {
+        record.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="hypothesis"
+    title="Hypothesis"
+    note="Written before looking, so that it can be wrong in public."
+  >
+    <div class="max-w-measure space-y-4 leading-relaxed text-muted">
+      <p>
+        Expected on the post: B. The date line already says when; saying what
+        it is about costs nothing there, and a link at the end is read only by
+        the reader who needed it least.
+      </p>
+      <p>
+        Expected on the project page: B. The page already ends in a link list
+        for experiments, and a second list in another form would make one look
+        more important than the other.
+      </p>
+      <p>F was added after this was written.</p>
+    </div>
+  </Section>
+
+  <Section
+    id="on-the-post"
+    rule={false}
+    title="On the post"
+    note="The header, the opening, and the end of a post about Playbook. Only the project link moves."
+  >
+    <div class="space-y-6">
+      {
+        postCandidates.map((candidate) => (
+          <article class="overflow-hidden rounded-xl border border-border bg-surface">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border px-5 py-3">
+              <h3 class="label !text-ink">{candidate.name}</h3>
+              <p class="font-mono text-xs tracking-tight text-dim">
+                {candidate.claim}
+              </p>
+            </div>
+
+            <div class="bg-bg px-5 py-10 sm:px-10">
+              <div class="mx-auto max-w-2xl">
+                <header class="border-b border-frame pb-8">
+                  <p class="label tabular-nums">
+                    <time datetime={post.date} class="!text-accent">
+                      {post.date}
+                    </time>
+                    {showsEyebrow(candidate.id) && (
+                      <>
+                        <span aria-hidden="true"> · </span>
+                        <a
+                          href={project.href}
+                          class="transition-colors duration-150 hover:!text-label-hover"
+                        >
+                          {project.title}
+                        </a>
+                      </>
+                    )}
+                  </p>
+                  <p class="mt-3 font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl">
+                    {post.title}
+                  </p>
+                  <p class="mt-4 text-lg leading-relaxed text-muted text-pretty">
+                    {post.description}
+                  </p>
+                  {candidate.id === "byline" && (
+                    <p class="mt-4 text-muted">
+                      About{" "}
+                      <a href={project.href} class={textLink}>
+                        {project.title}
+                      </a>{" "}
+                      <span aria-hidden="true">→</span>
+                    </p>
+                  )}
+                  {candidate.id === "run-for" && (
+                    <div class="mt-7 flex flex-wrap items-center gap-3">
+                      <span class="label">About</span>
+                      <span class="tag">{project.title}</span>
+                      <a
+                        href={project.href}
+                        class="label transition-colors duration-150 hover:!text-label-hover"
+                      >
+                        Project →
+                      </a>
+                    </div>
+                  )}
+                </header>
+
+                <div class="prose pt-10">
+                  <p>
+                    Placeholder copy. The structure is real; the words are not.
+                    This paragraph stands in for the opening of a post.
+                  </p>
+                  <p class="text-center text-dim" aria-hidden="true">⋯</p>
+                  <p>
+                    The last paragraph of the post. Whatever follows it is the
+                    first thing a reader who finished sees.
+                  </p>
+                </div>
+
+                {showsEnd(candidate.id) && (
+                  <section class="mt-14 border-t border-divider pt-8">
+                    <p class="label">This post is about</p>
+                    <a href={project.href} class="group mt-4 block">
+                      <span class="font-display text-xl font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent">
+                        {project.title} <span aria-hidden="true">→</span>
+                      </span>
+                      <span class="mt-1 block text-sm leading-relaxed text-muted">
+                        {project.description}
+                      </span>
+                    </a>
+                  </section>
+                )}
+              </div>
+            </div>
+
+            <div class="border-t border-border px-5 py-4">
+              <p class="max-w-measure text-sm leading-relaxed text-muted">{candidate.note}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="on-the-project-page"
+    rule={false}
+    title="On the project page"
+    note="The end of Playbook's page, with three posts about it. Only the list's form moves."
+  >
+    <div class="space-y-6">
+      {
+        listCandidates.map((candidate) => (
+          <article class="overflow-hidden rounded-xl border border-border bg-surface">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border px-5 py-3">
+              <h3 class="label !text-ink">{candidate.name}</h3>
+              <p class="font-mono text-xs tracking-tight text-dim">
+                {candidate.claim}
+              </p>
+            </div>
+
+            <div class="bg-bg px-5 py-10 sm:px-10">
+              <div class="mx-auto max-w-2xl">
+                <div class="prose">
+                  <p>
+                    The last paragraph of the write-up. Whatever follows it is
+                    what a reader who finished sees.
+                  </p>
+                </div>
+
+                {candidate.id === "links" && (
+                  <section class="mt-14 border-t border-divider pt-8">
+                    <p class="font-display text-xl font-semibold tracking-tight">
+                      Posts about this
+                    </p>
+                    <ul class="mt-4 space-y-2">
+                      {posts.map((item) => (
+                        <li>
+                          <a
+                            href="#on-the-project-page"
+                            class={`flex flex-wrap items-baseline gap-x-3 ${textLink}`}
+                          >
+                            <time datetime={item.date} class="label tabular-nums !text-dim">
+                              {item.date}
+                            </time>
+                            {item.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                {candidate.id === "rows" && (
+                  <section class="mt-14 border-t border-divider pt-8">
+                    <p class="font-display text-xl font-semibold tracking-tight">
+                      Posts about this
+                    </p>
+                    <div class="mt-4 rounded-xl border border-border bg-surface">
+                      {posts.map((item) => (
+                        <ListRow
+                          href="#on-the-project-page"
+                          meta={item.date}
+                          datetime={item.date}
+                          title={item.title}
+                          description={item.description}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                <section class="mt-14 border-t border-divider pt-8">
+                  <div class="flex flex-wrap gap-x-5 gap-y-3">
+                    <a href="https://github.com/andrej-kolic/playbook" class="btn-secondary">
+                      Repository
+                    </a>
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <div class="border-t border-border px-5 py-4">
+              <p class="max-w-measure text-sm leading-relaxed text-muted">{candidate.note}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section id="result" title="Result" note="Filled in by looking.">
+    <div class="max-w-measure space-y-4 leading-relaxed text-muted">
+      <p>
+        On the post, <strong class="font-semibold text-ink">E</strong>, settled
+        {settled}: the project's name in the date line, and the row with its
+        description after the last paragraph. The hypothesis expected B alone,
+        without the end row.
+      </p>
+      <p>
+        On the project page, <strong class="font-semibold text-ink">B</strong>,
+        as expected: a link list set like the experiments above it.
+      </p>
+    </div>
+  </Section>
+</LabLayout>

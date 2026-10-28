@@ -54,6 +54,16 @@ export interface Experiment {
 
 export const experiments: Experiment[] = [
   {
+    number: "06",
+    slug: "06-posts-and-their-projects",
+    title: "Posts and their projects",
+    status: "settled",
+    date: "2026-10-28",
+    project: "reys-lab",
+    summary:
+      "How a post links to the project it is about, and how the project page lists its posts. Six placements on a post, three list forms; E and B won: the project in the post's date line and again after its last paragraph, and a plain link list on the project page.",
+  },
+  {
     number: "05",
     slug: "05-the-contents-box",
     title: "The contents box",

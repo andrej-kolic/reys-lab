@@ -1,4 +1,4 @@
-import { defineCollection } from "astro:content";
+import { defineCollection, reference } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
@@ -20,6 +20,13 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
+    /**
+     * The projects the post is about, by slug. A slug with no project fails
+     * the build rather than linking to a 404: Astro only logs a bad
+     * reference, so the post page's getStaticPaths checks it. The project
+     * page lists the post from this, so the link is written once, here.
+     */
+    projects: z.array(reference("projects")).default([]),
     draft: z.boolean().default(false),
   }),
 });

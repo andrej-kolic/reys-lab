@@ -1,12 +1,36 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { getCollection, render } from "astro:content";
+import { getCollection, getEntries, render } from "astro:content";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import { formatDate } from "../../lib/site";
 
 export const getStaticPaths = (async () => {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  // Astro only logs a reference to a missing project and builds on, so a bad
+  // slug would surface as a crash on render, and not at all on a draft. This
+  // fails the build with the reason instead, drafts included. The object
+  // form, `{ slug, collection }`, has no id for the project page to match
+  // on, so it is refused rather than half supported.
+  const projectIds = new Set(
+    (await getCollection("projects")).map((project) => project.id),
+  );
+  const all = await getCollection("blog");
+  for (const post of all) {
+    for (const { id } of post.data.projects) {
+      if (id === undefined) {
+        throw new Error(
+          `post ${post.id} names a project as an object; write its slug as a plain string`,
+        );
+      }
+      if (!projectIds.has(id)) {
+        throw new Error(
+          `post ${post.id} names project ${id}, which does not exist`,
+        );
+      }
+    }
+  }
+
+  const posts = all.filter(({ data }) => !data.draft);
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -26,6 +50,18 @@ const { Content, headings } = await render(post);
 // Only h2 is listed. A two-level contents on a 2000-word post is a map of a
 // map, and h3s are section detail rather than destinations.
 const toc = headings.filter((heading) => heading.depth === 2);
+
+// The projects the post is about, named twice: in the date line for the
+// reader who scans, and with their descriptions after the last paragraph for
+// the one who finished. Settled by experiment 06 (#50). A draft project has
+// no page to link to, so it is left out, and a slug listed twice shows once.
+const references = post.data.projects.filter(
+  (reference, index, all) =>
+    all.findIndex(({ id }) => id === reference.id) === index,
+);
+const projects = (await getEntries(references)).filter(
+  (project) => !project.data.draft,
+);
 
 const linkClass =
   "text-sm text-muted underline decoration-border underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent";
@@ -73,12 +109,24 @@ const linkClass =
   </Fragment>
 
   <header class="border-b border-frame pb-8">
-    <time
-      datetime={formatDate(post.data.date)}
-      class="label block tabular-nums !text-accent"
-    >
-      {formatDate(post.data.date)}
-    </time>
+    <p class="label tabular-nums">
+      <time datetime={formatDate(post.data.date)} class="!text-accent">
+        {formatDate(post.data.date)}
+      </time>
+      {
+        projects.map((project) => (
+          <>
+            <span aria-hidden="true"> · </span>
+            <a
+              href={`/projects/${project.id}`}
+              class="transition-colors duration-150 hover:!text-label-hover"
+            >
+              {project.data.title}
+            </a>
+          </>
+        ))
+      }
+    </p>
     <h1
       class="mt-3 font-display text-4xl leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl"
     >
@@ -116,6 +164,28 @@ const linkClass =
       <Content />
     </article>
   </div>
+
+  {
+    projects.length > 0 && (
+      <section class="mt-14 border-t border-divider pt-8">
+        <h2 class="label">This post is about</h2>
+        <ul class="mt-4 space-y-6">
+          {projects.map((project) => (
+            <li>
+              <a href={`/projects/${project.id}`} class="group block">
+                <span class="font-display text-xl font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent">
+                  {project.data.title} <span aria-hidden="true">→</span>
+                </span>
+                <span class="mt-1 block text-sm leading-relaxed text-muted">
+                  {project.data.description}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </SiteLayout>
 
 <script>

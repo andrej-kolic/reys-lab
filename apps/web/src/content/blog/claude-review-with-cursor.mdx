@@ -214,13 +214,18 @@ and wanting it is what carried the project.
 
 ## Appendix: numbers behind the text
 
-From the Opening: Claude Code's multi-agent review starts every agent with an empty
-context, and each one reads the code again, so tokens multiply with each agent. Bugbot
-bills the more expensive "Other Models" quota, while a plain Grok review bills the
-cheaper "Cursor Models" quota.
+### From the Opening
 
-From Talking to Cursor, all on the same 15 planted bugs. Diff in the prompt against
-Cursor running git itself:
+Claude Code's multi-agent review starts every agent with an empty context, and each one
+reads the code again, so tokens multiply with each agent. Bugbot bills the more
+expensive "Other Models" quota, while a plain Grok review bills the cheaper "Cursor
+Models" quota.
+
+### From Talking to Cursor
+
+Every number here comes from the same test change with 15 planted bugs.
+
+Diff in the prompt against Cursor running git itself:
 
 | | Cursor runs git itself | Diff in the prompt |
 |---|---|---|
@@ -244,8 +249,9 @@ The costs leave out runs whose connection dropped, because their token counts ar
 unreliable; the bug counts use every run, since a dropped connection breaks only the
 token count.
 
-From Building the skill: a test run cost about $0.23 on composer-2.5, against $1.28 on
-the default Grok model.
+### From Building the skill
+
+A test run cost about $0.23 on composer-2.5, against $1.28 on the default Grok model.
 
 ## Appendix: real reviews vs manual
 Every real round adds one entry to the log, with a manual Cursor round on the same diff

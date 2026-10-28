@@ -1,0 +1,410 @@
+---
+title: "Claude, review with Cursor"
+description: "Building a Claude Code skill that asks Cursor for a code review, and why most of it was measuring"
+date: 2026-10-28
+projects: ["playbook"]
+---
+
+I write most of my code in Claude Code, then have one of Cursor's models review it. A
+different model in a fresh chat reviews the code without the bias of having written it,
+and I can pick whichever model fits. It's also cheaper than the built-in options: Claude
+Code's multi-agent review and Cursor's Bugbot both cost more ([Appendix: numbers behind
+the text](#appendix-numbers-behind-the-text)).
+
+Until recently, I did it by hand:
+
+1. Ask Cursor to review the branch or the uncommitted files, without Bugbot.
+2. Paste the review into Claude Code, and have it check the findings, pick which to fix
+   and apply them.
+3. Go back to Cursor for another round in the same chat, and repeat.
+
+It worked well enough, but it was repetitive and boring, and it cried out for
+automation. So I decided to build a Claude Code skill that runs the review rounds for
+me.
+
+## Is it worth it?
+The first version was simple: a call to the Cursor CLI that asked for a review of the
+uncommitted files and parsed the response. It reported back with the findings, how many
+of them were real, how long the review took and how many tokens it used. The results
+looked fine at first, but a manual round on the same change found two problems the skill
+had missed.
+
+The solution was obvious: measure what actually happens behind the scenes, and improve
+the skill based on the data until it matched or beat the manual process. But after a
+whole evening of testing, I had mixed results and no clear idea why ([Appendix: the lost
+evening](#appendix-the-lost-evening)).
+
+That led to my first important decision: measure one parameter at a time, changing
+nothing else. I split the work into three parts, one per section below:
+
+1. Talking to Cursor: sending the prompt and measuring the reply.
+2. Building the skill: wrapping the call, then parsing and checking the results.
+3. Later rounds: reviewing again after each set of fixes.
+
+## Talking to Cursor
+The first part was calling the Cursor CLI: sending the prompt, measuring the time, the
+tokens and the quality of the findings, and comparing each result with the manual
+process. I measured on a test change with 15 bugs planted on purpose. One result came
+quickly: sending Cursor the diff in the prompt made the review 21% faster and 28%
+cheaper, with the same bugs found ([Appendix: numbers behind the
+text](#appendix-numbers-behind-the-text)).
+
+My first attempt let Cursor run `git diff` itself. But Cursor kept trying git commands
+that weren't on its allowlist, like `git status` and `git log`, and each refused attempt
+cost an extra step. Allowing more commands wasn't an option, because any allowed command
+can also write files with a redirect, like `echo x > a.txt`. The better solution was to
+build the diff first and pipe it into the CLI call, so the whole diff arrives in the
+prompt. I wrote a script that builds the diff without touching the user's staged
+changes, and it later became part of the skill.
+
+The call to Cursor also wasn't supposed to change anything. Ask mode (Cursor's mode for
+questions, not edits) didn't guarantee that on its own, and a deny rule against writing
+files blocked nothing. So the skill gives Cursor no shell at all.
+
+Finally, I had to settle the exact prompt. A generic "review without Bugbot" was too
+vague: I had to balance real bugs found against false findings, time and tokens. I kept
+changing the prompt and comparing the results with manual ones, which took a lot of time
+and patience. I settled on:
+
+> Review the change included below as a diff, without Bugbot. Report every problem the
+> change causes, including in lines it did not edit; leave out old problems the change
+> did not cause. Give each finding a severity: high, medium or low. Report low-severity
+> findings too.
+
+Two sentences made the difference: asking for a severity, and asking for low-severity
+findings too. Together they took the bugs found from 6 to all 15, and each review cost a
+third more ($0.41 instead of $0.31; [Appendix: numbers behind the
+text](#appendix-numbers-behind-the-text)).
+
+## Building the skill
+With the prompt settled, the next part was wrapping it in a skill: getting Cursor's
+response, parsing and checking it, and proposing fixes.
+
+The first problem was what to diff against. In Talking to Cursor I worked out how to
+build the diff and send it; now I had to decide what to compare the change with. The
+skill had to review uncommitted changes, a branch, or the changes since a given commit.
+For some reason (read: making assumptions) I thought this would be straightforward: just
+find the branch we branched from. I soon realized that isn't always possible. Git
+doesn't remember which branch you started from, and even
+[git-machete](https://git-machete.readthedocs.io/en/stable/#fork-point), a tool built
+for exactly this, says its guess can fail. So the skill takes the branch as a parameter,
+or uses the default branch (usually `main`) when none is given. When that would pull in
+another branch's commits, the skill stops and asks which branch to compare against.
+
+The skill also had to work on Mac, Linux and Windows. To check that, I set up a CI
+workflow that runs the tests on all three, plus a local Docker container for quick Linux
+checks. It paid off on the first run: 15 tests failed on Windows that passed on Mac and
+Linux, because Windows read the script's temporary file paths wrong.
+
+I set Cursor's output to `stream-json`, because it's the only format that records every
+step Cursor takes, not just its answer. That lets a script check that Cursor only read
+the change and the code around it: it didn't edit files, didn't stop halfway, and didn't
+go online. Early runs did go online: they fetched my files from GitHub and reviewed the
+pushed version instead of my edits. The skill then reads only the final answer as the
+review.
+
+I also wanted the review to work with any model, with a sensible default. The default is
+Grok high fast, which has a good performance-to-cost ratio on the Pro plan, and a
+parameter switches it to any model the user names. (I used composer-2.5 a lot while
+testing the skill itself: each test run cost about five times less.)
+
+## Later rounds
+As in my manual loop, the skill needed more than one round of review. In real use, one
+round rarely found all the bugs (in 5 of 6 reviews, round two found more), and the first
+round of fixes could add new ones.
+
+That raised three questions: should a later round review only the fixes, look only at
+the changed files, and reuse the first round's chat? This part also took a lot of time,
+because every answer had to be compared with a manual round. After testing five
+round-two prompts, and a lot of patience (and losing it a few times), I settled on the
+prompt below. Cursor numbers its findings, so the skill fills in the blanks: the numbers
+it fixed, and for each one it didn't fix, my reason.
+
+> Addressed. Fixed: [finding numbers]. Not fixed: [finding numbers, each with my
+> reason]. Do another round on the change included below as a diff. Treat the findings
+> not fixed as settled: raise one again only if the new code changes it, and say what
+> changed. My reasons are not proof: if a finding I did not fix is still a real bug,
+> raise it again and say why.
+
+Compared with my old "addressed, do another round", it stopped Cursor from repeating
+findings I had already decided on, and it still caught what I had missed ([Appendix:
+round-two prompts](#appendix-round-two-prompts)).
+
+As for the three questions: later rounds run in the same chat, because a new chat cost
+six times more ([Appendix: round-two prompts](#appendix-round-two-prompts)). They send
+the whole change again, not just the fixes, and Cursor still looks beyond the changed
+files, because an edit can break lines it didn't touch. The decision to review only the
+fixes is postponed for now.
+
+## Running in circles
+The skill was built, but the job was far from over: it still had to prove itself in real
+work. So I added logging, to analyze after several days or weeks of use and improve the
+skill based on the data ([Appendix: real reviews vs
+manual](#appendix-real-reviews-vs-manual)).
+
+The logs soon showed many edge cases. Every test and review seemed to find a new one,
+and each fix made the flow more complex and opened new edge cases for the next review to
+find. I realized I was running in circles, and that I needed a more formal way than
+prose to describe a complex flow. That problem deserves its own post. For now: after
+some research, and after considering pseudo-code and flowcharts, I settled on a
+flowchart written in Graphviz `dot` (a plain-text format for drawing graphs) inside the
+skill itself, the way [Superpowers](https://github.com/obra/superpowers) skills do it.
+Here is one step from it, sending the change to Cursor, with an arrow for every way the
+send can end (labels in plain words; the lines as written are in [Appendix: the send
+step as written](#appendix-the-send-step-as-written)):
+
+```dot
+"Send to Cursor" -> "Check the reply" [label="Cursor answered"];
+"Send to Cursor" -> "Check the reply" [label="failed after Cursor started"];
+"Send to Cursor" -> "Finish" [label="failed before Cursor started"];
+"Send to Cursor" -> "Did Cursor finish before the user stopped waiting?" [label="ran past 10 minutes"];
+"Did Cursor finish before the user stopped waiting?" -> "Check the reply" [label="yes"];
+"Did Cursor finish before the user stopped waiting?" -> "Stop the send, then write the log entry" [label="no"];
+```
+
+Because the flowchart is plain text, a program can test its structure and find dead ends
+and unhandled steps. That formalized a good part of the process: a dead end or an
+unhandled ending now gets caught before the next review does. [The
+test](https://github.com/andrej-kolic/playbook/blob/220942e/test/skill-flow.test.js)
+checks that every step can be reached and every question has at least two answers; it
+caught all 8 mistakes I planted on purpose. None of the 8 approaches I compared, from
+Anthropic's skill guide and Superpowers to research like FlowBench, checks its flowchart
+automatically ([Appendix: how others write skill
+flows](#appendix-how-others-write-skill-flows)).
+
+## What's next
+Now that the skill works and I can count on it for real findings, proposed fixes and
+repeat rounds, I can focus on measuring and optimizing it further. A few things are
+already on the roadmap:
+
+1. **Faster first round:** change the prompt to ask for real bugs in the changed lines
+   only, not every possible problem across the repo.
+2. **Fine-tune each review by hand:** let the prompt take a parameter, a line of my own
+   for that run, such as "real bugs only".
+3. **Looping mode:** keep fixing and reviewing until a stop condition is met, such as a
+   maximum number of rounds or no high or medium findings left.
+
+## Conclusion
+There are many ready-made review tools, but none of them gives me all three things I
+need:
+
+| Tool | Runs locally | Cost-effective | I pick the model and prompt |
+|---|---|---|---|
+| [Cursor Bugbot](https://cursor.com/docs/bugbot) | ✓ | ✗ can bill "Other Models" without my control | ✗ |
+| [Claude Code `/code-review`](https://code.claude.com/docs/en/code-review-local) | ✓ normal, ✗ ultra (cloud) | ✓ normal, ✗ ultra | ✗ Claude models only |
+| [GitHub Copilot review](https://docs.github.com/copilot/code-review) | ✓ | ✗ separate plan | ✗ |
+| [CodeRabbit](https://docs.coderabbit.ai/cli) | ✓ | ✗ separate plan | ✗ |
+| [Greptile](https://www.greptile.com/docs/code-review/greptile-cli) | ✗ skips uncommitted | ✗ [credits](https://www.greptile.com/pricing) | ✗ |
+| **My skill** | ✓ | ✓ | ✓ |
+
+From each tool's docs, checked 26 Oct 2026; I ran none of them.
+
+I built the skill for a single developer: to save tokens while keeping the quality of
+the review. I'm pretty satisfied with how it performs. On small changes it is slower
+than a manual review, but I use it in everyday work: no more copy-paste, except for an
+occasional manual round to compare.
+
+But automation was only half the reason. I also built it to see how this kind of work
+really goes: how an agent's harness, tools and loop work, and how to solve problems
+while development itself is changing so fundamentally (from deterministic toward
+probabilistic). I had built skills before, but this one made me measure what I used to
+assume: what the agent does behind the scenes, what each prompt sentence finds and
+costs, and where the flow breaks in real use. That insight is what satisfies me most,
+and wanting it is what carried the project.
+
+## Appendix: numbers behind the text
+
+### From the Opening
+
+Claude Code's multi-agent review starts every agent with an empty context, and each one
+reads the code again, so tokens multiply with each agent. Bugbot bills the more
+expensive "Other Models" quota, while a plain Grok review bills the cheaper "Cursor
+Models" quota.
+
+### From Talking to Cursor
+
+Every number here comes from the same test change with 15 planted bugs.
+
+<p class="caption">Diff in the prompt against Cursor running git itself</p>
+
+| | Cursor runs git itself | Diff in the prompt |
+|---|---|---|
+| Steps | 6.6 | 4.2 |
+| Time | 88 s | 70 s |
+| Cost | $0.39 | $0.28 |
+| Bugs found | 6 of 15 | 6 of 15 |
+
+A big diff given as a file got "The file is too large to read at once", and Cursor read
+only its last lines; piped, the whole diff arrives in the prompt.
+
+<p class="caption">What each of the two prompt sentences did</p>
+
+| Prompt | Bugs found | Cost, average | Runs in the cost |
+|---|---|---|---|
+| Without either sentence | 6 of 15 | $0.31 | 3 |
+| With the severity sentence | 10 of 15 | $0.44 | 4 |
+| With "Report low-severity findings too." added | 15 of 15 | $0.41 | 4 |
+
+The costs leave out runs whose connection dropped, because their token counts are
+unreliable; the bug counts use every run, since a dropped connection breaks only the
+token count.
+
+### From Building the skill
+
+A test run cost about $0.23 on composer-2.5, against $1.28 on the default Grok model.
+
+## Appendix: real reviews vs manual
+Every real round adds one entry to the log, with a manual Cursor round on the same diff
+beside it, using the same model. No new features until the data calls for them.
+
+| What was reviewed | Rounds | Skill: raised, time | Manual: raised, time | Raised only by manual |
+|---|---|---|---|---|
+| 21 Oct, the skill's logging (49 lines) | 4 | 31, 17 min | 20, 15 min | 5 |
+| 21 Oct, the skill's failure handling (466 lines) | 3 | 8, 23 min | 8, 14 min | 6, of them 4 false |
+| 21 Oct, the skill as a flowchart (669 lines) | 2 | 9, 19 min | 5, 13 min | 4 |
+| 22 Oct, a rule change (96 lines) | 2 | 21, 9 min | 4, 3 min | 0 |
+| 22 Oct, a rule change (118 lines) | 3 | 7, 15 min | 3, 3 min | 1 |
+| 23 Oct, a rule change (63 lines) | 3 | 10, 11 min | 4, 2 min | 1 |
+
+In the very first round the skill raised 13 and manual 8, all 8 among the 13, but manual
+gave the better fix for one of them. "Raised" counts every finding, true or not; the log
+marks false findings only on the manual side. Left out: one review that timed out (no
+data), and rounds 3 and 4 of the 96-line review (no manual round beside them). Row names
+are read from each review's findings, because the log doesn't name what was reviewed.
+
+## Appendix: the lost evening
+On 14 Oct 2026 I ran 8 combinations of how to call Cursor in one evening, each changing
+several things at once. One of them was whether Bugbot ran, which I hadn't accounted
+for: Bugbot uses other, pricier models. With the prompt changing too, a saved diff file
+found 8 of 15 planted bugs and Cursor running git itself found 3 of 15. Rerun the next
+day with only that one thing changed, the two found the same 6 of 15.
+
+The rule that came out of it, in what I told the agent the next morning: "sole purpose
+of this is to measure 1 parameter - no pollution".
+
+## Appendix: round-two prompts
+I tested five round-two prompts; the tests cost about $6.21 for the first three and
+$4.59 for the last two.
+
+<table>
+  <thead>
+    <tr>
+      <th>Chat</th>
+      <th>Findings</th>
+      <th>Repeats</th>
+      <th>Re-raised bug</th>
+      <th>Cost</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. Do another round on the change included below as a diff.</blockquote></td>
+    </tr>
+    <tr>
+      <td>same</td>
+      <td>11</td>
+      <td>8</td>
+      <td>yes</td>
+      <td>$0.48</td>
+      <td>117 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. <strong>Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].</strong> Do another round on the change included below as a diff. <strong>Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>same</td>
+      <td>3</td>
+      <td>0</td>
+      <td>no</td>
+      <td>$0.41</td>
+      <td>117 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote><strong>[the round-1 review prompt] An earlier round raised these findings; the decisions follow. [each finding, with my decision and reason] Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>new</td>
+      <td>6</td>
+      <td>0</td>
+      <td>no</td>
+      <td>$2.55</td>
+      <td>573 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. <strong>Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].</strong> Do another round on the change included below as a diff. <strong>Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed. My reasons are not proof: if a finding I did not fix is still a real bug, raise it again and say why.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>same, <strong>picked</strong></td>
+      <td>2</td>
+      <td>0</td>
+      <td>yes, and said why</td>
+      <td>$0.41</td>
+      <td>71 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. <strong>Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].</strong> Do another round on the change included below as a diff. <strong>Review it independently first; only then compare with the earlier round, and mark each finding NEW, REOPENED or DUPLICATE.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>same</td>
+      <td>10</td>
+      <td>7</td>
+      <td>yes</td>
+      <td>$0.72</td>
+      <td>110 s</td>
+    </tr>
+  </tbody>
+</table>
+
+All five also caught the fix I had missed, and none raised a false alarm. "Re-raised
+bug" says whether Cursor raised again a real bug I had wrongly decided not to fix. Bold
+is what each prompt adds to the plain "do another round". Each prompt was tested once,
+except the second row's, which ran twice (122 s and 117 s); the table shows the second
+run. The new chat cost the most because it also has to be sent the first review's prompt
+and every finding.
+
+The research behind it: [More Rounds, More Noise](https://arxiv.org/abs/2603.16244)
+finds that later rounds raise 62% more false alarms, and [Challenging the
+Evaluator](https://arxiv.org/abs/2509.16533) finds that models give in to rebuttals.
+
+## Appendix: the send step as written
+The post shows the step with plain labels; this is the text the agent actually reads,
+[lines 38-44 of the
+skill](https://github.com/andrej-kolic/playbook/blob/220942e/.rulesync/skills/x-review-with-cursor-next/SKILL.md?plain=1#L38-L44),
+copied as they are:
+
+```dot
+"Send to Cursor (round 1)" -> "Check the reply (round 1)" [label="exit 0"];
+"Send to Cursor (round 1)" -> "Check the reply (round 1)" [label="exit 1 after the reply path"];
+"Send to Cursor (round 1)" -> "Finish" [label="exit 1 before the reply path"];
+"Send to Cursor (round 1)" -> "Finish" [label="exit 3"];
+"Send to Cursor (round 1)" -> "Did the send finish before the user said done? (round 1)" [label="timed out"];
+"Did the send finish before the user said done? (round 1)" -> "Check the reply (round 1)" [label="yes"];
+"Did the send finish before the user said done? (round 1)" -> "Stop the send, then write the log entry" [label="no"];
+```
+
+Each `exit N` is the send script's exit code. "After the reply path" means the script
+had already printed where Cursor's reply goes ([line
+126](https://github.com/andrej-kolic/playbook/blob/220942e/.rulesync/skills/x-review-with-cursor-next/SKILL.md?plain=1#L126)).
+The plain version leaves out `exit 3` (Cursor has no chat with that session id): it only
+happens when a later round resumes a chat, so round one never takes it ([line
+71](https://github.com/andrej-kolic/playbook/blob/220942e/.rulesync/skills/x-review-with-cursor-next/SKILL.md?plain=1#L71)).
+
+## Appendix: how others write skill flows
+Checked 21 Oct 2026. Each keeps the flow in a graph or steps; none checks it
+automatically.
+
+<div class="wide">
+
+| Source | Format for the flow |
+|---|---|
+| [Anthropic skill guide](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Numbered steps, branches in prose |
+| [Superpowers](https://github.com/obra/superpowers/blob/main/skills/writing-skills/SKILL.md) | Graphviz `dot` flowchart inside the skill |
+| [FlowBench](https://arxiv.org/abs/2406.14884) | Mermaid flowchart |
+| [SOP-Agent](https://arxiv.org/abs/2501.09316) | Decision graph with IF conditions |
+| [StateFlow](https://arxiv.org/abs/2403.11322) | State machine |
+| [Parlant journeys](https://parlant.io/docs/concepts/customization/journeys) | State diagram |
+| [Rasa CALM](https://rasa.com/docs/learn/concepts/calm/) | YAML steps |
+| [Compile, Then Page](https://arxiv.org/abs/2607.11346) | Compiled pseudo-code |
+
+</div>

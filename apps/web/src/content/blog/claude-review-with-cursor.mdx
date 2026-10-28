@@ -191,7 +191,7 @@ need:
 | Tool | Runs locally | Cost-effective | I pick the model and prompt |
 |---|---|---|---|
 | [Cursor Bugbot](https://cursor.com/docs/bugbot) | ✓ | ✗ can bill "Other Models" without my control | ✗ |
-| [Claude Code `/code-review`](https://code.claude.com/docs/en/code-review-local) | ✓ normal, ✗ `ultra` (cloud) | ✓ normal, ✗ `ultra` | ✗ Claude models only |
+| [Claude Code `/code-review`](https://code.claude.com/docs/en/code-review-local) | ✓ normal, ✗ ultra (cloud) | ✓ normal, ✗ ultra | ✗ Claude models only |
 | [GitHub Copilot review](https://docs.github.com/copilot/code-review) | ✓ | ✗ separate plan | ✗ |
 | [CodeRabbit](https://docs.coderabbit.ai/cli) | ✓ | ✗ separate plan | ✗ |
 | [Greptile](https://www.greptile.com/docs/code-review/greptile-cli) | ✗ skips uncommitted | ✗ [credits](https://www.greptile.com/pricing) | ✗ |
@@ -280,19 +280,82 @@ of this is to measure 1 parameter - no pollution".
 I tested five round-two prompts; the tests cost about $6.21 for the first three and
 $4.59 for the last two.
 
-| Chat | What I sent Cursor for round 2 | Findings | Repeats | Wrongly rejected bug raised again | Cost | Time |
-|---|---|---|---|---|---|---|
-| same | Addressed. Do another round on the change included below as a diff. | 11 | 8 | yes | $0.48 | 117 s |
-| same | Addressed. **Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].** Do another round on the change included below as a diff. **Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed.** | 3 | 0 | no | $0.41 | 117 s |
-| new | **[the round-1 review prompt] An earlier round raised these findings; the decisions follow. [each finding, with my decision and reason] Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed.** | 6 | 0 | no | $2.55 | 573 s |
-| same, **picked** | Addressed. **Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].** Do another round on the change included below as a diff. **Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed. My reasons are not proof: if a finding I did not fix is still a real bug, raise it again and say why.** | 2 | 0 | yes, and said why | $0.41 | 71 s |
-| same | Addressed. **Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].** Do another round on the change included below as a diff. **Review it independently first; only then compare with the earlier round, and mark each finding NEW, REOPENED or DUPLICATE.** | 10 | 7 | yes | $0.72 | 110 s |
+<table>
+  <thead>
+    <tr>
+      <th>Chat</th>
+      <th>Findings</th>
+      <th>Repeats</th>
+      <th>Rejected bug back</th>
+      <th>Cost</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. Do another round on the change included below as a diff.</blockquote></td>
+    </tr>
+    <tr>
+      <td>same</td>
+      <td>11</td>
+      <td>8</td>
+      <td>yes</td>
+      <td>$0.48</td>
+      <td>117 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. <strong>Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].</strong> Do another round on the change included below as a diff. <strong>Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>same</td>
+      <td>3</td>
+      <td>0</td>
+      <td>no</td>
+      <td>$0.41</td>
+      <td>117 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote><strong>[the round-1 review prompt] An earlier round raised these findings; the decisions follow. [each finding, with my decision and reason] Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>new</td>
+      <td>6</td>
+      <td>0</td>
+      <td>no</td>
+      <td>$2.55</td>
+      <td>573 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. <strong>Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].</strong> Do another round on the change included below as a diff. <strong>Treat the findings not fixed as settled: raise one again only if the new code changes it, and say what changed. My reasons are not proof: if a finding I did not fix is still a real bug, raise it again and say why.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>same, <strong>picked</strong></td>
+      <td>2</td>
+      <td>0</td>
+      <td>yes, and said why</td>
+      <td>$0.41</td>
+      <td>71 s</td>
+    </tr>
+    <tr class="prompt">
+      <td colspan="6"><blockquote>Addressed. <strong>Fixed: [finding numbers]. Not fixed: [finding numbers, each with my reason].</strong> Do another round on the change included below as a diff. <strong>Review it independently first; only then compare with the earlier round, and mark each finding NEW, REOPENED or DUPLICATE.</strong></blockquote></td>
+    </tr>
+    <tr>
+      <td>same</td>
+      <td>10</td>
+      <td>7</td>
+      <td>yes</td>
+      <td>$0.72</td>
+      <td>110 s</td>
+    </tr>
+  </tbody>
+</table>
 
-All five also caught the fix I had missed, and none raised a false alarm. Bold is what
-each prompt adds to the plain "do another round". Each prompt was tested once, except
-the second row's, which ran twice (122 s and 117 s); the table shows the second run.
-The new chat cost the most because it also has to be sent the first review's prompt and
-every finding.
+All five also caught the fix I had missed, and none raised a false alarm. "Rejected bug
+back" says whether Cursor raised again a real bug I had wrongly decided not to fix. Bold
+is what each prompt adds to the plain "do another round". Each prompt was tested once,
+except the second row's, which ran twice (122 s and 117 s); the table shows the second
+run. The new chat cost the most because it also has to be sent the first review's prompt
+and every finding.
 
 The research behind it: [More Rounds, More Noise](https://arxiv.org/abs/2603.16244)
 finds that later rounds raise 62% more false alarms, and [Challenging the

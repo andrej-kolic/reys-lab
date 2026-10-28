@@ -6,6 +6,7 @@ import { defineConfig, fontProviders } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
 import mdx from "@astrojs/mdx";
+import { dotGrammar } from "./src/lib/dot-grammar";
 import { getVersion } from "./src/lib/version";
 
 const google = fontProviders.google();
@@ -106,6 +107,7 @@ export default defineConfig({
       themes: ["houston"],
       // Dark-only for now, so a single theme is enough.
       useDarkModeMediaQuery: false,
+      shiki: { langs: [dotGrammar] },
       styleOverrides: {
         borderRadius: "0.75rem",
         borderColor: "var(--lab-border)",

@@ -87,17 +87,6 @@ const linkClass =
     <p class="mt-4 text-lg leading-relaxed text-muted text-pretty">
       {post.data.description}
     </p>
-    {
-      post.data.tags.length > 0 && (
-        <div class="mt-6 flex flex-wrap gap-2">
-          {post.data.tags.map((tag) => (
-            <span class="tag">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )
-    }
   </header>
 
   <div class="relative">

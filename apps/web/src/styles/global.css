@@ -889,6 +889,18 @@
     border-bottom: 0;
   }
 
+  /* Markdown has no table caption, so a caption is a paragraph with this
+     class right above its table: smaller and muted so it reads apart from
+     the body text, and close to the table so it reads as part of it. */
+  & .caption {
+    font-size: 0.875rem;
+    color: var(--lab-muted);
+  }
+
+  & .caption + table {
+    margin-top: 0.5rem;
+  }
+
   /* A full-width text row (a prompt, a quote) over its own row of numbers,
      for a table too narrow to give the text a column. No divider between
      the pair, so each reads as one entry. */

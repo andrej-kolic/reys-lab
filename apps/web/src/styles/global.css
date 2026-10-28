@@ -897,6 +897,15 @@
     border-bottom: 0;
   }
 
+  /* A table that spans the measure instead of hugging its content: Markdown
+     gives a table no class, so it sits in a div with this one. Back to
+     display: table, because a block table's columns do not stretch with it;
+     its text wraps instead of scrolling. */
+  & .wide table {
+    display: table;
+    width: 100%;
+  }
+
   /* Markdown has no table caption, so a caption is a paragraph with this
      class right above its table: smaller and muted so it reads apart from
      the body text, and close to the table so it reads as part of it. */

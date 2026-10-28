@@ -846,6 +846,14 @@
     padding: 0.1em 0.35em;
   }
 
+  /* Code inside a link keeps only the mono face: the link already marks it,
+     and a box inside the underline reads as two things stacked. */
+  & a > code {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+  }
+
   & .expressive-code {
     margin-block: 1.75em;
   }

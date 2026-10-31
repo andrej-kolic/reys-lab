@@ -226,4 +226,12 @@ const linkClass =
     overflow-y: auto;
     color: inherit;
   }
+
+  /* A post that opens with an image lets the image close the header: no
+     divider above it, and only the article's own top padding, not the
+     header's bottom padding as well. */
+  header:has(+ .relative > .prose > :global(img:first-child)) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
 </style>

@@ -759,6 +759,14 @@
     margin-top: 1.25em;
   }
 
+  /* An image takes the code blocks' and tables' gap, not a paragraph's, so
+     the text after it does not crowd it. Before the headings, so a heading
+     after an image keeps its own larger gap. */
+  & > * + img,
+  & > img + * {
+    margin-top: 1.75em;
+  }
+
   & h2 {
     font-family: var(--ff-display);
     font-size: 1.5rem;

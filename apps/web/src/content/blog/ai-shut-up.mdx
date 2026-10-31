@@ -1,0 +1,144 @@
+---
+title: "AI, shut the fuck up"
+description: "The rules I wrote to treat AI agents' logorrhea"
+date: 2026-10-31
+projects: ["playbook"]
+---
+
+import meme from "./ai-shut-up/one-does-not-simply-prompt.jpg";
+
+{/* Plain <img>, not <Image>: sharp is not installed. See ProjectCard. */}
+
+<img
+  src={meme.src}
+  width={meme.width}
+  height={meme.height}
+  alt="The One Does Not Simply meme: Boromir from The Lord of the Rings, pinching his thumb and fingers together, captioned One does not simply prompt the AI."
+/>
+
+I have a friend, Richard. He's a great guy, interesting and funny, but he has one major
+flaw: Richard is unable to summarize.
+
+When he walks through the door of my apartment, I know I'll have to hear about everything
+that happened to him that day, and since I last saw him, in full detail. With the names of
+people and places, as if I'm supposed to know them just because he does. All in
+chronological order, no exceptions! 45 minutes later, when the tank is empty, I can say
+"hi" and we can have a conversation.
+
+AI agents remind me of Richard a lot.
+
+They make me say things like:
+- why the fuck i have to read whole fucking novel only to figure out what the fuck is this about?
+- shut up! explain this very fucking simply because it is very fucking simple for fucks sake!!!
+- what is this? 1980s? and we don't have internet and shared fucking resources?
+
+Fortunately, thanks to my friend, I have 10 years of experience handling a seemingly
+unstoppable avalanche of word diarrhea, so I decided to do something about it.
+
+## The problem
+The first step was to document the specific behaviors that annoy me, so I made a list of
+the things the agent does wrong:
+
+- Writes too much and hides the answer in it
+- Writes sentences that are hard to follow
+- Uses words the user doesn't know, or keeps changing them
+- Leaves its own work to the user
+- Keeps breaking the same rules after being told to always follow them
+- Asks without saying what it wants or why
+- Explains in the abstract instead of showing
+- Doesn't treat a question as a question
+- Writes lists whose items don't say what they are
+- Points to things the user can't see or identify
+- Picks words that mislead
+- Moves on without saying what it already did
+
+## The goal
+The second step was to figure out how to tame the agent into behaving the way I'd like.
+Ideally, its communication style would:
+
+- be clear and concise, measured against a set budget
+- be structured: open with the answer or the core takeaway, use lists, and end with a
+  clear conclusion or a direct question
+
+In other words, it would optimize for the priciest resource of them all: my time and
+attention.
+
+## The implementation
+The third step was the technical implementation. After some research, I decided to write
+rules and skills that take over from them for a specific job. The communication rules are
+two: `conversation-style` for structure, and `concision` for length and wording. A skill
+like `x-write-docs` takes over from the `documentation` rule when the agent writes a
+README. I use [rulesync](https://github.com/dyoshikawa/rulesync) to make them work in any
+environment (I use Claude Code and Cursor), plus my own utility scripts and versioning.
+You can check out my [Playbook](https://github.com/andrej-kolic/playbook) project (it has
+grown since), but here is a basic example:
+
+```md title=".rulesync/rules/concision.md" wrap
+<!-- playbook:concision v11 (2026-10-23) — list items open with their point -->
+
+# Concision
+
+The measure of success is the reader's time: the least time spent parsing what you wrote and checking that it is true.
+
+## Budgets
+
+| Artifact         | Budget                                   |
+|------------------|------------------------------------------|
+| Chat reply       | 10 lines, until the reader asks for more |
+| PR or issue body | 6 lines                                  |
+| Review comment   | 3 lines                                  |
+| Commit body      | 3 lines, or none                         |
+```
+
+```md title=".rulesync/rules/conversation-style.md" wrap
+<!-- playbook:conversation-style v9 (2026-10-23) — item leads state their point -->
+
+## Before responding
+
+A question gets an answer. Only an explicit instruction — an imperative, a "yes", a direct request to act — gets a file edit, a commit, or any other change.
+
+1. **Open with the answer or the core takeaway**; `concision` (The first line is contractual) holds the test it must pass.
+```
+
+```md title=".rulesync/skills/x-write-docs/SKILL.md" wrap
+---
+name: x-write-docs
+description: Write or substantially update a README, tutorial, or how-to guide — pick the right structure per artifact type and follow README/tutorial writing conventions.
+targets: ["claudecode", "cursor"]
+---
+
+<!-- playbook:x-write-docs v1 (2026-09-09) -->
+
+Procedure for drafting or substantially rewriting documentation. Defer to the target project's own `documentation` rule (or an equivalent written convention) for which Diátaxis mode applies and for README-length/plain-language constraints — this skill is the checklist for actually writing the artifact once the mode is chosen, not a second copy of that rule.
+```
+
+## Next steps
+One thing I noticed is that agents are pretty relaxed about deciding when to apply rules
+and when to ignore (or deprioritize) them. So in longer conversations they slowly lean
+back into their usual style, and I have to keep reminding them to "respect my authoritah".
+I tried several things, such as writing "always respect the rules of communication" in
+`AGENTS.md`. But that is a rule itself, and it gets suppressed to the depths of the
+digital subconscious in no time. Claude Code's output style feature didn't improve it
+either, and neither did its built-in memory.
+
+So I'm going to try something different: a custom hook that adds a reminder of the rules
+to every message I send, to refresh the agent's awareness. It will take some
+experimenting, logging and debugging, and if it succeeds, a dedicated blog post.
+
+## Appendix: the raw prompt
+Here is a raw prompt, so you can judge for yourself how pissed I was on a scale of 1-10
+(tip: it's a logarithmic scale). The agent wrote:
+
+> Before suggesting a split, I checked that one is possible: no plugin here imports a
+> sibling file yet.
+
+I replied:
+
+> "no plugin here imports a sibling file yet" am i supposed to know ehat the fuck that
+> means? is there a problem? a reccomendation? a convention? is spliting going to have
+> sideefects? what the fucking fuck is the problem? ucking summarize
+
+(You can tell from the sheer amount of typos that I can't wait for AI to get a body so I
+can punch it\*.)
+
+\* I punch things when I'm angry. Not people, though. But AI is not people, right?

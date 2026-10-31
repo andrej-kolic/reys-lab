@@ -48,8 +48,12 @@ const { Content, headings } = await render(post);
 // first sentence. Settled by experiment 05 (#48).
 //
 // Only h2 is listed. A two-level contents on a 2000-word post is a map of a
-// map, and h3s are section detail rather than destinations.
-const toc = headings.filter((heading) => heading.depth === 2);
+// map, and h3s are section detail rather than destinations. The footnotes
+// list's heading is an h2 too, hidden for screen readers only, so it is left
+// out: the contents would otherwise link to a heading nobody can see.
+const toc = headings.filter(
+  (heading) => heading.depth === 2 && heading.slug !== "footnote-label",
+);
 
 // The projects the post is about, named twice: in the date line for the
 // reader who scans, and with their descriptions after the last paragraph for

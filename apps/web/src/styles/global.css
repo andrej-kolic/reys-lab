@@ -926,6 +926,37 @@
     margin-top: 0.5rem;
   }
 
+  /* Markdown footnotes ([^1]): the reference is a small raised number, and
+     the list at the end of the post is smaller and dim, so it reads as side
+     notes rather than more body text. Dim on the page is a gated pair. The
+     list's "Footnotes" heading is kept for screen readers only. */
+  & sup {
+    font-size: 0.75em;
+    line-height: 0;
+  }
+
+  & sup a {
+    text-decoration: none;
+  }
+
+  & [data-footnotes] {
+    font-size: 0.875rem;
+    color: var(--lab-dim);
+  }
+
+  & [data-footnotes] > h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  & [data-footnotes] ol {
+    padding-left: 1.25rem;
+  }
+
   /* A full-width text row (a prompt, a quote) over its own row of numbers,
      for a table too narrow to give the text a column. No divider between
      the pair, so each reads as one entry. */

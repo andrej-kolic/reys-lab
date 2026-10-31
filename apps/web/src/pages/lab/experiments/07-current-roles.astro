@@ -1,0 +1,216 @@
+---
+import LabLayout from "../../../layouts/LabLayout.astro";
+import Section from "../../../components/lab/Section.astro";
+
+/**
+ * How the CV marks a role that has not ended. Two roles are current, and
+ * today their years read "2026 —", which can pass for a cut-off range.
+ *
+ * One variable: the cue for "current". Held: the timeline's layout, the
+ * roles, and the "–" en dash the finished ranges use. The one exception to
+ * the layout: "2026 – PRESENT" does not fit the 8rem year column, so every
+ * "Present" candidate widens it to 9rem, as the CV would have to. Colour is only ever an
+ * extra cue on top of the word "Present", never a replacement for it, so the
+ * range still reads to a screen reader and without colour vision (WCAG 1.4.1).
+ *
+ * The roles are copied from cv.astro as they stood when this opened, and the
+ * timeline is copied from Timeline.astro rather than imported, because that
+ * component draws one treatment and this needs four. The copy is a record,
+ * not a second source of truth.
+ */
+
+const opened = "2026-10-31";
+const settled = "2026-10-31";
+
+const roles = [
+  {
+    from: "2026",
+    to: null,
+    role: "Building Rey’s Lab",
+    org: "Personal",
+    detail:
+      "Astro, Tailwind and Cloudflare, built as a monorepo with a static-only app and deployment kept behind the dist/ directory. Decisions recorded as dated experiments.",
+  },
+  {
+    from: "2026",
+    to: null,
+    role: "Senior Software Engineer",
+    org: "Crypto exchange",
+    detail:
+      "Placeholder. A professional trading platform: real-time order books, charts and order entry, where every millisecond of latency and every rounding error is visible to the trader.",
+  },
+  {
+    from: "2024",
+    to: "2026",
+    role: "Senior Frontend Engineer",
+    org: "Placeholder Company",
+    detail:
+      "Placeholder. React and AWS: design systems, build pipelines, and the occasional backend when the boundary made more sense on the other side.",
+  },
+];
+
+const record = [
+  { label: "Opened", value: opened },
+  { label: "Settled", value: settled },
+  { label: "Result", value: "D" },
+  { label: "Variable", value: "the “current” cue" },
+  { label: "Candidates", value: "4, incl. control" },
+  { label: "Held", value: "layout · roles · en dash" },
+];
+
+type Treatment = "dash" | "present" | "accent" | "hollow";
+
+const candidates: {
+  id: Treatment;
+  name: string;
+  claim: string;
+  note: string;
+}[] = [
+  {
+    id: "dash",
+    name: "A · Open dash",
+    claim: "The control. What ships today: “2026 —”.",
+    note: "Nothing marks a current role but the missing end year, and the dash is longer than the one in the finished ranges.",
+  },
+  {
+    id: "present",
+    name: "B · Present",
+    claim: "“2026 – Present”, in the same colour as every year.",
+    note: "The CV convention. The word does all the work; nothing else changes.",
+  },
+  {
+    id: "accent",
+    name: "C · Present, in the accent",
+    claim: "B, with the current roles’ years in the accent colour.",
+    note: "The accent is the colour the page’s “Updated” label already uses, so no new colour. Current roles read at a glance down the year column.",
+  },
+  {
+    id: "hollow",
+    name: "D · Present, finished dots hollow",
+    claim: "B, with a filled dot for current roles and a hollow one for finished.",
+    note: "The cue sits on the spine instead of the text, and the years stay one colour.",
+  },
+];
+
+const years = (id: Treatment, from: string, to: string | null) =>
+  to ? `${from} – ${to}` : id === "dash" ? `${from} —` : `${from} – Present`;
+---
+
+<LabLayout
+  title="Current roles"
+  intro="Two roles on the CV have not ended, and today their years read “2026 —”. How the timeline marks a current role, on the CV’s own top three roles."
+  kind="experiment"
+  slug="07-current-roles"
+>
+  <Section
+    id="record"
+    rule={false}
+    title="Record"
+    note="Settled. The page is frozen; the losing candidates stay as they were."
+  >
+    <dl
+      class="grid grid-cols-2 grid-ruled overflow-hidden rounded-xl border border-border sm:grid-cols-3"
+    >
+      {
+        record.map((item) => (
+          <div class="bg-surface px-4 py-4">
+            <dt class="label">{item.label}</dt>
+            <dd class="mt-2 font-mono text-sm tracking-tight text-ink">
+              {item.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <Section
+    id="hypothesis"
+    title="Hypothesis"
+    note="Written before looking, so that it can be wrong in public."
+  >
+    <div class="max-w-measure space-y-4 leading-relaxed text-muted">
+      <p>
+        Expected: B. The word “Present” is the whole fix; a colour or a dot on
+        top of it says the same thing a second time.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    id="candidates"
+    rule={false}
+    title="Candidates"
+    note="The top of the CV’s timeline. Only the current-role cue moves."
+  >
+    <div class="space-y-6">
+      {
+        candidates.map((candidate) => (
+          <article class="overflow-hidden rounded-xl border border-border bg-surface">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border px-5 py-3">
+              <h3 class="label !text-ink">{candidate.name}</h3>
+              <p class="font-mono text-xs tracking-tight text-dim">
+                {candidate.claim}
+              </p>
+            </div>
+
+            <div class="bg-bg px-5 py-10 sm:px-10">
+              <ol
+                class:list={[
+                  "ml-2 border-l border-frame pl-8",
+                  candidate.id === "dash" ? "sm:ml-32" : "sm:ml-36",
+                ]}
+              >
+                {roles.map((role) => (
+                  <li class="relative pb-12 last:pb-0">
+                    <span
+                      aria-hidden="true"
+                      class:list={[
+                        "absolute top-2.5 -left-[calc(2rem+4.5px)] h-2 w-2 rounded-full ring-4 ring-bg",
+                        candidate.id === "hollow" && role.to
+                          ? "border border-accent bg-bg"
+                          : "bg-accent",
+                      ]}
+                    />
+                    <p
+                      class:list={[
+                        "label !leading-7 whitespace-nowrap tabular-nums sm:absolute sm:top-0 sm:pr-4 sm:text-right",
+                        candidate.id === "dash"
+                          ? "sm:-left-[calc(2rem+8rem)] sm:w-32"
+                          : "sm:-left-[calc(2rem+9rem)] sm:w-36",
+                        candidate.id === "accent" && !role.to && "!text-accent",
+                      ]}
+                    >
+                      {years(candidate.id, role.from, role.to)}
+                    </p>
+                    <p class="font-display text-xl leading-7 font-semibold tracking-tight">
+                      {role.role}
+                    </p>
+                    <p class="mt-1 font-mono text-sm text-dim">{role.org}</p>
+                    <p class="mt-3 max-w-measure leading-relaxed text-muted">
+                      {role.detail}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div class="border-t border-border px-5 py-4">
+              <p class="max-w-measure text-sm leading-relaxed text-muted">
+                {candidate.note}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section id="result" title="Result" note="Filled in by looking.">
+    <p class="max-w-measure leading-relaxed text-muted">
+      <strong class="font-semibold text-ink">D</strong>, settled {settled}:
+      “Present” for a current role, a filled dot for current roles and a hollow
+      one for finished. The hypothesis expected B, the word alone.
+    </p>
+  </Section>
+</LabLayout>

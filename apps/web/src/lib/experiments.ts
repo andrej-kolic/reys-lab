@@ -54,6 +54,16 @@ export interface Experiment {
 
 export const experiments: Experiment[] = [
   {
+    number: "07",
+    slug: "07-current-roles",
+    title: "Current roles",
+    status: "settled",
+    date: "2026-10-31",
+    project: "reys-lab",
+    summary:
+      "How the CV marks a role that has not ended. Four candidates on the CV's top three roles: the open dash it ships with, “Present”, “Present” with accent-coloured years, and “Present” with hollow dots for finished roles. D won: “Present”, and a hollow dot for every finished role.",
+  },
+  {
     number: "06",
     slug: "06-posts-and-their-projects",
     title: "Posts and their projects",

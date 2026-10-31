@@ -75,21 +75,23 @@ const experiments = [
 
 const timeline = [
   {
-    years: "2026 —",
+    from: "2026",
     role: "Building Rey’s Lab",
     org: "Personal",
     detail: "Astro, Tailwind, Cloudflare. A portfolio that is also the work sample.",
     projects: ["Rey’s Lab", "Grounder"],
   },
   {
-    years: "2024 – 2026",
+    from: "2024",
+    to: "2026",
     role: "Senior Frontend Engineer",
     org: "Placeholder Company",
     detail: "React and AWS. Design systems, build pipelines, and the odd backend.",
     projects: ["Rookie Trader"],
   },
   {
-    years: "2021 – 2024",
+    from: "2021",
+    to: "2024",
     role: "Frontend Engineer",
     org: "Placeholder Company",
     detail: "Where the habit of writing the tradeoff down started.",
@@ -286,7 +288,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
   <Section
     id="timeline"
     title="Timeline node"
-    note="The spine of /cv. Years are mono and small, set left of the line inside the text column; the line is the only place a bright colour runs vertically."
+    note="The spine of /cv. Years are mono and small, set left of the line inside the text column; the line is the only place a bright colour runs vertically. A current role reads “Present” and keeps a filled dot; a finished one’s dot is hollow."
   >
     <Timeline roles={timeline} />
   </Section>

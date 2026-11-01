@@ -1,0 +1,37 @@
+---
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import { site } from "../../../lib/site";
+
+// Homepage for the Google login app that claude-sync's history sync uses.
+// Google requires one before the app can be published. Kept off the
+// /projects list and out of search: it is a private tool, not a project.
+---
+
+<SiteLayout
+  title="claude-history"
+  description="A private tool that backs up my Claude Code chat history to my own Google Drive."
+  noindex
+  width="measure"
+>
+  <h1 class="font-display text-4xl font-bold tracking-tight text-balance">
+    claude-history
+  </h1>
+  <div class="mt-6 space-y-5 text-lg leading-relaxed text-muted text-pretty">
+    <p>
+      claude-history backs up my Claude Code chat history to my own Google
+      Drive, so past chats can be searched on either of my laptops.
+      Only I, {site.author}, use it. It is not offered to anyone else.
+    </p>
+    <p>
+      Every 15 minutes, rclone on each laptop uploads that laptop's chat
+      history to a <code>claude-history</code> folder in my Drive, then
+      downloads the other laptop's copy. It reads and writes nothing outside
+      that folder.
+    </p>
+    <p>
+      How it handles Google data: <a href="/projects/claude-history/privacy"
+        >privacy policy</a
+      >.
+    </p>
+  </div>
+</SiteLayout>

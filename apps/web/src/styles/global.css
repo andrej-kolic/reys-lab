@@ -750,6 +750,22 @@
    the article title is the loudest thing on the page and nothing inside it
    competes. */
 
+/* An inline link in running text, inside prose or out: cyan, with the
+   underline faint at rest and full on hover. Colour alone would not mark it,
+   since cyan is also an edge and focus colour, so the underline stays. */
+@utility link {
+  color: var(--lab-accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--lab-accent) 40%, transparent);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 150ms;
+
+  &:hover,
+  &:active {
+    text-decoration-color: var(--lab-accent);
+  }
+}
+
 @utility prose {
   max-width: var(--container-measure);
   color: var(--lab-ink);
@@ -790,16 +806,7 @@
   }
 
   & a {
-    color: var(--lab-accent);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in oklab, var(--lab-accent) 40%, transparent);
-    text-underline-offset: 4px;
-    transition: text-decoration-color 150ms;
-  }
-
-  & a:hover,
-  & a:active {
-    text-decoration-color: var(--lab-accent);
+    @apply link;
   }
 
   & strong {

@@ -67,6 +67,7 @@ export const pairs: Pair[] = [
   { what: "body text on the page", fg: palette.ink, bg: palette.bg, floor: 4.5 },
   { what: "muted text on the page", fg: palette.muted, bg: palette.bg, floor: 4.5 },
   { what: "dim text on the page", fg: palette.dim, bg: palette.bg, floor: 4.5 },
+  { what: "link on the page", fg: palette.accent, bg: palette.bg, floor: 4.5 },
   { what: "dim text on a card", fg: palette.dim, bg: palette.surface, floor: 4.5 },
   // A table in a post is a card: its cells, quoted prompts and links sit on it.
   { what: "body text on a card", fg: palette.ink, bg: palette.surface, floor: 4.5 },

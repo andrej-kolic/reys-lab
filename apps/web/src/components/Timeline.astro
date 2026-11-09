@@ -1,8 +1,10 @@
 ---
+import RichText, { type Rich } from "./RichText.astro";
+
 /**
  * The CV timeline, the mikes.cv model: a thin vertical line as the spine, a
- * dot per role, years in small mono to the left of the line, projects nested
- * under each role.
+ * dot per role, years in small mono to the left of the line, the role's
+ * highlights as a bulleted list and its stack as tags under it.
  *
  * Year, dot and heading share one centre line: the year takes the heading's
  * 28px line box, and the dot sits 10px down so its 8px centre lands at 14px.
@@ -12,7 +14,8 @@
  * column is 9rem because "2026 – PRESENT" does not fit in 8rem.
  *
  * A role without `to` is current: it reads "– Present" and keeps the filled
- * dot, while a finished role's dot is hollow (experiment 07).
+ * dot, while a finished role's dot is hollow (experiment 07). A role that
+ * starts and ends in the same year shows that year alone.
  */
 
 export interface Role {
@@ -20,9 +23,18 @@ export interface Role {
   /** End year. Absent while the role is current. */
   to?: string;
   role: string;
-  org?: string;
-  detail: string;
-  projects?: string[];
+  /**
+   * The heading. Most roles share a title, so the company is the part that
+   * changes down the page; the title sits under it in small mono.
+   */
+  org: string;
+  detail: Rich;
+  /** A remark under the detail, such as why the detail is redacted. */
+  note?: string;
+  /** One bullet each, under the detail. */
+  highlights?: Rich[];
+  /** The tech used in this role, shown as tags: the CV's skills list. */
+  stack?: string[];
 }
 
 interface Props {
@@ -45,22 +57,34 @@ const { roles } = Astro.props;
           ]}
         />
         <p class="label !leading-7 whitespace-nowrap tabular-nums sm:absolute sm:top-0 sm:-left-[calc(2rem+9rem)] sm:w-36 sm:pr-4 sm:text-right">
-          {role.from} – {role.to ?? "Present"}
+          {role.to === role.from
+            ? role.from
+            : `${role.from} – ${role.to ?? "Present"}`}
         </p>
         <h3 class="font-display text-xl leading-7 font-semibold tracking-tight">
-          {role.role}
+          {role.org}
         </h3>
-        {role.org && <p class="mt-1 font-mono text-sm text-dim">{role.org}</p>}
+        <p class="mt-1 font-mono text-sm text-dim">{role.role}</p>
         <p class="mt-3 max-w-measure leading-relaxed text-muted">
-          {role.detail}
+          <RichText text={role.detail} />
         </p>
-        {role.projects && role.projects.length > 0 && (
+        {role.note && (
+          <p class="mt-2 max-w-measure text-sm text-dim">{role.note}</p>
+        )}
+        {role.highlights && role.highlights.length > 0 && (
+          <ul class="mt-3 max-w-measure list-disc space-y-2 pl-5 leading-relaxed text-muted marker:text-dim">
+            {role.highlights.map((highlight) => (
+              <li>
+                <RichText text={highlight} />
+              </li>
+            ))}
+          </ul>
+        )}
+        {role.stack && role.stack.length > 0 && (
           <div class="mt-4 flex flex-wrap items-center gap-2">
-            <span class="label">Projects</span>
-            {role.projects.map((project) => (
-              <span class="tag">
-                {project}
-              </span>
+            <span class="label">Stack</span>
+            {role.stack.map((item) => (
+              <span class="tag">{item}</span>
             ))}
           </div>
         )}

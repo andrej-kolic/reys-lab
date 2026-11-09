@@ -1,0 +1,33 @@
+---
+/**
+ * Renders text that may carry links: a plain string, or strings and links in
+ * reading order.
+ */
+
+export interface Link {
+  label: string;
+  href: string;
+}
+
+/** Plain text, or text with links in it: strings and links in reading order. */
+export type Rich = string | (string | Link)[];
+
+interface Props {
+  text: Rich;
+}
+
+const { text } = Astro.props;
+const parts = typeof text === "string" ? [text] : text;
+---
+
+{
+  parts.map((part) =>
+    typeof part === "string" ? (
+      part
+    ) : (
+      <a href={part.href} class="link">
+        {part.label}
+      </a>
+    ),
+  )
+}

@@ -1,6 +1,6 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
-import Timeline from "../components/Timeline.astro";
+import Timeline, { type Role } from "../components/Timeline.astro";
 import { site } from "../lib/site";
 
 // About merged in here, 2026-09-20. A CV page and an About page tell the same
@@ -9,46 +9,135 @@ import { site } from "../lib/site";
 
 // Set by hand to the last date this page's text changed, not the build date,
 // which would move on every deploy and claim edits that never happened.
-const updated = "2026-10-31";
+const updated = "2026-11-10";
 
 const intro = [
-  "Placeholder. Two paragraphs of narrative go here — the part that used to be an About page. Who I am, what I work on, and what I am looking for, written as prose rather than as a bullet list of technologies.",
-  "The second paragraph is the one that earns the read: what kind of problem I like, and the sort of engineering judgement I bring to it. Evidence beats adjectives, so it should point at something on this site rather than assert a quality.",
+  "I build systems that carry real businesses at scale: from national lotteries and sports betting, through e-government and SEO, to NFT marketplaces and real-time crypto trading. I go after the hard part: the architecture that decides if a product survives its own growth, whether I'm writing the code or leading the team that does.",
+  "Currently focusing on agentic development and building open-source tools that make it reliable on production codebases.",
 ];
 
-const roles = [
+const roles: Role[] = [
   {
+    // "Personal projects" rather than "Independent Software Engineer": resume
+    // guides keep that title for paid client work, and this is not.
     from: "2026",
-    role: "Building Rey’s Lab",
-    org: "Personal",
-    detail:
-      "Astro, Tailwind and Cloudflare, built as a monorepo with a static-only app and deployment kept behind the dist/ directory. Decisions recorded as dated experiments.",
-    projects: ["Rey’s Lab", "Grounder"],
+    role: "Open-source AI developer tools",
+    org: "Personal projects",
+    // Picks up the intro's last line: the intro names the focus, this entry
+    // is the proof. One sentence like the entries below it; the tools are
+    // described, not named, and each description links to its project page.
+    detail: [
+      "Tools that fix where coding agents break: ",
+      { label: "structured, portable memory", href: "/projects/grounder" },
+      " you own, across sessions, machines and agents; ",
+      { label: "rules and skills", href: "/projects/playbook" },
+      " that standardize and optimize the development workflow; and ",
+      { label: "monitoring and alerts", href: "/projects/usage-bar" },
+      " for context, cost and plan limits.",
+    ],
+    stack: ["AI", "Claude Code", "Cursor", "TypeScript", "Node"],
   },
   {
+    // Dates and detail cut to the year and the job description on purpose:
+    // the role is under NDA, and the note below says so on the page.
     from: "2026",
-    role: "Senior Software Engineer",
-    org: "Crypto exchange",
-    detail:
-      "Placeholder. A professional trading platform: real-time order books, charts and order entry, where every millisecond of latency and every rounding error is visible to the trader.",
-  },
-  {
-    from: "2024",
     to: "2026",
-    role: "Senior Frontend Engineer",
-    org: "Placeholder Company",
+    role: "Senior Software Engineer",
+    org: "Kraken / Payward, Berlin",
     detail:
-      "Placeholder. React and AWS: design systems, build pipelines, and the occasional backend when the boundary made more sense on the other side.",
-    projects: ["Rookie Trader"],
+      "Frontend systems for a cryptocurrency exchange, built to stay fast and fault tolerant. Took part in architecture and technical strategy, delivered projects from start to launch, and mentored engineers through code review.",
+    note: "Details redacted: this work is covered by non-disclosure agreements.",
+    stack: [
+      "TypeScript",
+      "React",
+      "Zustand",
+      "Redux",
+      "WebGL",
+      "TradingView",
+      "Tailwind",
+      "WebSockets",
+      "TanStack Query",
+      "Cypress",
+    ],
   },
   {
-    from: "2021",
+    // Kraken's entry is redacted, so this is the public proof of the "real-time
+    // crypto trading" in the intro. Kept apart from the AI tools entry so that
+    // proof is not buried. The starter it is built on is folded in, not listed:
+    // a template next to production work would weaken the page. One year, not
+    // a range: it was two short bursts of work, not a multi-year project.
+    from: "2026",
+    to: "2026",
+    role: "Real-time trading client",
+    org: "Personal projects",
+    detail: [
+      "Live Kraken market data, plus your balances, orders and trades, in one ",
+      { label: "browser page", href: "https://rookie.andrejkolic.com" },
+      ". Layered architecture around a framework-free domain model, live data as RxJS streams, and sign-in through stateless, encrypted tokens on a serverless AWS proxy. Built on my own ",
+      {
+        label: "monorepo starter template",
+        href: "https://github.com/andrej-kolic/turborepo-react-starter",
+      },
+      ".",
+    ],
+    stack: ["React", "TypeScript", "RxJS", "WebSockets", "Turborepo", "Storybook", "AWS"],
+  },
+  {
+    from: "2023",
     to: "2024",
-    role: "Frontend Engineer",
-    org: "Placeholder Company",
+    role: "Senior Software Engineer",
+    org: "Pink.gg / Spielworks, Berlin",
     detail:
-      "Placeholder. Where the habit of writing down the tradeoff — rather than only the decision — started.",
-    projects: [],
+      "Built and scaled AtomicHub, a leading NFT marketplace on the WAX and EOS blockchains. Added IMX, Polygon and Immutable zkEVM, merged the separate per-chain sites into one multi-chain marketplace, and carried it through the acquisition by Spielworks.",
+    stack: ["Web3", "TypeScript", "React", "Express", "Jest", "PostgreSQL"],
+  },
+  {
+    from: "2017",
+    to: "2022",
+    role: "Senior Software Engineer",
+    org: "Searchmetrics, Berlin",
+    detail:
+      "Replaced a legacy SEO system with a React single-page app on microservices, then split the frontend into micro-frontends with Module Federation. Embedded an analytics module that increased sales, and built single sign-on across the company’s products.",
+    stack: [
+      "React",
+      "TypeScript",
+      "Redux",
+      "GraphQL",
+      "Node.js",
+      "Module Federation",
+      "Java",
+      "Spring",
+      "PostgreSQL",
+      "AWS",
+      "OAuth2",
+    ],
+  },
+  {
+    from: "2016",
+    to: "2017",
+    role: "Senior Software Engineer",
+    org: "8fit, Berlin",
+    detail:
+      "Grew subscribers of a fitness and nutrition app by moving its features step by step to React Native, with A/B tests on a Ruby on Rails backend.",
+    stack: ["React Native", "Redux", "Ruby on Rails", "A/B testing"],
+  },
+  {
+    from: "2011",
+    to: "2016",
+    role: "Senior Software Engineer / Team Lead",
+    org: "Nortal, Belgrade",
+    detail:
+      "Replaced a monolithic e-government portal for Oman’s Ministry of Commerce and Industry with Spring services, led the team that built its mobile app, and built interactive visualisations for large data sets.",
+    stack: ["Java", "Spring", "WebSphere", "Oracle", "DB2", "Angular", "Cordova", "D3"],
+  },
+  {
+    from: "2007",
+    to: "2011",
+    role: "Software Engineer",
+    org: "GTech / Finsoft, Belgrade",
+    detail:
+      "Built a sport-betting module for GTech’s retail terminal in Java, and online portals for national lotteries in Chile and Singapore.",
+    stack: ["Java", "Swing", "JavaScript", "Flash", "ActionScript", "ASP.NET"],
   },
 ];
 ---

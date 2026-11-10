@@ -2,6 +2,10 @@
 /**
  * Renders text that may carry links: a plain string, or strings and links in
  * reading order.
+ *
+ * A link to another site ends in a small arrow, so the reader knows it leaves
+ * this one; screen readers hear "(another site)" instead. It opens in the same
+ * tab, keeping the back button.
  */
 
 export interface Link {
@@ -27,6 +31,14 @@ const parts = typeof text === "string" ? [text] : text;
     ) : (
       <a href={part.href} class="link">
         {part.label}
+        {/^https?:\/\//.test(part.href) && (
+          <>
+            {/* A narrow no-break space, not a margin: the underline runs through
+                it, and the arrow never wraps onto a line of its own. */}
+            <span aria-hidden="true">{"\u202F↗"}</span>
+            <span class="sr-only">(another site)</span>
+          </>
+        )}
       </a>
     ),
   )

@@ -3,11 +3,11 @@
 Publishes `apps/web/dist` to Cloudflare Workers Static Assets.
 
 ```
-pnpm exec turbo run deploy --filter=@reys-lab/deploy-cloudflare
+pnpm deploy:cf
 ```
 
-Keep the `--filter`: without it turbo runs every package's `deploy`, including
-`deploy/aws`, which pushes the site to staging.
+Run it from the repo root. It is `turbo run deploy --filter=@reys-lab/deploy-cloudflare`;
+plain `pnpm run deploy` also runs `deploy/aws`, which pushes the site to staging.
 
 Not `pnpm --filter @reys-lab/deploy-cloudflare deploy`: pnpm 11 reserves `deploy`
 as a built-in command, so that form never reaches the script and fails with

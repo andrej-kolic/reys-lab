@@ -42,13 +42,17 @@ Adding a host means adding a folder and a CI job — zero application changes.
 - **`deploy/cloudflare`** — Cloudflare Workers Static Assets, kept as the portability
   proof that the static-only architecture isn't tied to one host.
 
-Not `pnpm --filter <package> deploy`: pnpm 11 reserves `deploy` as a built-in command, so
-that form never reaches the package's script. Go through turbo instead, which also picks
-up the `deploy → ^build` edge so `apps/web` is rebuilt first:
+Deploy one host from the root; `pnpm run deploy` runs both:
 
 ```
-pnpm exec turbo run deploy --filter=@reys-lab/deploy-aws
+pnpm deploy:aws
+pnpm deploy:cf
 ```
+
+Each script is `turbo run deploy --filter=<package>`, which picks up the
+`deploy → ^build` edge so `apps/web` is rebuilt first. Not
+`pnpm --filter <package> deploy`: pnpm 11 reserves `deploy` as a built-in command, so
+that form never reaches the package's script.
 
 ## Licensing
 

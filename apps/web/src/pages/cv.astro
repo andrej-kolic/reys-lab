@@ -62,30 +62,23 @@ const roles: Role[] = [
   },
   {
     // Kraken's entry is redacted, so this is the public proof of the "real-time
-    // crypto trading" in the intro. The starter it is built on is folded in,
-    // not listed: a template next to production work would weaken the page.
-    from: "2025",
+    // crypto trading" in the intro. Kept apart from the AI tools entry so that
+    // proof is not buried. The starter it is built on is folded in, not listed:
+    // a template next to production work would weaken the page. One year, not
+    // a range: it was two short bursts of work, not a multi-year project.
+    from: "2026",
     to: "2026",
     role: "Real-time trading client",
     org: "Personal projects",
     detail: [
-      { label: "Rookie Trader", href: "/projects/rookie-trader" },
-      ": live Kraken market data and your own Kraken account in one browser page. Live at ",
-      { label: "rookie.andrejkolic.com", href: "https://rookie.andrejkolic.com" },
+      "Live Kraken market data, plus your balances, orders and trades, in one ",
+      { label: "browser page", href: "https://rookie.andrejkolic.com" },
+      ". Layered architecture around a framework-free domain model, live data as RxJS streams, and sign-in through stateless, encrypted tokens on a serverless AWS proxy. Built on my own ",
+      {
+        label: "monorepo starter template",
+        href: "https://github.com/andrej-kolic/turborepo-react-starter",
+      },
       ".",
-    ],
-    highlights: [
-      "Real-time data as RxJS streams over WebSockets: up to 20 order book updates a second, shared subscriptions, reconnect on drop, and rendering capped at twice a second to keep memory flat.",
-      "Layered so the UI knows nothing about the exchange: API, mappers into domain classes, hooks, then components built in isolation in Storybook.",
-      "Sign-in that stores nothing: a small backend turns the API key into an encrypted session token, then balances, orders and trades stream straight from Kraken.",
-      [
-        "Built on my own ",
-        {
-          label: "Turborepo React starter",
-          href: "https://github.com/andrej-kolic/turborepo-react-starter",
-        },
-        ": the app is a library with the bundler as a swappable shell (Vite, Webpack, ESBuild, Rspack), shared configs and UI packages, and AWS deployment as CloudFormation.",
-      ],
     ],
     stack: ["React", "TypeScript", "RxJS", "WebSockets", "Turborepo", "Storybook", "AWS"],
   },

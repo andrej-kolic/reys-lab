@@ -7,7 +7,7 @@ import ProjectCard from "../../../components/ProjectCard.astro";
 import grounderDiagram from "../../../content/projects/grounder/diagram.svg";
 import rookieThumbnail from "../../../content/projects/rookie-trader/thumbnail.webp";
 import ListRow from "../../../components/ListRow.astro";
-import Timeline from "../../../components/Timeline.astro";
+import Timeline, { type Role } from "../../../components/Timeline.astro";
 
 // Samples render through the real components, not copies of their markup —
 // this page is maintained, and a copy stops matching the site the moment the
@@ -73,27 +73,27 @@ const experiments = [
   },
 ];
 
-const timeline = [
+const timeline: Role[] = [
   {
     from: "2026",
     role: "Building Rey’s Lab",
-    org: "Personal",
+    org: "Personal projects",
     detail: "Astro, Tailwind, Cloudflare. A portfolio that is also the work sample.",
-    projects: ["Rey’s Lab", "Grounder"],
+    stack: ["Astro", "Tailwind", "Cloudflare"],
   },
   {
     from: "2024",
     to: "2026",
     role: "Senior Frontend Engineer",
-    org: "Placeholder Company",
+    org: "Placeholder Company A",
     detail: "React and AWS. Design systems, build pipelines, and the odd backend.",
-    projects: ["Rookie Trader"],
+    stack: ["React", "AWS"],
   },
   {
     from: "2021",
     to: "2024",
     role: "Frontend Engineer",
-    org: "Placeholder Company",
+    org: "Placeholder Company B",
     detail: "Where the habit of writing the tradeoff down started.",
   },
 ];
@@ -277,7 +277,7 @@ const shellCode = `pnpm --filter @reys-lab/deploy-cloudflare deploy`;
         <p class="mt-3">
           <a
             href="#links"
-            class="text-accent underline decoration-accent/40 underline-offset-4 transition-colors duration-150 hover:decoration-accent"
+            class="link"
             >a portable build</a
           >
         </p>

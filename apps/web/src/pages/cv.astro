@@ -164,10 +164,11 @@ const roles: Role[] = [
     </div>
     <div class="mt-8 flex flex-wrap gap-x-5 gap-y-3">
       {/*
-        Recruiters ask for a PDF and it costs a link. Whether it is
-        hand-maintained or generated from this same data is still open.
+        Recruiters ask for a PDF and it costs a link. It is hand-maintained:
+        public/Andrej_Kolic_CV.pdf is exported separately, not generated
+        from this data.
       */}
-      <a href="/cv.pdf" class="btn-primary">Download PDF</a>
+      <a href="/Andrej_Kolic_CV.pdf" download class="btn-primary">Download PDF</a>
       <a href={`mailto:${site.email}`} class="btn-secondary">Email</a>
     </div>
   </header>
